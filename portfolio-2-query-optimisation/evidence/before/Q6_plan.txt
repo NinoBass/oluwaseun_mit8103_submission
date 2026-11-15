@@ -6,15 +6,15 @@ WHERE product_name ILIKE '%air fryer%'
 ORDER BY unit_price
 LIMIT 20;
 
-Limit  (cost=280.86..280.91 rows=20 width=54) (actual time=4.991..4.994 rows=20 loops=1)
+Limit  (cost=280.86..280.91 rows=20 width=54) (actual time=1.719..1.720 rows=20 loops=1)
   Buffers: shared hit=179
-  ->  Sort  (cost=280.86..281.04 rows=70 width=54) (actual time=4.990..4.991 rows=20 loops=1)
+  ->  Sort  (cost=280.86..281.04 rows=70 width=54) (actual time=1.719..1.719 rows=20 loops=1)
         Sort Key: unit_price
         Sort Method: top-N heapsort  Memory: 28kB
         Buffers: shared hit=179
-        ->  Seq Scan on product  (cost=0.00..279.00 rows=70 width=54) (actual time=0.687..4.944 rows=68 loops=1)
+        ->  Seq Scan on product  (cost=0.00..279.00 rows=70 width=54) (actual time=0.248..1.697 rows=68 loops=1)
               Filter: (is_active AND ((product_name)::text ~~* '%air fryer%'::text))
               Rows Removed by Filter: 7932
               Buffers: shared hit=179
-Planning Time: 0.174 ms
-Execution Time: 5.004 ms
+Planning Time: 0.087 ms
+Execution Time: 1.724 ms

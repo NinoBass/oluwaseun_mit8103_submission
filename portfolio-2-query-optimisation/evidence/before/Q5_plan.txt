@@ -7,28 +7,28 @@ WHERE o.order_status = 'PAID'
 ORDER BY o.order_date
 LIMIT 50;
 
-Limit  (cost=7201.93..7391.70 rows=50 width=54) (actual time=12.973..15.242 rows=50 loops=1)
-  Buffers: shared hit=4225
-  ->  Nested Loop  (cost=7201.93..10078.80 rows=758 width=54) (actual time=12.972..15.234 rows=50 loops=1)
-        Buffers: shared hit=4225
-        ->  Gather Merge  (cost=7201.64..7289.93 rows=758 width=30) (actual time=12.929..14.986 rows=50 loops=1)
+Limit  (cost=7204.00..7379.34 rows=50 width=54) (actual time=7.554..8.380 rows=50 loops=1)
+  Buffers: shared hit=4224
+  ->  Nested Loop  (cost=7204.00..10384.78 rows=907 width=54) (actual time=7.554..8.377 rows=50 loops=1)
+        Buffers: shared hit=4224
+        ->  Gather Merge  (cost=7203.71..7309.34 rows=907 width=30) (actual time=7.518..8.267 rows=50 loops=1)
               Workers Planned: 2
               Workers Launched: 2
-              Buffers: shared hit=4075
-              ->  Sort  (cost=6201.62..6202.41 rows=316 width=30) (actual time=10.826..10.836 rows=140 loops=3)
+              Buffers: shared hit=4074
+              ->  Sort  (cost=6203.68..6204.63 rows=378 width=30) (actual time=6.120..6.123 rows=123 loops=3)
                     Sort Key: o.order_date
-                    Sort Method: quicksort  Memory: 36kB
-                    Buffers: shared hit=4075
-                    Worker 0:  Sort Method: quicksort  Memory: 37kB
+                    Sort Method: quicksort  Memory: 38kB
+                    Buffers: shared hit=4074
+                    Worker 0:  Sort Method: quicksort  Memory: 34kB
                     Worker 1:  Sort Method: quicksort  Memory: 34kB
-                    ->  Parallel Seq Scan on customer_order o  (cost=0.00..6188.50 rows=316 width=30) (actual time=2.871..10.727 rows=198 loops=3)
+                    ->  Parallel Seq Scan on customer_order o  (cost=0.00..6187.50 rows=378 width=30) (actual time=0.642..6.066 rows=198 loops=3)
                           Filter: (((order_status)::text = 'PAID'::text) AND (order_date < ('2026-10-31 00:00:00+01'::timestamp with time zone - '24:00:00'::interval)))
                           Rows Removed by Filter: 99802
-                          Buffers: shared hit=4001
-        ->  Index Scan using customer_pkey on customer c  (cost=0.29..3.67 rows=1 width=22) (actual time=0.004..0.004 rows=1 loops=50)
+                          Buffers: shared hit=4000
+        ->  Index Scan using customer_pkey on customer c  (cost=0.29..3.39 rows=1 width=22) (actual time=0.002..0.002 rows=1 loops=50)
               Index Cond: (customer_id = o.customer_id)
               Buffers: shared hit=150
 Planning:
   Buffers: shared hit=6
-Planning Time: 0.234 ms
-Execution Time: 15.275 ms
+Planning Time: 0.088 ms
+Execution Time: 8.391 ms
