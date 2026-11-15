@@ -1,8 +1,8 @@
 Q4 regression diagnosis (indexes from 02_indexes.sql present)
 
-A. default planner                                      cost=    34717  median=  232.1 ms
-    scans: Subquery Scan, Subquery Scan, Seq Scan on order_item, Bitmap Heap Scan on customer_order, Bitmap Index Scan using brin_order_date, Seq Scan on product, Seq Scan on category, Seq Scan on category
-B. bitmap scans disabled (BRIN unusable)                cost=    37758  median=  121.3 ms
-    scans: Subquery Scan, Subquery Scan, Gather, Seq Scan on order_item, Seq Scan on customer_order, Seq Scan on product, Seq Scan on category, Seq Scan on category
-C. nested loop forced (hash & merge join disabled)      cost=    51609  median=  146.7 ms
-    scans: Subquery Scan, Subquery Scan, Gather, Bitmap Heap Scan on customer_order, Bitmap Index Scan using brin_order_date, Index Scan on order_item using uq_order_item_product, Index Scan on product using product_pkey, Index Scan on category using category_pkey, Index Scan on category using category_pkey
+A. default planner                                      cost=    42595  median=   59.2 ms
+    scans: Subquery Scan, Subquery Scan, Gather Merge, Seq Scan on order_item, Bitmap Heap Scan on customer_order, Bitmap Index Scan using brin_order_date, Seq Scan on product, Seq Scan on category, Seq Scan on category
+B. bitmap scans disabled (BRIN unusable)                cost=    43684  median=   60.6 ms
+    scans: Subquery Scan, Subquery Scan, Gather Merge, Seq Scan on order_item, Seq Scan on customer_order, Seq Scan on product, Seq Scan on category, Seq Scan on category
+C. nested loop forced (hash & merge join disabled)      cost=    57631  median=   75.6 ms
+    scans: Subquery Scan, Subquery Scan, Gather Merge, Bitmap Heap Scan on customer_order, Bitmap Index Scan using brin_order_date, Index Scan on order_item using uq_order_item_product, Index Scan on product using product_pkey, Index Scan on category using category_pkey, Index Scan on category using category_pkey
