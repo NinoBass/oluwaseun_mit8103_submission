@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Portfolio 3 - multi-session concurrency demonstrations for OjaHub Commerce.
+Portfolio 3 - multi-session concurrency demonstrations for SeunBaba Commerce.
 
 Each demo opens real, separate PostgreSQL connections ("sessions" A, B, ...)
 and interleaves their statements in a controlled order, printing a
@@ -23,7 +23,7 @@ from psycopg2 import errors
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 EVID = os.path.join(HERE, "..", "evidence")
-DSN = os.environ.get("OJAHUB_DSN", "host=localhost dbname=ojahub user=postgres")
+DSN = os.environ.get("SEUNBABA_DSN", "host=localhost dbname=seunbaba user=postgres")
 SETUP_SQL = open(os.path.join(HERE, "..", "sql", "00_demo_setup.sql")).read()
 
 
@@ -54,7 +54,7 @@ def session(name, iso="READ COMMITTED"):
     c = psycopg2.connect(DSN, application_name=name)
     c.set_session(isolation_level=iso, autocommit=False)
     cur = c.cursor()
-    cur.execute("SET search_path = ojahub, public")
+    cur.execute("SET search_path = seunbaba, public")
     c.commit()
     return c
 
@@ -63,7 +63,7 @@ def admin():
     c = psycopg2.connect(DSN, application_name="monitor")
     c.autocommit = True
     cur = c.cursor()
-    cur.execute("SET search_path = ojahub, public")
+    cur.execute("SET search_path = seunbaba, public")
     return c
 
 
@@ -78,7 +78,7 @@ def one(cur, sql, args=None):
     return cur.fetchone()
 
 
-def flash_id(cur, sku="OJH-FLASH-001"):
+def flash_id(cur, sku="SBB-FLASH-001"):
     return one(cur, "SELECT product_id FROM product WHERE sku = %s", (sku,))[0]
 
 
@@ -182,7 +182,7 @@ def d1_lost_update():
         tl.log("B", "COMMIT (unexpected)")
     except errors.SerializationFailure as e:
         B.rollback()
-        tl.log("B", f"ERROR {e.pgcode}: {e.pgerror.splitlines()[0].replace("ERROR:  ", "")}")
+        tl.log("B", f"ERROR {e.pgcode}: {e.pgerror.splitlines()[0].replace('ERROR:  ', '')}")
         tl.log("B", "application must ROLLBACK and RETRY the whole transaction")
     tl.log("monitor", f"final qty_on_hand = {stock(m, pid)[0]} (no silent loss)")
     A.close(); B.close(); mon.close()
@@ -197,10 +197,10 @@ def d2_non_repeatable_read():
         tl.say(f"\nReport session isolation = {iso}")
         R, W = session("A", iso), session("B"); r, w = R.cursor(), W.cursor()
         q = """SELECT sum(i.qty_on_hand * p.unit_price) FROM inventory i JOIN product p USING (product_id)
-               WHERE p.sku LIKE 'OJH-FLASH-%'"""
+               WHERE p.sku LIKE 'SBB-FLASH-%'"""
         v1 = one(r, q)[0]; tl.log("A", f"stock value (1st read) = NGN {v1:,.2f}")
         w.execute("""UPDATE inventory SET qty_on_hand = qty_on_hand + 10
-                     WHERE product_id IN (SELECT product_id FROM product WHERE sku LIKE 'OJH-FLASH-%')""")
+                     WHERE product_id IN (SELECT product_id FROM product WHERE sku LIKE 'SBB-FLASH-%')""")
         W.commit(); tl.log("B", "restock +10 units of each flash product; COMMIT")
         v2 = one(r, q)[0]; tl.log("A", f"stock value (2nd read) = NGN {v2:,.2f}")
         tl.log("A", "==> NON-REPEATABLE READ (values differ inside one transaction)" if v1 != v2
@@ -237,7 +237,7 @@ def d3_write_skew():
             B.commit(); tl.log("B", "COMMIT ok")
         except errors.SerializationFailure as e:
             B.rollback()
-            tl.log("B", f"COMMIT failed {e.pgcode}: {e.pgerror.splitlines()[0].replace("ERROR:  ", "")}")
+            tl.log("B", f"COMMIT failed {e.pgcode}: {e.pgerror.splitlines()[0].replace('ERROR:  ', '')}")
             tl.log("B", f"   DETAIL: {[l for l in e.pgerror.splitlines() if 'DETAIL' in l][0].split('DETAIL:')[1].strip()}")
             tl.log("B", "retrying whole transaction ...")
             B2 = session("B", iso); b2 = B2.cursor()
@@ -255,7 +255,7 @@ def d4_deadlock():
     tl = Timeline("D4  DEADLOCK: two staff adjust two stock rows in opposite order")
     reset()
     mon = admin(); m = mon.cursor()
-    p1, p2 = flash_id(m, "OJH-FLASH-001"), flash_id(m, "OJH-FLASH-002")
+    p1, p2 = flash_id(m, "SBB-FLASH-001"), flash_id(m, "SBB-FLASH-002")
     upd = "UPDATE inventory SET qty_on_hand = qty_on_hand + 1 WHERE product_id=%s AND warehouse_id=1"
     A, B = session("A"), session("B"); a, b = A.cursor(), B.cursor()
     a.execute(upd, (p1,)); tl.log("A", "locks FLASH-001")
@@ -269,7 +269,7 @@ def d4_deadlock():
             tl.log(who, f"got {label}; COMMIT")
         except errors.DeadlockDetected as e:
             conn.rollback(); outcome[who] = "40P01"
-            tl.log(who, f"ERROR {e.pgcode}: {e.pgerror.splitlines()[0].replace("ERROR:  ", "")}")
+            tl.log(who, f"ERROR {e.pgcode}: {e.pgerror.splitlines()[0].replace('ERROR:  ', '')}")
             tl.log(who, "   " + [l for l in e.pgerror.splitlines() if l.startswith("DETAIL")][0])
     ta = threading.Thread(target=run, args=("A", a, A, p2, "FLASH-002")); ta.start(); time.sleep(0.3)
     tb = threading.Thread(target=run, args=("B", b, B, p1, "FLASH-001")); tb.start()
@@ -280,7 +280,7 @@ def d4_deadlock():
     tl.say("\nFix: place_order() locks inventory rows ORDER BY product_id, whatever order the basket lists them in")
     reset()
     A, B = session("A"), session("B"); a, b = A.cursor(), B.cursor()
-    p1, p2 = flash_id(m, "OJH-FLASH-001"), flash_id(m, "OJH-FLASH-002")
+    p1, p2 = flash_id(m, "SBB-FLASH-001"), flash_id(m, "SBB-FLASH-002")
     basket_a = f'[{{"product_id": {p1}, "qty": 1}}, {{"product_id": {p2}, "qty": 1}}]'
     basket_b = f'[{{"product_id": {p2}, "qty": 1}}, {{"product_id": {p1}, "qty": 1}}]'
     oa = one(a, "SELECT place_order(1207, %s::jsonb)", (basket_a,))[0]
