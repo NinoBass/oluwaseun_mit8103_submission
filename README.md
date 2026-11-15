@@ -24,8 +24,8 @@ The same case study and the same data set are used in all five portfolio activit
 ```
 ├── README.md                              <- this file
 ├── portfolio-1-database-design/           ERD, relational schema, keys, constraints, normalisation
-│   ├── sql/01_schema.sql … 04_constraint_tests.sql
-│   ├── diagrams/seunbaba_erd.mmd / .png
+│   ├── sql/Odunlade_Oluwaseun_301931438_01_schema.sql … Odunlade_Oluwaseun_301931438_04_constraint_tests.sql
+│   ├── diagrams/Odunlade_Oluwaseun_301931438_seunbaba_erd.mmd / .png
 │   └── evidence/
 ├── portfolio-2-query-optimisation/        7 workloads, EXPLAIN ANALYZE before/after, indexes, rewrites, MV
 │   ├── sql/  run_benchmark.py  q4_regression_diagnosis.py
@@ -64,7 +64,7 @@ The five `portfolio-*` folders and `README.md` follow the structure suggested in
 | Required content | Where |
 |---|---|
 | I. SQL scripts | `portfolio-1…/sql/`, `portfolio-2…/sql/`, `portfolio-3…/sql/`, `portfolio-5…/sharding/` |
-| II. Database schemas | [`portfolio-1-database-design/sql/01_schema.sql`](portfolio-1-database-design/sql/01_schema.sql), [`sharding/01_shard_node.sql`](portfolio-5-distributed-cloud/sharding/01_shard_node.sql), MongoDB `$jsonSchema` validators in [`01_migrate_from_postgres.py`](portfolio-4-nosql/mongodb/01_migrate_from_postgres.py) |
+| II. Database schemas | [`portfolio-1-database-design/sql/Odunlade_Oluwaseun_301931438_01_schema.sql`](portfolio-1-database-design/sql/Odunlade_Oluwaseun_301931438_01_schema.sql), [`sharding/01_shard_node.sql`](portfolio-5-distributed-cloud/sharding/01_shard_node.sql), MongoDB `$jsonSchema` validators in [`01_migrate_from_postgres.py`](portfolio-4-nosql/mongodb/01_migrate_from_postgres.py) |
 | III. ER diagrams / database models | [`portfolio-1-database-design/diagrams/`](portfolio-1-database-design/diagrams/), document model in [P4 README](portfolio-4-nosql/README.md), Cassandra model in [`cassandra_design/`](portfolio-4-nosql/cassandra_design/) |
 | IV. NoSQL implementations | [`portfolio-4-nosql/mongodb/`](portfolio-4-nosql/mongodb/), [`portfolio-4-nosql/redis/`](portfolio-4-nosql/redis/), [`portfolio-5…/mongodb-replica-set/`](portfolio-5-distributed-cloud/mongodb-replica-set/) |
 | V. Query execution plans and performance results | [`portfolio-2-query-optimisation/evidence/`](portfolio-2-query-optimisation/evidence/) (`before/`, `after/`, `benchmark_summary.md`) |
@@ -78,7 +78,7 @@ Each portfolio folder has its own `README.md` explaining **what was implemented,
 | Criterion (marks) | Where to look |
 |---|---|
 | **Technical correctness (8)** | Every script was executed, and its raw output is in each `evidence/` folder. Correctness is cross-validated: rewrites `diff`-ed against the originals (P2), invariants asserted in the concurrency demos (P3), SQL vs MongoDB 12/12 identical (P4 `05_sql_vs_mongodb_crosscheck.txt`), sharded vs single-node `EXCEPT` = 0 rows (P5 S5). |
-| **Database design quality (6)** | [P1 README](portfolio-1-database-design/README.md): ERD, relational schema, 6 kinds of key, 11 DBMS-enforced rules, UNF→BCNF derivation from functional dependencies, justified denormalisation |
+| **Database design quality (6)** | [P1 README](portfolio-1-database-design/Odunlade_Oluwaseun_301931438_P1_README.md): ERD, relational schema, 6 kinds of key, 11 DBMS-enforced rules, UNF→BCNF derivation from functional dependencies, justified denormalisation |
 | **Practical implementation (8)** | 16-table schema + deterministic 300k-order generator; `place_order()`/`settle_payment()`; MongoDB migration and transaction; Redis structures; 7 live database servers (primary, standby, 2 shards, 3-node replica set); full rebuild via [`scripts/run_all.sh`](scripts/run_all.sh) |
 | **Query and performance analysis (5)** | [P2 README](portfolio-2-query-optimisation/README.md) §2–§4: before/after plans for 7 queries, buffers, the Q4 regression experiment, index cost trade-off. Also P4 `explain()` and P5 replication latency. |
 | **Advanced database concepts (5)** | MVCC, isolation anomalies and SSI (P3); BRIN, GIN-trigram, partial/covering indexes, materialised views (P2); aggregate modelling, `$jsonSchema`, optimistic transactions (P4); WAL streaming, `pg_rewind`, sharding, CAP/PACELC, causal consistency (P5). Each README has an "Advanced concepts applied" line. |

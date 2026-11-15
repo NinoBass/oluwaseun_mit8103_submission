@@ -2,7 +2,7 @@
 -- MIT 8103 Advanced Database Systems - Portfolio 1
 -- Case study : SeunBaba Commerce Ltd (simulated multi-vendor e-commerce
 --              marketplace headquartered in Lagos, Nigeria)
--- File       : 01_schema.sql
+-- File       : Odunlade_Oluwaseun_301931438_01_schema.sql
 -- Purpose    : Physical relational schema (PostgreSQL 16) with keys,
 --              domain constraints and referential integrity rules.
 -- Author     : Odunlade Oluwaseun (301931438)

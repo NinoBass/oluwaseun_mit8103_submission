@@ -7,14 +7,14 @@
 | Expected evidence (assessment brief) | Where to find it |
 |---|---|
 | Chosen case study description | [§1 Case study statement](#1-case-study-statement) |
-| ER diagram | [§2](#2-conceptual-model-er-diagram): [`diagrams/seunbaba_erd.png`](diagrams/seunbaba_erd.png) (source [`seunbaba_erd.mmd`](diagrams/seunbaba_erd.mmd)) |
-| Relational schema | [§3](#3-relational-schema-logical-model) (logical) and [`sql/01_schema.sql`](sql/01_schema.sql) (physical DDL) |
+| ER diagram | [§2](#2-conceptual-model-er-diagram): [`diagrams/Odunlade_Oluwaseun_301931438_seunbaba_erd.png`](diagrams/Odunlade_Oluwaseun_301931438_seunbaba_erd.png) (source [`Odunlade_Oluwaseun_301931438_seunbaba_erd.mmd`](diagrams/Odunlade_Oluwaseun_301931438_seunbaba_erd.mmd)) |
+| Relational schema | [§3](#3-relational-schema-logical-model) (logical) and [`sql/Odunlade_Oluwaseun_301931438_01_schema.sql`](sql/Odunlade_Oluwaseun_301931438_01_schema.sql) (physical DDL) |
 | Keys | [§4 Keys](#4-keys): surrogate, natural, composite, alternate, composite FK, recursive FK |
-| Constraints | [§5](#5-constraints-business-rules-enforced-in-the-database), proven by [`sql/04_constraint_tests.sql`](sql/04_constraint_tests.sql) → [`evidence/04_constraint_tests_output.txt`](evidence/04_constraint_tests_output.txt) |
+| Constraints | [§5](#5-constraints-business-rules-enforced-in-the-database), proven by [`sql/Odunlade_Oluwaseun_301931438_04_constraint_tests.sql`](sql/Odunlade_Oluwaseun_301931438_04_constraint_tests.sql) → [`evidence/Odunlade_Oluwaseun_301931438_04_constraint_tests_output.txt`](evidence/Odunlade_Oluwaseun_301931438_04_constraint_tests_output.txt) |
 | Normalisation explanation | [§6 Normalisation](#6-normalisation): UNF → 1NF → 2NF → 3NF → BCNF, with the functional dependencies listed |
 
 **How it was implemented.** Hand-written PostgreSQL DDL (16 tables). Reference data and a deterministic synthetic data generator (`setseed`) give 300,000 orders.
-**How it was tested.** 11 statements that *must* fail (each violates one business rule), all rejected by the DBMS, plus one valid statement for contrast. Row counts and table sizes are recorded in [`evidence/05_schema_overview.txt`](evidence/05_schema_overview.txt).
+**How it was tested.** 11 statements that *must* fail (each violates one business rule), all rejected by the DBMS, plus one valid statement for contrast. Row counts and table sizes are recorded in [`evidence/Odunlade_Oluwaseun_301931438_05_schema_overview.txt`](evidence/Odunlade_Oluwaseun_301931438_05_schema_overview.txt).
 **Advanced concepts applied.** BCNF analysis, controlled denormalisation, generated stored column, partial unique index, case-insensitive expression index, trigger for a cross-row rule, ON DELETE RESTRICT vs CASCADE chosen per relationship.
 
 ## 1. Case study statement
@@ -29,9 +29,9 @@
 
 ## 2. Conceptual model (ER diagram)
 
-![SeunBaba ER diagram](diagrams/seunbaba_erd.png)
+![SeunBaba ER diagram](diagrams/Odunlade_Oluwaseun_301931438_seunbaba_erd.png)
 
-The diagram source is in [`diagrams/seunbaba_erd.mmd`](diagrams/seunbaba_erd.mmd) (Mermaid, crow's-foot notation). It is rendered to PNG by [`../scripts/render_evidence.js`](../scripts/render_evidence.js).
+The diagram source is in [`diagrams/Odunlade_Oluwaseun_301931438_seunbaba_erd.mmd`](diagrams/Odunlade_Oluwaseun_301931438_seunbaba_erd.mmd) (Mermaid, crow's-foot notation). It is rendered to PNG by [`../scripts/render_evidence.js`](../scripts/render_evidence.js).
 
 Key modelling decisions:
 
@@ -65,7 +65,7 @@ SHIPMENT_EVENT(event_id, shipment_id*, event_status, event_location, event_time)
 PRODUCT_REVIEW(review_id, product_id*, customer_id*, rating, review_text, created_at)
 ```
 
-The physical implementation is in [`sql/01_schema.sql`](sql/01_schema.sql).
+The physical implementation is in [`sql/Odunlade_Oluwaseun_301931438_01_schema.sql`](sql/Odunlade_Oluwaseun_301931438_01_schema.sql).
 
 ## 4. Keys
 
@@ -93,9 +93,9 @@ The physical implementation is in [`sql/01_schema.sql`](sql/01_schema.sql).
 | Customers with orders cannot be deleted; deleting an order deletes its lines | `ON DELETE RESTRICT` / `ON DELETE CASCADE` chosen per relationship |
 | Status columns accept only known values | `CHECK (… IN (…))` |
 
-**Evidence.** [`sql/04_constraint_tests.sql`](sql/04_constraint_tests.sql) attempts 11 invalid operations, and every one is rejected by the DBMS. See [`evidence/04_constraint_tests_output.txt`](evidence/04_constraint_tests_output.txt) and the screenshot below.
+**Evidence.** [`sql/Odunlade_Oluwaseun_301931438_04_constraint_tests.sql`](sql/Odunlade_Oluwaseun_301931438_04_constraint_tests.sql) attempts 11 invalid operations, and every one is rejected by the DBMS. See [`evidence/Odunlade_Oluwaseun_301931438_04_constraint_tests_output.txt`](evidence/Odunlade_Oluwaseun_301931438_04_constraint_tests_output.txt) and the screenshot below.
 
-![constraint tests](evidence/04_constraint_tests.png)
+![constraint tests](evidence/Odunlade_Oluwaseun_301931438_04_constraint_tests.png)
 
 ## 6. Normalisation
 
@@ -146,16 +146,16 @@ tracking_no         → courier, shipment_status
 
 ```bash
 createdb seunbaba
-psql -d seunbaba -v ON_ERROR_STOP=1 -f sql/01_schema.sql
-psql -d seunbaba -v ON_ERROR_STOP=1 -f sql/02_reference_data.sql
-psql -d seunbaba -v ON_ERROR_STOP=1 -f sql/03_seed_data.sql      # about 35 s on an Apple M5 Pro
-psql -d seunbaba -e -f sql/04_constraint_tests.sql
+psql -d seunbaba -v ON_ERROR_STOP=1 -f sql/Odunlade_Oluwaseun_301931438_01_schema.sql
+psql -d seunbaba -v ON_ERROR_STOP=1 -f sql/Odunlade_Oluwaseun_301931438_02_reference_data.sql
+psql -d seunbaba -v ON_ERROR_STOP=1 -f sql/Odunlade_Oluwaseun_301931438_03_seed_data.sql      # about 35 s on an Apple M5 Pro
+psql -d seunbaba -e -f sql/Odunlade_Oluwaseun_301931438_04_constraint_tests.sql
 ```
 
-The seed is deterministic (`setseed(0.8103)`) and fully synthetic, with no real personal data. Volumes: 50,000 customers, 8,000 products, 300,000 orders, 642,738 order lines, 1.12 million tracking events. Table sizes are in [`evidence/05_schema_overview.txt`](evidence/05_schema_overview.txt).
+The seed is deterministic (`setseed(0.8103)`) and fully synthetic, with no real personal data. Volumes: 50,000 customers, 8,000 products, 300,000 orders, 642,738 order lines, 1.12 million tracking events. Table sizes are in [`evidence/Odunlade_Oluwaseun_301931438_05_schema_overview.txt`](evidence/Odunlade_Oluwaseun_301931438_05_schema_overview.txt).
 
 **Problem met during the build.** The first seed run stocked every product in all four warehouses (32,000 inventory rows instead of about 17,500). The `EXPLAIN` output showed why: the planner had pushed `random() < 0.40` down into the scan of the small `warehouse` table and materialised it, so `random()` ran 4 times instead of once per (product, warehouse) pair. Correlating the expression with the outer row (`random() + p.product_id*0`) forced per-row evaluation. This was a practical reminder that a volatile function inside a join behaves differently from what the SQL text suggests.
 
 **The same problem, found later.** While building the MongoDB catalogue (Portfolio 4), a text search for "air fryer" returned nothing, although air fryers are in the specification. Every category turned out to contain only **one** brand and item, for example all 364 audio products were "JBL Soundbar …". The `LATERAL (SELECT … random() …)` sub-selects that pick the brand referenced only the category row, so they were evaluated once per category instead of once per product. Adding `+ g * 0` correlates them with the generated row. I then regenerated the database and **all evidence in Portfolios 1–4** with [`../scripts/run_all.sh`](../scripts/run_all.sh). The catalogue now has 2,386 distinct product names.
 
-**Time zone.** The database default time zone is set to `Africa/Lagos` in `01_schema.sql`. Without it, `date_trunc('month', order_date)` runs in UTC, and an order placed at 00:30 WAT on the 1st of a month is reported in the previous month. This was found by the SQL-vs-MongoDB cross-check in Portfolio 4.
+**Time zone.** The database default time zone is set to `Africa/Lagos` in `Odunlade_Oluwaseun_301931438_01_schema.sql`. Without it, `date_trunc('month', order_date)` runs in UTC, and an order placed at 00:30 WAT on the 1st of a month is reported in the previous month. This was found by the SQL-vs-MongoDB cross-check in Portfolio 4.

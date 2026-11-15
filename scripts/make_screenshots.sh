@@ -14,12 +14,12 @@ RDV="Redis $(redis-cli INFO server | sed -n 's/^redis_version:\(.*\)\r$/\1/p')"
 
 # ---- Portfolio 1
 if [ -n "${MERMAID_JS:-}" ]; then
-  $R mermaid portfolio-1-database-design/diagrams/seunbaba_erd.mmd portfolio-1-database-design/diagrams/seunbaba_erd.png
+  $R mermaid portfolio-1-database-design/diagrams/Odunlade_Oluwaseun_301931438_seunbaba_erd.mmd portfolio-1-database-design/diagrams/Odunlade_Oluwaseun_301931438_seunbaba_erd.png
   $R mermaid portfolio-5-distributed-cloud/cloud/architecture.mmd portfolio-5-distributed-cloud/cloud/architecture.png
 fi
 E=portfolio-1-database-design/evidence
-grep -E "^====|ERROR|order_id \||-----\+-|^ +1 \|" $E/04_constraint_tests_output.txt | sed '1,2d; s/^psql:sql\/04_constraint_tests.sql:[0-9]*: //' > $TMP/p1.txt
-$R term $TMP/p1.txt $E/04_constraint_tests.png "psql seunbaba -f 04_constraint_tests.sql ($PGV)"
+grep -E "^====|ERROR|order_id \||-----\+-|^ +1 \|" $E/Odunlade_Oluwaseun_301931438_04_constraint_tests_output.txt | sed '1,2d; s/^psql:sql\/Odunlade_Oluwaseun_301931438_04_constraint_tests.sql:[0-9]*: //' > $TMP/p1.txt
+$R term $TMP/p1.txt $E/Odunlade_Oluwaseun_301931438_04_constraint_tests.png "psql seunbaba -f Odunlade_Oluwaseun_301931438_04_constraint_tests.sql ($PGV)"
 
 # ---- Portfolio 2
 E=portfolio-2-query-optimisation/evidence

@@ -1,5 +1,5 @@
 -- =====================================================================
--- Portfolio 1 - 03_seed_data.sql
+-- Portfolio 1 - Odunlade_Oluwaseun_301931438_03_seed_data.sql
 -- Deterministic synthetic data generator for SeunBaba Commerce.
 -- All data is fictitious. setseed() makes every run produce the same
 -- data so that query plans and timings in Portfolio 2 are repeatable.

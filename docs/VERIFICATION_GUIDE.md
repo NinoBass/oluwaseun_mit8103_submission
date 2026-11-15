@@ -10,7 +10,7 @@
 E-commerce combines money (payments), shared stock that many users change at once, and history (orders) that must never change. Those need ACID transactions, foreign keys and CHECK constraints, which a relational DBMS enforces itself. Data that fits relations badly (product attributes, the order-page read model, carts) moved to NoSQL in Portfolio 4.
 
 **Q2. What normal form is the schema in, and how do you know?**
-BCNF. In every table, every determinant (the left-hand side of a functional dependency) is a candidate key. Example: in `customer`, both `customer_id` and `lower(email)` determine every other column, and both are declared keys. The UNF → 1NF → 2NF → 3NF steps are in `portfolio-1-database-design/README.md` §6.
+BCNF. In every table, every determinant (the left-hand side of a functional dependency) is a candidate key. Example: in `customer`, both `customer_id` and `lower(email)` determine every other column, and both are declared keys. The UNF → 1NF → 2NF → 3NF steps are in `portfolio-1-database-design/Odunlade_Oluwaseun_301931438_P1_README.md` §6.
 
 **Q3. `order_item.unit_price` duplicates `product.unit_price`. Isn't that a normalisation violation?**
 No. They are different facts. `product.unit_price` is today's catalogue price, while `order_item.unit_price` is the price the customer paid on that day. It does not depend on `product_id`, because the same product sells at different prices over time, so it is not redundant.
@@ -119,8 +119,8 @@ Majority acknowledgement means the write is durable on 2 of 3 nodes, not that it
 
 | File | What to explain |
 |---|---|
-| `portfolio-1-database-design/sql/01_schema.sql` | Key choices, CHECKs, partial and expression indexes, the address-ownership trigger, the generated column, the time-zone setting |
-| `portfolio-1-database-design/sql/03_seed_data.sql` | `setseed` for repeatability, weighted city choice, skewed customers and products, why `+ g * 0` is needed for volatile `random()` in LATERAL |
+| `portfolio-1-database-design/sql/Odunlade_Oluwaseun_301931438_01_schema.sql` | Key choices, CHECKs, partial and expression indexes, the address-ownership trigger, the generated column, the time-zone setting |
+| `portfolio-1-database-design/sql/Odunlade_Oluwaseun_301931438_03_seed_data.sql` | `setseed` for repeatability, weighted city choice, skewed customers and products, why `+ g * 0` is needed for volatile `random()` in LATERAL |
 | `portfolio-2-query-optimisation/run_benchmark.py` | Parses `-- @Qn` blocks, warm-up plus 7 runs, median of `Execution Time` from `EXPLAIN (FORMAT JSON)`, saves plans and results |
 | `portfolio-3-transactions-concurrency/sql/01_checkout_functions.sql` | Steps 1–6 of `place_order()`, lock ordering, conditional coupon UPDATE, two-phase stock, idempotent `settle_payment()` |
 | `portfolio-3-transactions-concurrency/scripts/concurrency_demos.py` | Separate connections, `threading.Barrier`, the monitor connection reading `pg_locks`, how each invariant is checked |

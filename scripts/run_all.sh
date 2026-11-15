@@ -10,11 +10,11 @@ MONGOSH="${MONGOSH:-mongosh}"
 
 echo "== Portfolio 1: schema + seed"
 cd "$ROOT/portfolio-1-database-design"
-$PSQL -q -v ON_ERROR_STOP=1 -f sql/01_schema.sql 2>/dev/null
-$PSQL -q -v ON_ERROR_STOP=1 -f sql/02_reference_data.sql
-time $PSQL -q -v ON_ERROR_STOP=1 -f sql/03_seed_data.sql > /dev/null
-$PSQL -e -f sql/04_constraint_tests.sql > evidence/04_constraint_tests_output.txt 2>&1 || true
-$PSQL -c "\dt+ seunbaba.*" -c "\d seunbaba.customer_order" -c "\d seunbaba.inventory" > evidence/05_schema_overview.txt
+$PSQL -q -v ON_ERROR_STOP=1 -f sql/Odunlade_Oluwaseun_301931438_01_schema.sql 2>/dev/null
+$PSQL -q -v ON_ERROR_STOP=1 -f sql/Odunlade_Oluwaseun_301931438_02_reference_data.sql
+time $PSQL -q -v ON_ERROR_STOP=1 -f sql/Odunlade_Oluwaseun_301931438_03_seed_data.sql > /dev/null
+$PSQL -e -f sql/Odunlade_Oluwaseun_301931438_04_constraint_tests.sql > evidence/Odunlade_Oluwaseun_301931438_04_constraint_tests_output.txt 2>&1 || true
+$PSQL -c "\dt+ seunbaba.*" -c "\d seunbaba.customer_order" -c "\d seunbaba.inventory" > evidence/Odunlade_Oluwaseun_301931438_05_schema_overview.txt
 
 echo "== Portfolio 2: benchmark before/after"
 cd "$ROOT/portfolio-2-query-optimisation"

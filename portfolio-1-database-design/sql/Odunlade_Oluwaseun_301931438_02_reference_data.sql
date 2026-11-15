@@ -1,5 +1,5 @@
 -- =====================================================================
--- Portfolio 1 - 02_reference_data.sql
+-- Portfolio 1 - Odunlade_Oluwaseun_301931438_02_reference_data.sql
 -- Lookup data for SeunBaba Commerce: states, warehouses, category tree,
 -- couriers are plain text in shipment so they are not seeded here.
 -- =====================================================================

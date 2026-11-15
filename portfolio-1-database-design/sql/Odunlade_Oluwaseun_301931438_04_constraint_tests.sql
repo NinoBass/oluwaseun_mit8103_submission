@@ -1,8 +1,8 @@
 -- =====================================================================
--- Portfolio 1 - 04_constraint_tests.sql
+-- Portfolio 1 - Odunlade_Oluwaseun_301931438_04_constraint_tests.sql
 -- Each statement below is EXPECTED TO FAIL. It proves that a business
 -- rule is enforced by the database itself rather than by application code.
--- Run with:  psql -d seunbaba -e -f 04_constraint_tests.sql   (no ON_ERROR_STOP)
+-- Run with:  psql -d seunbaba -e -f Odunlade_Oluwaseun_301931438_04_constraint_tests.sql   (no ON_ERROR_STOP)
 -- =====================================================================
 SET search_path = seunbaba, public;
 \echo '==== Row counts after seeding ===='

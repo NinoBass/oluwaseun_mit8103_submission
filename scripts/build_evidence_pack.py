@@ -11,8 +11,8 @@ W, H = A4
 M = 1.5 * cm
 SECTIONS = [
     ("Portfolio 1 - Database Design and Modelling", [
-        ("portfolio-1-database-design/diagrams/seunbaba_erd.png", "ER diagram (crow's-foot) of the SeunBaba schema"),
-        ("portfolio-1-database-design/evidence/04_constraint_tests.png", "11 invalid operations rejected by DBMS-enforced constraints"),
+        ("portfolio-1-database-design/diagrams/Odunlade_Oluwaseun_301931438_seunbaba_erd.png", "ER diagram (crow's-foot) of the SeunBaba schema"),
+        ("portfolio-1-database-design/evidence/Odunlade_Oluwaseun_301931438_04_constraint_tests.png", "11 invalid operations rejected by DBMS-enforced constraints"),
     ]),
     ("Portfolio 2 - Query Processing and Optimisation", [
         ("portfolio-2-query-optimisation/evidence/benchmark_summary.png", "Before/after benchmark, median of 7 runs"),
