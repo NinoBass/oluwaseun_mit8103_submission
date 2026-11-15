@@ -1,0 +1,5 @@
+products   docs=   8,002  avgObjSize=   807 B  storage=   1.8 MB  indexes=5
+reviews    docs=  56,547  avgObjSize=   120 B  storage=   1.9 MB  indexes=2
+customers  docs=  50,000  avgObjSize=   339 B  storage=   5.0 MB  indexes=2
+orders     docs= 111,129  avgObjSize= 1,305 B  storage=  46.0 MB  indexes=4
+migration finished in 22.9s
