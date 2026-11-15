@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Portfolio 2 benchmark harness (OjaHub Commerce).
+Portfolio 2 benchmark harness (SeunBaba Commerce).
 
 For every query block tagged "-- @Qn" in sql/*.sql it:
   1. saves the result rows             -> evidence/<phase>/Qn_result.txt
@@ -10,15 +10,15 @@ For every query block tagged "-- @Qn" in sql/*.sql it:
 
 Usage:
   python3 run_benchmark.py before            # baseline: no optimisation indexes
-  psql -d ojahub -f sql/02_indexes.sql
+  psql -d seunbaba -f sql/02_indexes.sql
   python3 run_benchmark.py after             # with indexes (+ rewritten Q7b)
   python3 run_benchmark.py report            # evidence/benchmark_summary.md
 """
-import json, os, re, statistics, sys
+import json, os, platform, re, statistics, sys
 import psycopg2
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DSN = os.environ.get("OJAHUB_DSN", "host=localhost dbname=ojahub user=postgres")
+DSN = os.environ.get("SEUNBABA_DSN", "host=localhost dbname=seunbaba user=postgres")
 RUNS = 7
 
 
@@ -47,7 +47,7 @@ def main(phase):
     conn = psycopg2.connect(DSN)
     conn.autocommit = True
     cur = conn.cursor()
-    cur.execute("SET search_path = ojahub, public")
+    cur.execute("SET search_path = seunbaba, public")
     cur.execute("SET max_parallel_workers_per_gather = 2")
     results = {}
     for name, sql in queries.items():
@@ -103,7 +103,14 @@ def report():
             lines.append(f"| {q} → {q}b (rewrite) | {x['median_exec_ms']:.2f} | {y['median_exec_ms']:.2f} | "
                          f"{x['median_exec_ms'] / y['median_exec_ms']:.1f}× | {x['shared_hit_blocks'] + x['shared_read_blocks']:,} | "
                          f"{y['shared_hit_blocks'] + y['shared_read_blocks']:,} | {x['total_cost']:,.0f} | {y['total_cost']:,.0f} |")
-    md = "\n".join(lines) + f"\n\nMedian of {RUNS} warm runs (EXPLAIN ANALYZE execution time, PostgreSQL 16.15, 4 vCPU).\n"
+    try:   # describe the environment the numbers were measured on, instead of hard-coding it
+        with psycopg2.connect(DSN) as c, c.cursor() as cur:
+            cur.execute("SHOW server_version")
+            pg = "PostgreSQL " + cur.fetchone()[0].split()[0]
+    except psycopg2.Error:
+        pg = "PostgreSQL"
+    env = f"{pg}, {os.cpu_count()} CPU cores, {platform.system()} {platform.machine()}"
+    md = "\n".join(lines) + f"\n\nMedian of {RUNS} warm runs (EXPLAIN ANALYZE execution time, {env}).\n"
     open(os.path.join(HERE, "evidence", "benchmark_summary.md"), "w").write(md)
     print(md)
 
