@@ -62,7 +62,7 @@ time.sleep(1)
 
 print("######## E1  majority write, read from a secondary ########")
 log(f"topology: {topology()}")
-events.insert_one({"tracking_number": "OJX000245000", "status": "OUT_FOR_DELIVERY", "at": datetime.now(timezone.utc)})
+events.insert_one({"tracking_number": "SBX000245000", "status": "OUT_FOR_DELIVERY", "at": datetime.now(timezone.utc)})
 sec = client.seunbaba.get_collection("courier_scans", read_preference=ReadPreference.SECONDARY)
 log(f"w:majority insert acknowledged; immediate plain read from a secondary -> {sec.count_documents({})} document(s)")
 log("   (majority ack = durable on 2 of 3 nodes, NOT 'already applied on the node I happen to read from')")
@@ -71,7 +71,7 @@ print("\n######## E1b  read-your-writes on a secondary with a causally consisten
 from pymongo.read_concern import ReadConcern
 with client.start_session(causal_consistency=True) as sess:
     coll = client.seunbaba.get_collection("courier_scans", write_concern=WriteConcern(w="majority"))
-    coll.insert_one({"tracking_number": "OJX000245000", "status": "DELIVERED", "at": datetime.now(timezone.utc)}, session=sess)
+    coll.insert_one({"tracking_number": "SBX000245000", "status": "DELIVERED", "at": datetime.now(timezone.utc)}, session=sess)
     csec = client.seunbaba.get_collection("courier_scans", read_preference=ReadPreference.SECONDARY,
                                         read_concern=ReadConcern("majority"))
     log(f"same session, read from a secondary with afterClusterTime -> {csec.count_documents({}, session=sess)} document(s)"
@@ -86,7 +86,7 @@ attempt = 0
 while True:
     attempt += 1
     try:
-        events.insert_one({"tracking_number": "OJX000245001", "status": "IN_TRANSIT", "at": datetime.now(timezone.utc)})
+        events.insert_one({"tracking_number": "SBX000245001", "status": "IN_TRANSIT", "at": datetime.now(timezone.utc)})
         break
     except PyMongoError as e:
         log(f"write attempt {attempt} failed: {type(e).__name__}")
@@ -119,7 +119,7 @@ log(f"topology: {topology()}")
 fast = MongoClient(URI, serverSelectionTimeoutMS=3000)
 try:
     fast.seunbaba.get_collection("courier_scans", write_concern=WriteConcern(w="majority", wtimeout=2000)) \
-        .insert_one({"tracking_number": "OJX000245002", "status": "DELIVERED"})
+        .insert_one({"tracking_number": "SBX000245002", "status": "DELIVERED"})
     log("write accepted (unexpected)")
 except PyMongoError as e:
     log(f"write refused: {type(e).__name__} - no PRIMARY can be elected without a majority (consistency over availability)")
