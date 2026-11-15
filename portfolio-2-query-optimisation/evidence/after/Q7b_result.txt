@@ -1,0 +1,12 @@
+-- Q7b: 10 row(s)
+vendor_id | business_name | gross_sales | avg_rating
+39 | Unity Mart 39 | 2147404250.00 | 3.73
+48 | Arewa Traders 48 | 523466450.00 | 3.75
+60 | Mainland Concepts 60 | 460311300.00 | 3.70
+136 | Island Emporium 136 | 288506600.00 | 3.71
+65 | Royal Concepts 65 | 252597200.00 | 3.71
+123 | Arewa Hub 123 | 247319050.00 | 3.73
+46 | Island Traders 46 | 242359650.00 | 3.64
+83 | Sahel Supplies 83 | 239919550.00 | 3.79
+40 | Golden Mart 40 | 224473300.00 | 3.64
+132 | Zenith Hub 132 | 214805900.00 | 3.68
