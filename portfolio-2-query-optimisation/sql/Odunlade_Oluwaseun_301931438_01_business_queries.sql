@@ -2,7 +2,7 @@
 -- Portfolio 2 - Odunlade_Oluwaseun_301931438_01_business_queries.sql
 -- Six realistic SeunBaba workloads. Each is run with
 --   EXPLAIN (ANALYZE, BUFFERS)  before and after optimisation
--- by run_benchmark.sh. The plain query text lives here.
+-- by Odunlade_Oluwaseun_301931438_run_benchmark.py. The plain query text lives here.
 -- =====================================================================
 SET search_path = seunbaba, public;
 

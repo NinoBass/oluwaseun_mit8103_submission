@@ -8,8 +8,8 @@
 | Expected evidence (assessment brief) | Where to find it |
 |---|---|
 | SQL queries | [`sql/Odunlade_Oluwaseun_301931438_01_business_queries.sql`](sql/Odunlade_Oluwaseun_301931438_01_business_queries.sql) (Q1–Q7), [`sql/Odunlade_Oluwaseun_301931438_03_query_rewrites.sql`](sql/Odunlade_Oluwaseun_301931438_03_query_rewrites.sql) (Q7b), [`sql/Odunlade_Oluwaseun_301931438_04_materialized_view.sql`](sql/Odunlade_Oluwaseun_301931438_04_materialized_view.sql) (Q4b) |
-| Query results | `evidence/before/Qn_result.txt` and `evidence/after/Qn_result.txt` |
-| Execution plans | `evidence/before/Qn_plan.txt` and `evidence/after/Qn_plan.txt` (`EXPLAIN (ANALYZE, BUFFERS)`), screenshot [`Odunlade_Oluwaseun_301931438_Q2_plan_before_after.png`](evidence/Odunlade_Oluwaseun_301931438_Q2_plan_before_after.png) |
+| Query results | `evidence/before/Odunlade_Oluwaseun_301931438_Qn_result.txt` and `evidence/after/…_Qn_result.txt` |
+| Execution plans | `evidence/before/Odunlade_Oluwaseun_301931438_Qn_plan.txt` and `evidence/after/…_Qn_plan.txt` (`EXPLAIN (ANALYZE, BUFFERS)`), screenshot [`Odunlade_Oluwaseun_301931438_Q2_plan_before_after.png`](evidence/Odunlade_Oluwaseun_301931438_Q2_plan_before_after.png) |
 | Indexing / optimisation evidence | [`sql/Odunlade_Oluwaseun_301931438_02_indexes.sql`](sql/Odunlade_Oluwaseun_301931438_02_indexes.sql) → [`evidence/Odunlade_Oluwaseun_301931438_02_indexes_output.txt`](evidence/Odunlade_Oluwaseun_301931438_02_indexes_output.txt) (sizes); [§2 Results](#2-results); [`evidence/Odunlade_Oluwaseun_301931438_benchmark_summary.md`](evidence/Odunlade_Oluwaseun_301931438_benchmark_summary.md) |
 | Brief performance analysis | [§3 Analysis of the execution plans](#3-analysis-of-the-execution-plans), [§4 Cost of the indexes](#4-cost-of-the-indexes-write-side-trade-off), [§5 Lessons](#5-lessons-learned) |
 
@@ -26,7 +26,7 @@
 | [`sql/Odunlade_Oluwaseun_301931438_03_query_rewrites.sql`](sql/Odunlade_Oluwaseun_301931438_03_query_rewrites.sql) | Logical optimisation: Q7 rewritten from correlated sub-queries to set-based aggregation (Q7b) |
 | [`sql/Odunlade_Oluwaseun_301931438_04_materialized_view.sql`](sql/Odunlade_Oluwaseun_301931438_04_materialized_view.sql) | Materialised daily sales summary plus early aggregation (Q4b) |
 | [`Odunlade_Oluwaseun_301931438_run_benchmark.py`](Odunlade_Oluwaseun_301931438_run_benchmark.py) | Harness that captures results, `EXPLAIN (ANALYZE, BUFFERS)` plans and median timings |
-| `evidence/before/`, `evidence/after/` | One `Qn_plan.txt` and one `Qn_result.txt` per query and phase |
+| `evidence/before/`, `evidence/after/` | One `Odunlade_Oluwaseun_301931438_Qn_plan.txt` and one `…_Qn_result.txt` per query and phase |
 | [`evidence/Odunlade_Oluwaseun_301931438_benchmark_summary.md`](evidence/Odunlade_Oluwaseun_301931438_benchmark_summary.md) | Generated comparison table |
 | [`evidence/Odunlade_Oluwaseun_301931438_Q4_regression_diagnosis.txt`](evidence/Odunlade_Oluwaseun_301931438_Q4_regression_diagnosis.txt) | Controlled experiment explaining a slowdown caused by an index |
 
