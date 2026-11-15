@@ -1,7 +1,7 @@
 {
   "Q1": {
-    "median_exec_ms": 0.043,
-    "median_plan_ms": 0.156,
+    "median_exec_ms": 0.014,
+    "median_plan_ms": 0.046,
     "total_cost": 44.12,
     "shared_hit_blocks": 20,
     "shared_read_blocks": 0,
@@ -9,44 +9,44 @@
     "top_node": "Limit"
   },
   "Q2": {
-    "median_exec_ms": 0.021,
-    "median_plan_ms": 0.105,
-    "total_cost": 22.34,
+    "median_exec_ms": 0.007,
+    "median_plan_ms": 0.039,
+    "total_cost": 28.62,
     "shared_hit_blocks": 8,
     "shared_read_blocks": 0,
     "rows": 4,
     "top_node": "Sort"
   },
   "Q3": {
-    "median_exec_ms": 177.813,
-    "median_plan_ms": 0.351,
-    "total_cost": 30307.2,
-    "shared_hit_blocks": 3671,
+    "median_exec_ms": 88.896,
+    "median_plan_ms": 0.143,
+    "total_cost": 34379.49,
+    "shared_hit_blocks": 4693,
     "shared_read_blocks": 0,
     "rows": 60,
     "top_node": "Incremental Sort"
   },
   "Q4": {
-    "median_exec_ms": 228.534,
-    "median_plan_ms": 0.72,
-    "total_cost": 34716.85,
-    "shared_hit_blocks": 8516,
+    "median_exec_ms": 60.815,
+    "median_plan_ms": 0.383,
+    "total_cost": 42595.28,
+    "shared_hit_blocks": 8802,
     "shared_read_blocks": 0,
     "rows": 40,
     "top_node": "Incremental Sort"
   },
   "Q5": {
-    "median_exec_ms": 0.113,
-    "median_plan_ms": 0.147,
-    "total_cost": 310.07,
+    "median_exec_ms": 0.058,
+    "median_plan_ms": 0.058,
+    "total_cost": 348.8,
     "shared_hit_blocks": 202,
     "shared_read_blocks": 0,
     "rows": 50,
     "top_node": "Limit"
   },
   "Q6": {
-    "median_exec_ms": 0.11,
-    "median_plan_ms": 0.145,
+    "median_exec_ms": 0.049,
+    "median_plan_ms": 0.049,
     "total_cost": 205.24,
     "shared_hit_blocks": 25,
     "shared_read_blocks": 0,
@@ -54,28 +54,28 @@
     "top_node": "Limit"
   },
   "Q7": {
-    "median_exec_ms": 2015.023,
-    "median_plan_ms": 0.614,
-    "total_cost": 2172584.83,
-    "shared_hit_blocks": 3100147,
+    "median_exec_ms": 970.524,
+    "median_plan_ms": 0.307,
+    "total_cost": 2172571.51,
+    "shared_hit_blocks": 3100125,
     "shared_read_blocks": 0,
     "rows": 10,
     "top_node": "Limit"
   },
   "Q7b": {
-    "median_exec_ms": 103.186,
-    "median_plan_ms": 0.7,
-    "total_cost": 17204.77,
-    "shared_hit_blocks": 9770,
+    "median_exec_ms": 47.457,
+    "median_plan_ms": 0.326,
+    "total_cost": 17619.36,
+    "shared_hit_blocks": 9610,
     "shared_read_blocks": 0,
     "rows": 10,
     "top_node": "Limit"
   },
   "Q4b": {
-    "median_exec_ms": 49.754,
-    "median_plan_ms": 0.388,
-    "total_cost": 8520.06,
-    "shared_hit_blocks": 3877,
+    "median_exec_ms": 23.624,
+    "median_plan_ms": 0.159,
+    "total_cost": 8479.8,
+    "shared_hit_blocks": 4299,
     "shared_read_blocks": 0,
     "rows": 40,
     "top_node": "Incremental Sort"
