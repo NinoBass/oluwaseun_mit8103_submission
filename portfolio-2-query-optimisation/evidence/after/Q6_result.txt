@@ -1,22 +1,22 @@
 -- Q6: 20 row(s)
 product_id | sku | product_name | unit_price
-4722 | OJH-006194 | Kenwood Air Fryer Original | 9500.00
-4467 | OJH-002124 | Scanfrost Air Fryer Max | 9500.00
-4507 | OJH-004126 | Binatone Air Fryer Max | 9500.00
-4523 | OJH-004456 | Kenwood Air Fryer Plus | 9500.00
-4610 | OJH-006480 | Kenwood Air Fryer Edition 2025 | 9500.00
-4543 | OJH-002190 | Scanfrost Air Fryer Original | 9500.00
-4581 | OJH-006260 | Kenwood Air Fryer Lite | 9500.00
-4622 | OJH-002278 | Kenwood Air Fryer Max | 9500.00
-4423 | OJH-002080 | Kenwood Air Fryer Pro | 9500.00
-4604 | OJH-005248 | Philips Air Fryer Edition 2025 | 9500.00
-4462 | OJH-002630 | Nexus Air Fryer Edition 2025 | 9500.00
-4387 | OJH-003994 | Kenwood Air Fryer Plus | 9500.00
-4652 | OJH-005908 | Kenwood Air Fryer Classic | 9550.00
-4677 | OJH-002344 | Philips Air Fryer Original | 9550.00
-4609 | OJH-004390 | Philips Air Fryer Pro | 9600.00
-4456 | OJH-003840 | Kenwood Air Fryer Plus | 9600.00
-4568 | OJH-005380 | Nexus Air Fryer Plus | 9600.00
-4729 | OJH-007822 | Scanfrost Air Fryer Max | 9600.00
-4607 | OJH-002872 | Binatone Air Fryer Lite | 9650.00
-4432 | OJH-000958 | Kenwood Air Fryer Original | 9650.00
+4722 | SBB-006194 | Kenwood Air Fryer Original | 9500.00
+4467 | SBB-002124 | Scanfrost Air Fryer Max | 9500.00
+4507 | SBB-004126 | Binatone Air Fryer Max | 9500.00
+4523 | SBB-004456 | Kenwood Air Fryer Plus | 9500.00
+4610 | SBB-006480 | Kenwood Air Fryer Edition 2025 | 9500.00
+4543 | SBB-002190 | Scanfrost Air Fryer Original | 9500.00
+4581 | SBB-006260 | Kenwood Air Fryer Lite | 9500.00
+4622 | SBB-002278 | Kenwood Air Fryer Max | 9500.00
+4423 | SBB-002080 | Kenwood Air Fryer Pro | 9500.00
+4604 | SBB-005248 | Philips Air Fryer Edition 2025 | 9500.00
+4462 | SBB-002630 | Nexus Air Fryer Edition 2025 | 9500.00
+4387 | SBB-003994 | Kenwood Air Fryer Plus | 9500.00
+4652 | SBB-005908 | Kenwood Air Fryer Classic | 9550.00
+4677 | SBB-002344 | Philips Air Fryer Original | 9550.00
+4609 | SBB-004390 | Philips Air Fryer Pro | 9600.00
+4456 | SBB-003840 | Kenwood Air Fryer Plus | 9600.00
+4568 | SBB-005380 | Nexus Air Fryer Plus | 9600.00
+4729 | SBB-007822 | Scanfrost Air Fryer Max | 9600.00
+4607 | SBB-002872 | Binatone Air Fryer Lite | 9650.00
+4432 | SBB-000958 | Kenwood Air Fryer Original | 9650.00
