@@ -1,0 +1,113 @@
+-- Q7b (after)
+WITH sales AS (
+    SELECT p.vendor_id, sum(oi.quantity * oi.unit_price) AS gross_sales
+    FROM customer_order o
+    JOIN order_item oi ON oi.order_id = o.order_id
+    JOIN product p     ON p.product_id = oi.product_id
+    WHERE o.order_status = 'DELIVERED'
+      AND o.order_date >= TIMESTAMPTZ '2026-07-01 00:00+01'
+      AND o.order_date <  TIMESTAMPTZ '2026-10-01 00:00+01'
+    GROUP BY p.vendor_id
+), ratings AS (
+    SELECT p.vendor_id, round(avg(r.rating), 2) AS avg_rating
+    FROM product_review r JOIN product p ON p.product_id = r.product_id
+    GROUP BY p.vendor_id
+)
+SELECT v.vendor_id, v.business_name,
+       coalesce(s.gross_sales, 0) AS gross_sales,
+       r.avg_rating
+FROM vendor v
+LEFT JOIN sales   s ON s.vendor_id = v.vendor_id
+LEFT JOIN ratings r ON r.vendor_id = v.vendor_id
+WHERE v.is_active
+ORDER BY gross_sales DESC
+LIMIT 10;
+
+Limit  (cost=17204.75..17204.77 rows=10 width=85) (actual time=109.591..109.989 rows=10 loops=1)
+  Buffers: shared hit=9770
+  ->  Sort  (cost=17204.75..17205.11 rows=144 width=85) (actual time=109.590..109.986 rows=10 loops=1)
+        Sort Key: (COALESCE((sum(((oi.quantity)::numeric * oi.unit_price))), '0'::numeric)) DESC
+        Sort Method: top-N heapsort  Memory: 26kB
+        Buffers: shared hit=9770
+        ->  Hash Left Join  (cost=17158.08..17201.63 rows=144 width=85) (actual time=109.147..109.924 rows=144 loops=1)
+              Hash Cond: (v.vendor_id = r.vendor_id)
+              Buffers: shared hit=9770
+              ->  Merge Left Join  (cost=15123.74..15166.90 rows=144 width=53) (actual time=86.116..86.864 rows=144 loops=1)
+                    Merge Cond: (v.vendor_id = p.vendor_id)
+                    Buffers: shared hit=8918
+                    ->  Sort  (cost=8.66..9.02 rows=144 width=21) (actual time=0.042..0.052 rows=144 loops=1)
+                          Sort Key: v.vendor_id
+                          Sort Method: quicksort  Memory: 31kB
+                          Buffers: shared hit=2
+                          ->  Seq Scan on vendor v  (cost=0.00..3.50 rows=144 width=21) (actual time=0.006..0.025 rows=144 loops=1)
+                                Filter: is_active
+                                Rows Removed by Filter: 6
+                                Buffers: shared hit=2
+                    ->  Finalize GroupAggregate  (cost=15115.08..15154.20 rows=150 width=36) (actual time=86.070..86.769 rows=149 loops=1)
+                          Group Key: p.vendor_id
+                          Buffers: shared hit=8916
+                          ->  Gather Merge  (cost=15115.08..15150.08 rows=300 width=36) (actual time=86.058..86.540 rows=448 loops=1)
+                                Workers Planned: 2
+                                Workers Launched: 2
+                                Buffers: shared hit=8916
+                                ->  Sort  (cost=14115.05..14115.43 rows=150 width=36) (actual time=74.134..74.151 rows=150 loops=3)
+                                      Sort Key: p.vendor_id
+                                      Sort Method: quicksort  Memory: 39kB
+                                      Buffers: shared hit=8916
+                                      Worker 0:  Sort Method: quicksort  Memory: 39kB
+                                      Worker 1:  Sort Method: quicksort  Memory: 39kB
+                                      ->  Partial HashAggregate  (cost=14107.76..14109.63 rows=150 width=36) (actual time=74.042..74.086 rows=150 loops=3)
+                                            Group Key: p.vendor_id
+                                            Batches: 1  Memory Usage: 96kB
+                                            Buffers: shared hit=8902
+                                            Worker 0:  Batches: 1  Memory Usage: 96kB
+                                            Worker 1:  Batches: 1  Memory Usage: 96kB
+                                            ->  Hash Join  (cost=5014.21..13826.24 rows=28152 width=14) (actual time=37.912..64.992 rows=22029 loops=3)
+                                                  Hash Cond: (oi.product_id = p.product_id)
+                                                  Buffers: shared hit=8902
+                                                  ->  Parallel Hash Join  (cost=4655.21..13393.29 rows=28152 width=18) (actual time=35.904..56.552 rows=22029 loops=3)
+                                                        Hash Cond: (oi.order_id = o.order_id)
+                                                        Buffers: shared hit=8335
+                                                        ->  Parallel Seq Scan on order_item oi  (cost=0.00..8035.08 rows=267808 width=26) (actual time=0.008..16.236 rows=214246 loops=3)
+                                                              Buffers: shared hit=5357
+                                                        ->  Parallel Hash  (cost=4490.96..4490.96 rows=13140 width=8) (actual time=9.581..9.583 rows=10306 loops=3)
+                                                              Buckets: 32768  Batches: 1  Memory Usage: 1536kB
+                                                              Buffers: shared hit=2978
+                                                              ->  Parallel Bitmap Heap Scan on customer_order o  (cost=20.10..4490.96 rows=13140 width=8) (actual time=0.090..7.759 rows=10306 loops=3)
+                                                                    Recheck Cond: ((order_date >= '2026-07-01 00:00:00+01'::timestamp with time zone) AND (order_date < '2026-10-01 00:00:00+01'::timestamp with time zone))
+                                                                    Rows Removed by Index Recheck: 62804
+                                                                    Filter: ((order_status)::text = 'DELIVERED'::text)
+                                                                    Rows Removed by Filter: 1289
+                                                                    Heap Blocks: lossy=2330
+                                                                    Buffers: shared hit=2978
+                                                                    ->  Bitmap Index Scan on brin_order_date  (cost=0.00..12.22 rows=64438 width=0) (actual time=0.090..0.091 rows=29760 loops=1)
+                                                                          Index Cond: ((order_date >= '2026-07-01 00:00:00+01'::timestamp with time zone) AND (order_date < '2026-10-01 00:00:00+01'::timestamp with time zone))
+                                                                          Buffers: shared hit=2
+                                                  ->  Hash  (cost=259.00..259.00 rows=8000 width=12) (actual time=1.962..1.963 rows=8000 loops=3)
+                                                        Buckets: 8192  Batches: 1  Memory Usage: 439kB
+                                                        Buffers: shared hit=537
+                                                        ->  Seq Scan on product p  (cost=0.00..259.00 rows=8000 width=12) (actual time=0.014..1.030 rows=8000 loops=3)
+                                                              Buffers: shared hit=537
+              ->  Hash  (cost=2032.47..2032.47 rows=150 width=36) (actual time=23.015..23.019 rows=150 loops=1)
+                    Buckets: 1024  Batches: 1  Memory Usage: 15kB
+                    Buffers: shared hit=852
+                    ->  Subquery Scan on r  (cost=2028.72..2032.47 rows=150 width=36) (actual time=22.919..22.983 rows=150 loops=1)
+                          Buffers: shared hit=852
+                          ->  HashAggregate  (cost=2028.72..2030.97 rows=150 width=36) (actual time=22.917..22.967 rows=150 loops=1)
+                                Group Key: p_1.vendor_id
+                                Batches: 1  Memory Usage: 64kB
+                                Buffers: shared hit=852
+                                ->  Hash Join  (cost=359.00..1745.98 rows=56547 width=6) (actual time=1.713..15.886 rows=56547 loops=1)
+                                      Hash Cond: (r_1.product_id = p_1.product_id)
+                                      Buffers: shared hit=852
+                                      ->  Seq Scan on product_review r_1  (cost=0.00..1238.47 rows=56547 width=10) (actual time=0.006..4.081 rows=56547 loops=1)
+                                            Buffers: shared hit=673
+                                      ->  Hash  (cost=259.00..259.00 rows=8000 width=12) (actual time=1.671..1.673 rows=8000 loops=1)
+                                            Buckets: 8192  Batches: 1  Memory Usage: 439kB
+                                            Buffers: shared hit=179
+                                            ->  Seq Scan on product p_1  (cost=0.00..259.00 rows=8000 width=12) (actual time=0.004..0.848 rows=8000 loops=1)
+                                                  Buffers: shared hit=179
+Planning:
+  Buffers: shared hit=46
+Planning Time: 0.731 ms
+Execution Time: 110.093 ms
