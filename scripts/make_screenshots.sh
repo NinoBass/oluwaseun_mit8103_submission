@@ -8,7 +8,7 @@ R="node $ROOT/scripts/render_evidence.js"
 TMP="$(mktemp -d)"
 cd "$ROOT"
 # versions shown in the window titles are read from the running servers, not hard-coded
-PGV="PostgreSQL $(psql -h localhost -U postgres -d seunbaba -XAtc 'SHOW server_version' | cut -d' ' -f1)"
+PGV="PostgreSQL $(psql -h localhost -U postgres -d postgres -XAtc 'SHOW server_version' | cut -d' ' -f1)"
 MGV="MongoDB $(mongosh --quiet --port 27017 --eval 'db.version()')"
 RDV="Redis $(redis-cli INFO server | sed -n 's/^redis_version:\(.*\)\r$/\1/p')"
 
