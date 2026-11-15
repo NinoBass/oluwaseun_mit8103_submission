@@ -7,14 +7,14 @@
 
 | Expected evidence (assessment brief) | Where to find it |
 |---|---|
-| NoSQL model based on the **same case study** | The same SeunBaba data, migrated by [`mongodb/01_migrate_from_postgres.py`](mongodb/01_migrate_from_postgres.py) |
+| NoSQL model based on the **same case study** | The same SeunBaba data, migrated by [`mongodb/Odunlade_Oluwaseun_301931438_01_migrate_from_postgres.py`](mongodb/Odunlade_Oluwaseun_301931438_01_migrate_from_postgres.py) |
 | **Document** example | [§2](#2-document-model-mongodb): a real order document, embedding decisions, validator, indexes |
-| **Key-value** example | [§3](#3-key-value--data-structure-model-redis): Redis HASH, LIST, ZSET, STRING+TTL, Lua ([`redis/redis_demo.py`](redis/redis_demo.py)) |
-| **Column (wide-column)** example | [§4](#4-wide-column-model-cassandra-design-only): Cassandra query-first design ([`cassandra_design/shipment_tracking.cql`](cassandra_design/shipment_tracking.cql)), **design only** |
+| **Key-value** example | [§3](#3-key-value--data-structure-model-redis): Redis HASH, LIST, ZSET, STRING+TTL, Lua ([`redis/Odunlade_Oluwaseun_301931438_redis_demo.py`](redis/Odunlade_Oluwaseun_301931438_redis_demo.py)) |
+| **Column (wide-column)** example | [§4](#4-wide-column-model-cassandra-design-only): Cassandra query-first design ([`cassandra_design/Odunlade_Oluwaseun_301931438_shipment_tracking.cql`](cassandra_design/Odunlade_Oluwaseun_301931438_shipment_tracking.cql)), **design only** |
 | **Graph** example | [§4](#4-wide-column-model-cassandra-design-only), graph discussion ("customers who bought X also bought Y") |
 | Implementation evidence | `evidence/01`–`05` (`.txt` and `.png`): migration, queries with `explain()`, transaction, Redis, SQL-vs-MongoDB cross-check |
 | Explanation of suitability | [§1](#1-why-nosql-at-all-for-seunbaba) (which workloads and why) and [§5](#5-comparison-and-polyglot-persistence-decision) (comparison and polyglot decision) |
-| Configuration | [`config/redis.conf`](config/redis.conf) (persistence deliberately off); MongoDB replica set member settings in [`../portfolio-5-distributed-cloud/config/mongod-rs0.conf`](../portfolio-5-distributed-cloud/config/mongod-rs0.conf) |
+| Configuration | [`config/Odunlade_Oluwaseun_301931438_redis.conf`](config/Odunlade_Oluwaseun_301931438_redis.conf) (persistence deliberately off); MongoDB replica set member settings in [`../portfolio-5-distributed-cloud/config/mongod-rs0.conf`](../portfolio-5-distributed-cloud/config/mongod-rs0.conf) |
 
 **How it was implemented.** An ETL script reads PostgreSQL and writes MongoDB documents. Queries, an aggregation pipeline and a multi-document transaction run in `mongosh`. Redis structures are driven from Python using real SeunBaba sales data.
 **How it was tested.** `explain("executionStats")` shows the index used and the keys/documents examined. Schema validation is tested with a deliberately malformed document. The migration is reconciled with SQL to the kobo (12/12 rows identical). The Redis flash-sale gate is stress-tested with 40 concurrent clients.
@@ -33,7 +33,7 @@ Portfolios 1–3 show that PostgreSQL is the right **system of record** for mone
 
 ## 2. Document model (MongoDB)
 
-Implemented in [`mongodb/01_migrate_from_postgres.py`](mongodb/01_migrate_from_postgres.py), which reads PostgreSQL and writes MongoDB in about 12 s.
+Implemented in [`mongodb/Odunlade_Oluwaseun_301931438_01_migrate_from_postgres.py`](mongodb/Odunlade_Oluwaseun_301931438_01_migrate_from_postgres.py), which reads PostgreSQL and writes MongoDB in about 12 s.
 
 | Collection | Docs | Avg size | Embedding decision |
 |---|---:|---:|---|
@@ -69,15 +69,15 @@ The failed-then-successful payment pair shows why `payments` is an array (1:N), 
 
 * Money is stored as **`Decimal128`**, never as a binary float, so the cross-check below matches to the kobo.
 * The model is schema-*flexible*, not schema-*less*. A **`$jsonSchema` validator** on `orders` enforces required fields, the status enum, at least one item, integer quantities from 1 to 100, and decimal prices (M8 shows a rejected insert).
-* Indexes are designed per query, as in Portfolio 2. They are listed in `01_migrate_from_postgres.py`: a compound `(customer.customer_id, order_date desc)`, a unique sparse index on `shipment.tracking_number`, a **partial** index on PAID orders, a compound `(category.leaf, attributes.ram_gb, price)`, a **wildcard** `attributes.$**`, and a weighted **text** index.
+* Indexes are designed per query, as in Portfolio 2. They are listed in `Odunlade_Oluwaseun_301931438_01_migrate_from_postgres.py`: a compound `(customer.customer_id, order_date desc)`, a unique sparse index on `shipment.tracking_number`, a **partial** index on PAID orders, a compound `(category.leaf, attributes.ram_gb, price)`, a **wildcard** `attributes.$**`, and a weighted **text** index.
 
 ### Evidence
 
-![migration](evidence/01_migration.png)
+![migration](evidence/Odunlade_Oluwaseun_301931438_01_migration.png)
 
-[`mongodb/02_queries.js`](mongodb/02_queries.js) → [`evidence/02_mongodb_queries_output.txt`](evidence/02_mongodb_queries_output.txt)
+[`mongodb/Odunlade_Oluwaseun_301931438_02_queries.js`](mongodb/Odunlade_Oluwaseun_301931438_02_queries.js) → [`evidence/Odunlade_Oluwaseun_301931438_02_mongodb_queries_output.txt`](evidence/Odunlade_Oluwaseun_301931438_02_mongodb_queries_output.txt)
 
-![mongo queries](evidence/02_mongodb_queries.png)
+![mongo queries](evidence/Odunlade_Oluwaseun_301931438_02_mongodb_queries.png)
 
 | # | Query | Result / plan |
 |---|---|---|
@@ -90,15 +90,15 @@ The failed-then-successful payment pair shows why `payments` is an array (1:N), 
 | M7 | Courier scan | `$push` an event and `$set` the status in **one atomic single-document update**, with no transaction needed |
 | M8 | Malformed order | `Document failed validation` (status, items, totals) |
 
-**Migration verified.** [`crosscheck_sql_vs_mongo.py`](crosscheck_sql_vs_mongo.py) computes Sep–Oct 2026 revenue per geo-zone in both databases. **All 12 rows are identical** in order count and in Naira to the kobo. This cross-check also exposed a time-zone bug in the SQL side, which is now fixed (see Portfolio 2, section 3).
+**Migration verified.** [`Odunlade_Oluwaseun_301931438_crosscheck_sql_vs_mongo.py`](Odunlade_Oluwaseun_301931438_crosscheck_sql_vs_mongo.py) computes Sep–Oct 2026 revenue per geo-zone in both databases. **All 12 rows are identical** in order count and in Naira to the kobo. This cross-check also exposed a time-zone bug in the SQL side, which is now fixed (see Portfolio 2, section 3).
 
-![crosscheck](evidence/05_crosscheck.png)
+![crosscheck](evidence/Odunlade_Oluwaseun_301931438_05_crosscheck.png)
 
 ### Multi-document ACID transaction in MongoDB
 
-[`mongodb/03_transaction.js`](mongodb/03_transaction.js) re-implements the Portfolio 3 checkout. Each stock decrement is a *conditional* `updateOne({stock.wh1: {$gte: qty}}, {$inc: …})` inside a snapshot transaction with `writeConcern: majority`:
+[`mongodb/Odunlade_Oluwaseun_301931438_03_transaction.js`](mongodb/Odunlade_Oluwaseun_301931438_03_transaction.js) re-implements the Portfolio 3 checkout. Each stock decrement is a *conditional* `updateOne({stock.wh1: {$gte: qty}}, {$inc: …})` inside a snapshot transaction with `writeConcern: majority`:
 
-![mongo txn](evidence/03_mongodb_transaction.png)
+![mongo txn](evidence/Odunlade_Oluwaseun_301931438_03_mongodb_transaction.png)
 
 * **T1 commit.** Stock moves from 174→172 and 243→242, and order 300037 is inserted.
 * **T2 abort.** Line 1 had already decremented stock inside the transaction. Line 2 failed, `abortTransaction()` undid line 1, and the order does not exist.
@@ -108,9 +108,9 @@ The document model reduces the *need* for transactions, because most SeunBaba wr
 
 ## 3. Key-value / data-structure model (Redis)
 
-[`redis/redis_demo.py`](redis/redis_demo.py) → [`evidence/04_redis_output.txt`](evidence/04_redis_output.txt)
+[`redis/Odunlade_Oluwaseun_301931438_redis_demo.py`](redis/Odunlade_Oluwaseun_301931438_redis_demo.py) → [`evidence/Odunlade_Oluwaseun_301931438_04_redis_output.txt`](evidence/Odunlade_Oluwaseun_301931438_04_redis_output.txt)
 
-![redis](evidence/04_redis.png)
+![redis](evidence/Odunlade_Oluwaseun_301931438_04_redis.png)
 
 | # | SeunBaba feature | Redis structure and commands | Measured result |
 |---|---|---|---|
@@ -126,7 +126,7 @@ The document model reduces the *need* for transactions, because most SeunBaba wr
 
 ## 4. Wide-column model (Cassandra, design only)
 
-[`cassandra_design/shipment_tracking.cql`](cassandra_design/shipment_tracking.cql) is a **design artefact and was not executed**, because no Cassandra cluster was available in my environment. It applies *query-first* modelling to the scan-event log:
+[`cassandra_design/Odunlade_Oluwaseun_301931438_shipment_tracking.cql`](cassandra_design/Odunlade_Oluwaseun_301931438_shipment_tracking.cql) is a **design artefact and was not executed**, because no Cassandra cluster was available in my environment. It applies *query-first* modelling to the scan-event log:
 
 * `events_by_tracking_number`: partition key `tracking_number`, clustering `event_time DESC`, so the tracking page is a single-partition read already sorted on disk. A 2-year TTL handles data retention.
 * `events_by_courier_day`: partition key `(courier_name, scan_date)`, which bounds partition size and avoids one hot partition per courier.
@@ -153,9 +153,9 @@ mongod --replSet rs0 --port 27017 --dbpath ./data/rs0-1 --logpath ./rs0-1.log & 
 mongosh --eval 'rs.initiate({_id:"rs0",members:[{_id:0,host:"localhost:27017"}]})'
 redis-server --port 6379 --daemonize yes --save "" --appendonly no
 pip install pymongo redis psycopg2-binary
-python3 mongodb/01_migrate_from_postgres.py
-mongosh --quiet "mongodb://localhost:27017/seunbaba?replicaSet=rs0" mongodb/02_queries.js
-mongosh --quiet "mongodb://localhost:27017/seunbaba?replicaSet=rs0" mongodb/03_transaction.js
-python3 redis/redis_demo.py
-python3 crosscheck_sql_vs_mongo.py
+python3 mongodb/Odunlade_Oluwaseun_301931438_01_migrate_from_postgres.py
+mongosh --quiet "mongodb://localhost:27017/seunbaba?replicaSet=rs0" mongodb/Odunlade_Oluwaseun_301931438_02_queries.js
+mongosh --quiet "mongodb://localhost:27017/seunbaba?replicaSet=rs0" mongodb/Odunlade_Oluwaseun_301931438_03_transaction.js
+python3 redis/Odunlade_Oluwaseun_301931438_redis_demo.py
+python3 Odunlade_Oluwaseun_301931438_crosscheck_sql_vs_mongo.py
 ```

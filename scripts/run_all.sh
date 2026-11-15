@@ -35,9 +35,9 @@ python3 scripts/Odunlade_Oluwaseun_301931438_concurrency_demos.py > /dev/null
 
 echo "== Portfolio 4: MongoDB + Redis"
 cd "$ROOT/portfolio-4-nosql"
-python3 mongodb/01_migrate_from_postgres.py | tee evidence/01_migration_output.txt
-$MONGOSH --quiet "mongodb://localhost:27017/seunbaba?replicaSet=rs0" mongodb/02_queries.js > evidence/02_mongodb_queries_output.txt 2>&1
-$MONGOSH --quiet "mongodb://localhost:27017/seunbaba?replicaSet=rs0" mongodb/03_transaction.js > evidence/03_mongodb_transaction_output.txt 2>&1
-python3 redis/redis_demo.py > evidence/04_redis_output.txt
-python3 crosscheck_sql_vs_mongo.py > evidence/05_sql_vs_mongodb_crosscheck.txt
+python3 mongodb/Odunlade_Oluwaseun_301931438_01_migrate_from_postgres.py | tee evidence/Odunlade_Oluwaseun_301931438_01_migration_output.txt
+$MONGOSH --quiet "mongodb://localhost:27017/seunbaba?replicaSet=rs0" mongodb/Odunlade_Oluwaseun_301931438_02_queries.js > evidence/Odunlade_Oluwaseun_301931438_02_mongodb_queries_output.txt 2>&1
+$MONGOSH --quiet "mongodb://localhost:27017/seunbaba?replicaSet=rs0" mongodb/Odunlade_Oluwaseun_301931438_03_transaction.js > evidence/Odunlade_Oluwaseun_301931438_03_mongodb_transaction_output.txt 2>&1
+python3 redis/Odunlade_Oluwaseun_301931438_redis_demo.py > evidence/Odunlade_Oluwaseun_301931438_04_redis_output.txt
+python3 Odunlade_Oluwaseun_301931438_crosscheck_sql_vs_mongo.py > evidence/Odunlade_Oluwaseun_301931438_05_sql_vs_mongodb_crosscheck.txt
 echo "done"

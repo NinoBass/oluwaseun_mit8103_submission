@@ -55,14 +55,14 @@ done
 
 # ---- Portfolio 4
 E=portfolio-4-nosql/evidence
-cat $E/01_migration_output.txt > $TMP/m0.txt
-$R term $TMP/m0.txt $E/01_migration.png "python3 01_migrate_from_postgres.py"
-grep -E "########|plan=|matching|REJECTED|orders=|#[1-3] |name: '|score|forced|with index" $E/02_mongodb_queries_output.txt | cut -c1-170 > $TMP/m1.txt
-$R term $TMP/m1.txt $E/02_mongodb_queries.png "mongosh seunbaba 02_queries.js ($MGV, replica set rs0) - condensed"
-$R term $E/03_mongodb_transaction_output.txt $E/03_mongodb_transaction.png "mongosh seunbaba 03_transaction.js"
-cut -c1-180 $E/04_redis_output.txt > $TMP/r.txt
-$R term $TMP/r.txt $E/04_redis.png "python3 redis_demo.py ($RDV)"
-$R term $E/05_sql_vs_mongodb_crosscheck.txt $E/05_crosscheck.png "python3 crosscheck_sql_vs_mongo.py"
+cat $E/Odunlade_Oluwaseun_301931438_01_migration_output.txt > $TMP/m0.txt
+$R term $TMP/m0.txt $E/Odunlade_Oluwaseun_301931438_01_migration.png "python3 Odunlade_Oluwaseun_301931438_01_migrate_from_postgres.py"
+grep -E "########|plan=|matching|REJECTED|orders=|#[1-3] |name: '|score|forced|with index" $E/Odunlade_Oluwaseun_301931438_02_mongodb_queries_output.txt | cut -c1-170 > $TMP/m1.txt
+$R term $TMP/m1.txt $E/Odunlade_Oluwaseun_301931438_02_mongodb_queries.png "mongosh seunbaba Odunlade_Oluwaseun_301931438_02_queries.js ($MGV, replica set rs0) - condensed"
+$R term $E/Odunlade_Oluwaseun_301931438_03_mongodb_transaction_output.txt $E/Odunlade_Oluwaseun_301931438_03_mongodb_transaction.png "mongosh seunbaba Odunlade_Oluwaseun_301931438_03_transaction.js"
+cut -c1-180 $E/Odunlade_Oluwaseun_301931438_04_redis_output.txt > $TMP/r.txt
+$R term $TMP/r.txt $E/Odunlade_Oluwaseun_301931438_04_redis.png "python3 Odunlade_Oluwaseun_301931438_redis_demo.py ($RDV)"
+$R term $E/Odunlade_Oluwaseun_301931438_05_sql_vs_mongodb_crosscheck.txt $E/Odunlade_Oluwaseun_301931438_05_crosscheck.png "python3 Odunlade_Oluwaseun_301931438_crosscheck_sql_vs_mongo.py"
 
 # ---- Portfolio 5 (only if its evidence exists)
 E=portfolio-5-distributed-cloud/evidence

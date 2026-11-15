@@ -34,7 +34,7 @@ The same case study and the same data set are used in all five portfolio activit
 │   ├── sql/  scripts/Odunlade_Oluwaseun_301931438_concurrency_demos.py lost update, non-repeatable read, write skew, deadlock, 40-buyer stress test
 │   └── evidence/
 ├── portfolio-4-nosql/                     MongoDB document model + transactions, Redis, Cassandra design
-│   ├── mongodb/  redis/  cassandra_design/  config/redis.conf  crosscheck_sql_vs_mongo.py
+│   ├── mongodb/  redis/  cassandra_design/  config/Odunlade_Oluwaseun_301931438_redis.conf  Odunlade_Oluwaseun_301931438_crosscheck_sql_vs_mongo.py
 │   └── evidence/
 ├── portfolio-5-distributed-cloud/         streaming replication, failover + pg_rewind, postgres_fdw sharding,
 │   ├── replication/  sharding/  mongodb-replica-set/  MongoDB elections, AWS design
@@ -64,8 +64,8 @@ The five `portfolio-*` folders and `README.md` follow the structure suggested in
 | Required content | Where |
 |---|---|
 | I. SQL scripts | `portfolio-1…/sql/`, `portfolio-2…/sql/`, `portfolio-3…/sql/`, `portfolio-5…/sharding/` |
-| II. Database schemas | [`portfolio-1-database-design/sql/Odunlade_Oluwaseun_301931438_01_schema.sql`](portfolio-1-database-design/sql/Odunlade_Oluwaseun_301931438_01_schema.sql), [`sharding/01_shard_node.sql`](portfolio-5-distributed-cloud/sharding/01_shard_node.sql), MongoDB `$jsonSchema` validators in [`01_migrate_from_postgres.py`](portfolio-4-nosql/mongodb/01_migrate_from_postgres.py) |
-| III. ER diagrams / database models | [`portfolio-1-database-design/diagrams/`](portfolio-1-database-design/diagrams/), document model in [P4 README](portfolio-4-nosql/README.md), Cassandra model in [`cassandra_design/`](portfolio-4-nosql/cassandra_design/) |
+| II. Database schemas | [`portfolio-1-database-design/sql/Odunlade_Oluwaseun_301931438_01_schema.sql`](portfolio-1-database-design/sql/Odunlade_Oluwaseun_301931438_01_schema.sql), [`sharding/01_shard_node.sql`](portfolio-5-distributed-cloud/sharding/01_shard_node.sql), MongoDB `$jsonSchema` validators in [`Odunlade_Oluwaseun_301931438_01_migrate_from_postgres.py`](portfolio-4-nosql/mongodb/Odunlade_Oluwaseun_301931438_01_migrate_from_postgres.py) |
+| III. ER diagrams / database models | [`portfolio-1-database-design/diagrams/`](portfolio-1-database-design/diagrams/), document model in [P4 README](portfolio-4-nosql/Odunlade_Oluwaseun_301931438_P4_README.md), Cassandra model in [`cassandra_design/`](portfolio-4-nosql/cassandra_design/) |
 | IV. NoSQL implementations | [`portfolio-4-nosql/mongodb/`](portfolio-4-nosql/mongodb/), [`portfolio-4-nosql/redis/`](portfolio-4-nosql/redis/), [`portfolio-5…/mongodb-replica-set/`](portfolio-5-distributed-cloud/mongodb-replica-set/) |
 | V. Query execution plans and performance results | [`portfolio-2-query-optimisation/evidence/`](portfolio-2-query-optimisation/evidence/) (`before/`, `after/`, `Odunlade_Oluwaseun_301931438_benchmark_summary.md`) |
 | VI. Screenshots, configuration files, test results | `evidence/*.png` and `*.txt` in every portfolio; [`portfolio-5…/config/`](portfolio-5-distributed-cloud/config/), [`portfolio-4-nosql/config/`](portfolio-4-nosql/config/), [`cloud/terraform/`](portfolio-5-distributed-cloud/cloud/terraform/) |
@@ -77,7 +77,7 @@ Each portfolio folder has its own `README.md` explaining **what was implemented,
 
 | Criterion (marks) | Where to look |
 |---|---|
-| **Technical correctness (8)** | Every script was executed, and its raw output is in each `evidence/` folder. Correctness is cross-validated: rewrites `diff`-ed against the originals (P2), invariants asserted in the concurrency demos (P3), SQL vs MongoDB 12/12 identical (P4 `05_sql_vs_mongodb_crosscheck.txt`), sharded vs single-node `EXCEPT` = 0 rows (P5 S5). |
+| **Technical correctness (8)** | Every script was executed, and its raw output is in each `evidence/` folder. Correctness is cross-validated: rewrites `diff`-ed against the originals (P2), invariants asserted in the concurrency demos (P3), SQL vs MongoDB 12/12 identical (P4 `Odunlade_Oluwaseun_301931438_05_sql_vs_mongodb_crosscheck.txt`), sharded vs single-node `EXCEPT` = 0 rows (P5 S5). |
 | **Database design quality (6)** | [P1 README](portfolio-1-database-design/Odunlade_Oluwaseun_301931438_P1_README.md): ERD, relational schema, 6 kinds of key, 11 DBMS-enforced rules, UNF→BCNF derivation from functional dependencies, justified denormalisation |
 | **Practical implementation (8)** | 16-table schema + deterministic 300k-order generator; `place_order()`/`settle_payment()`; MongoDB migration and transaction; Redis structures; 7 live database servers (primary, standby, 2 shards, 3-node replica set); full rebuild via [`scripts/run_all.sh`](scripts/run_all.sh) |
 | **Query and performance analysis (5)** | [P2 README](portfolio-2-query-optimisation/Odunlade_Oluwaseun_301931438_P2_README.md) §2–§4: before/after plans for 7 queries, buffers, the Q4 regression experiment, index cost trade-off. Also P4 `explain()` and P5 replication latency. |
@@ -132,7 +132,7 @@ MERMAID_JS=/path/to/mermaid.min.js bash scripts/make_screenshots.sh   # needs no
 
 All data is **synthetic** and generated deterministically (`setseed(0.8103)`). No real customer data is used.
 
-**Design-only artefacts (clearly not executed):** `portfolio-4-nosql/cassandra_design/shipment_tracking.cql` and `portfolio-5-distributed-cloud/cloud/terraform/main.tf`. Everything else in the repository was executed, and its output is in the `evidence/` folders.
+**Design-only artefacts (clearly not executed):** `portfolio-4-nosql/cassandra_design/Odunlade_Oluwaseun_301931438_shipment_tracking.cql` and `portfolio-5-distributed-cloud/cloud/terraform/main.tf`. Everything else in the repository was executed, and its output is in the `evidence/` folders.
 
 ## Academic integrity and AI-use declaration
 

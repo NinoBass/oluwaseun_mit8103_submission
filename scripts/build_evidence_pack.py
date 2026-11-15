@@ -28,11 +28,11 @@ SECTIONS = [
         ("portfolio-3-transactions-concurrency/evidence/Odunlade_Oluwaseun_301931438_D5_flash_sale_stress.png", "D5 flash-sale stress test, 40 concurrent buyers"),
     ]),
     ("Portfolio 4 - NoSQL and Advanced Data Models", [
-        ("portfolio-4-nosql/evidence/01_migration.png", "PostgreSQL to MongoDB migration"),
-        ("portfolio-4-nosql/evidence/02_mongodb_queries.png", "MongoDB queries, explain plans, aggregation, validation"),
-        ("portfolio-4-nosql/evidence/03_mongodb_transaction.png", "MongoDB multi-document transaction: commit, abort, write conflict"),
-        ("portfolio-4-nosql/evidence/04_redis.png", "Redis cart, list, leaderboard, cache-aside, flash-sale gate"),
-        ("portfolio-4-nosql/evidence/05_crosscheck.png", "SQL vs MongoDB reconciliation (12/12 rows identical)"),
+        ("portfolio-4-nosql/evidence/Odunlade_Oluwaseun_301931438_01_migration.png", "PostgreSQL to MongoDB migration"),
+        ("portfolio-4-nosql/evidence/Odunlade_Oluwaseun_301931438_02_mongodb_queries.png", "MongoDB queries, explain plans, aggregation, validation"),
+        ("portfolio-4-nosql/evidence/Odunlade_Oluwaseun_301931438_03_mongodb_transaction.png", "MongoDB multi-document transaction: commit, abort, write conflict"),
+        ("portfolio-4-nosql/evidence/Odunlade_Oluwaseun_301931438_04_redis.png", "Redis cart, list, leaderboard, cache-aside, flash-sale gate"),
+        ("portfolio-4-nosql/evidence/Odunlade_Oluwaseun_301931438_05_crosscheck.png", "SQL vs MongoDB reconciliation (12/12 rows identical)"),
     ]),
     ("Portfolio 5 - Distributed and Cloud Database", [
         ("portfolio-5-distributed-cloud/cloud/architecture.png", "Target AWS deployment (design)"),
