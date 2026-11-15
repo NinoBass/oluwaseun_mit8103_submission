@@ -1,0 +1,28 @@
+-- Q4: 40 row(s)
+top_category | rnk | product_name | units | revenue
+Baby Products | 1 | SMA Infant Formula 800g Classic | 14 | 1047200.00
+Baby Products | 2 | Tommee Tippee Infant Formula 800g Classic | 11 | 939200.00
+Baby Products | 3 | Tommee Tippee Infant Formula 800g Lite | 10 | 748850.00
+Baby Products | 4 | SMA Feeding Bottle Set Edition 2025 | 8 | 661650.00
+Baby Products | 5 | Philips Avent Sterilizer Plus | 10 | 638200.00
+Computing | 1 | Asus Laptop Ryzen 5 Pro | 41 | 100024750.00
+Computing | 2 | Asus Laptop Ryzen 5 Edition 2025 | 26 | 61686400.00
+Computing | 3 | Lenovo Laptop Core i5 8GB Max | 22 | 57247500.00
+Computing | 4 | HP Laptop Core i7 16GB Plus | 21 | 54979700.00
+Computing | 5 | Acer Laptop Core i7 16GB Max | 24 | 50930150.00
+Electronics | 1 | LG LED TV 32-inch Max | 24 | 29009450.00
+Electronics | 2 | Firman Solar Panel 300W Lite | 20 | 27265600.00
+Electronics | 3 | Samsung Smart TV 55-inch Original | 21 | 21702750.00
+Electronics | 4 | Samsung LED TV 32-inch Lite | 18 | 20873050.00
+Electronics | 5 | TCL Smart TV 55-inch Plus | 18 | 19943750.00
+Fashion | 1 | Lagos Chic Ankara Gown Max | 22 | 2379050.00
+Fashion | 2 | Nike Corporate Shoes Pro | 18 | 2266750.00
+Fashion | 3 | Clarks Corporate Shoes Original | 14 | 2258500.00
+Fashion | 4 | Adidas Corporate Shoes Max | 19 | 2236450.00
+Fashion | 5 | Nike Leather Sandals Plus | 20 | 2174100.00
+Groceries | 1 | Dangote Spaghetti x20 Edition 2025 | 12 | 769300.00
+Groceries | 2 | Golden Penny Vegetable Oil 5L Pro | 10 | 767900.00
+Groceries | 3 | Power Oil Garri 10kg Classic | 16 | 751600.00
+Groceries | 4 | Mama Gold Semovita 5kg Edition 2025 | 10 | 720850.00
+Groceries | 5 | Power Oil Semovita 5kg Classic | 11 | 705900.00
+... (15 more rows)
