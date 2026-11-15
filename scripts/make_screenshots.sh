@@ -23,15 +23,15 @@ $R term $TMP/p1.txt $E/Odunlade_Oluwaseun_301931438_04_constraint_tests.png "psq
 
 # ---- Portfolio 2
 E=portfolio-2-query-optimisation/evidence
-{ echo "### BEFORE (no FK indexes) ###"; sed -n '/^$/,$p' $E/before/Q2_plan.txt | sed '/^$/d' | cut -c1-165
-  echo; echo "### AFTER (ix_shipment_order + ix_shipment_event_ship) ###"; sed -n '/^$/,$p' $E/after/Q2_plan.txt | sed '/^$/d' | cut -c1-165; } > $TMP/q2.txt
-$R term $TMP/q2.txt $E/Q2_plan_before_after.png "EXPLAIN (ANALYZE, BUFFERS) - Q2 order tracking"
-cut -c1-190 $E/Q4_regression_diagnosis.txt > $TMP/q4.txt
-$R term $TMP/q4.txt $E/Q4_regression_diagnosis.png "python3 q4_regression_diagnosis.py"
+{ echo "### BEFORE (no FK indexes) ###"; sed -n '/^$/,$p' $E/before/Odunlade_Oluwaseun_301931438_Q2_plan.txt | sed '/^$/d' | cut -c1-165
+  echo; echo "### AFTER (ix_shipment_order + ix_shipment_event_ship) ###"; sed -n '/^$/,$p' $E/after/Odunlade_Oluwaseun_301931438_Q2_plan.txt | sed '/^$/d' | cut -c1-165; } > $TMP/q2.txt
+$R term $TMP/q2.txt $E/Odunlade_Oluwaseun_301931438_Q2_plan_before_after.png "EXPLAIN (ANALYZE, BUFFERS) - Q2 order tracking"
+cut -c1-190 $E/Odunlade_Oluwaseun_301931438_Q4_regression_diagnosis.txt > $TMP/q4.txt
+$R term $TMP/q4.txt $E/Odunlade_Oluwaseun_301931438_Q4_regression_diagnosis.png "python3 Odunlade_Oluwaseun_301931438_q4_regression_diagnosis.py"
 python3 - "$E" > $TMP/bench.txt <<'EOF'
 import json, sys
 e = sys.argv[1]
-b = json.load(open(f"{e}/timings_before.json")); a = json.load(open(f"{e}/timings_after.json"))
+b = json.load(open(f"{e}/Odunlade_Oluwaseun_301931438_timings_before.json")); a = json.load(open(f"{e}/Odunlade_Oluwaseun_301931438_timings_after.json"))
 print(f"{'Query':28}{'Before ms':>12}{'After ms':>12}{'Speed-up':>10}{'Buffers before':>16}{'Buffers after':>15}")
 print("-" * 93)
 rows = [(q + ' + indexes', b[q], a[q]) for q in b]
@@ -41,7 +41,7 @@ for n, x, y in rows:
     print(f"{n:28}{x['median_exec_ms']:12.2f}{y['median_exec_ms']:12.2f}{x['median_exec_ms'] / y['median_exec_ms']:9.1f}x"
           f"{x['shared_hit_blocks'] + x['shared_read_blocks']:16,}{y['shared_hit_blocks'] + y['shared_read_blocks']:15,}")
 EOF
-$R term $TMP/bench.txt $E/benchmark_summary.png "python3 run_benchmark.py report  (median of 7 runs)"
+$R term $TMP/bench.txt $E/Odunlade_Oluwaseun_301931438_benchmark_summary.png "python3 Odunlade_Oluwaseun_301931438_run_benchmark.py report  (median of 7 runs)"
 
 # ---- Portfolio 3
 E=portfolio-3-transactions-concurrency/evidence

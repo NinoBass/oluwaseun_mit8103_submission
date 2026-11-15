@@ -1,5 +1,5 @@
 -- =====================================================================
--- Portfolio 2 - 04_materialized_view.sql
+-- Portfolio 2 - Odunlade_Oluwaseun_301931438_04_materialized_view.sql
 -- Q4 cannot be fixed with an index: order_item has no date, so every
 -- reporting run must scan all 640k lines and join them to orders.
 -- Solution: pre-aggregate sales per product per day ONCE (nightly

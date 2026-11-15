@@ -9,10 +9,10 @@ For every query block tagged "-- @Qn" in sql/*.sql it:
      server-side execution time reported by EXPLAIN ANALYZE.
 
 Usage:
-  python3 run_benchmark.py before            # baseline: no optimisation indexes
-  psql -d seunbaba -f sql/02_indexes.sql
-  python3 run_benchmark.py after             # with indexes (+ rewritten Q7b)
-  python3 run_benchmark.py report            # evidence/benchmark_summary.md
+  python3 Odunlade_Oluwaseun_301931438_run_benchmark.py before            # baseline: no optimisation indexes
+  psql -d seunbaba -f sql/Odunlade_Oluwaseun_301931438_02_indexes.sql
+  python3 Odunlade_Oluwaseun_301931438_run_benchmark.py after             # with indexes (+ rewritten Q7b)
+  python3 Odunlade_Oluwaseun_301931438_run_benchmark.py report            # evidence/Odunlade_Oluwaseun_301931438_benchmark_summary.md
 """
 import json, os, platform, re, statistics, sys
 import psycopg2
@@ -40,7 +40,7 @@ def explain(cur, sql):
 def main(phase):
     if phase == "report":
         return report()
-    files = ["01_business_queries.sql"] + (["03_query_rewrites.sql", "04_materialized_view.sql"] if phase == "after" else [])
+    files = ["Odunlade_Oluwaseun_301931438_01_business_queries.sql"] + (["Odunlade_Oluwaseun_301931438_03_query_rewrites.sql", "Odunlade_Oluwaseun_301931438_04_materialized_view.sql"] if phase == "after" else [])
     queries = load_queries(*files)
     out_dir = os.path.join(HERE, "evidence", phase)
     os.makedirs(out_dir, exist_ok=True)
@@ -89,8 +89,8 @@ def main(phase):
 
 
 def report():
-    b = json.load(open(os.path.join(HERE, "evidence", "timings_before.json")))
-    a = json.load(open(os.path.join(HERE, "evidence", "timings_after.json")))
+    b = json.load(open(os.path.join(HERE, "evidence", "Odunlade_Oluwaseun_301931438_timings_before.json")))
+    a = json.load(open(os.path.join(HERE, "evidence", "Odunlade_Oluwaseun_301931438_timings_after.json")))
     lines = ["| Query | Before (ms) | After (ms) | Speed-up | Buffers before | Buffers after | Est. cost before | Est. cost after |",
              "|---|---:|---:|---:|---:|---:|---:|---:|"]
     for q in b:
@@ -111,7 +111,7 @@ def report():
         pg = "PostgreSQL"
     env = f"{pg}, {os.cpu_count()} CPU cores, {platform.system()} {platform.machine()}"
     md = "\n".join(lines) + f"\n\nMedian of {RUNS} warm runs (EXPLAIN ANALYZE execution time, {env}).\n"
-    open(os.path.join(HERE, "evidence", "benchmark_summary.md"), "w").write(md)
+    open(os.path.join(HERE, "evidence", "Odunlade_Oluwaseun_301931438_benchmark_summary.md"), "w").write(md)
     print(md)
 
 

@@ -15,9 +15,9 @@ SECTIONS = [
         ("portfolio-1-database-design/evidence/Odunlade_Oluwaseun_301931438_04_constraint_tests.png", "11 invalid operations rejected by DBMS-enforced constraints"),
     ]),
     ("Portfolio 2 - Query Processing and Optimisation", [
-        ("portfolio-2-query-optimisation/evidence/benchmark_summary.png", "Before/after benchmark, median of 7 runs"),
-        ("portfolio-2-query-optimisation/evidence/Q2_plan_before_after.png", "Q2 execution plans: parallel hash join vs index nested loop"),
-        ("portfolio-2-query-optimisation/evidence/Q4_regression_diagnosis.png", "Q4 plan choice: controlled planner experiment"),
+        ("portfolio-2-query-optimisation/evidence/Odunlade_Oluwaseun_301931438_benchmark_summary.png", "Before/after benchmark, median of 7 runs"),
+        ("portfolio-2-query-optimisation/evidence/Odunlade_Oluwaseun_301931438_Q2_plan_before_after.png", "Q2 execution plans: parallel hash join vs index nested loop"),
+        ("portfolio-2-query-optimisation/evidence/Odunlade_Oluwaseun_301931438_Q4_regression_diagnosis.png", "Q4 plan choice: controlled planner experiment"),
     ]),
     ("Portfolio 3 - Transactions and Concurrency", [
         ("portfolio-3-transactions-concurrency/evidence/02_commit_rollback.png", "COMMIT, automatic ROLLBACK, explicit ROLLBACK, SAVEPOINT"),

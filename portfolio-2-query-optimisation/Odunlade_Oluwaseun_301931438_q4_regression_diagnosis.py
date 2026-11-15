@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Controlled experiment: why did Q4 get slower after 02_indexes.sql?
+"""Controlled experiment: why did Q4 get slower after Odunlade_Oluwaseun_301931438_02_indexes.sql?
 Runs Q4 under four planner settings and reports estimated cost, median time
-and the scan nodes chosen. Output: evidence/Q4_regression_diagnosis.txt"""
+and the scan nodes chosen. Output: evidence/Odunlade_Oluwaseun_301931438_Q4_regression_diagnosis.txt"""
 import os, re, statistics
 import psycopg2
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-q = re.search(r"-- @Q4\n(.*?;)", open(os.path.join(HERE, "sql", "01_business_queries.sql")).read(), re.S).group(1).rstrip(";")
+q = re.search(r"-- @Q4\n(.*?;)", open(os.path.join(HERE, "sql", "Odunlade_Oluwaseun_301931438_01_business_queries.sql")).read(), re.S).group(1).rstrip(";")
 c = psycopg2.connect(os.environ.get("SEUNBABA_DSN", "host=localhost dbname=seunbaba user=postgres"))
 c.autocommit = True
 cur = c.cursor()
@@ -35,7 +35,7 @@ def trial(label, settings):
     print("    scans: " + ", ".join(n for n in nodes(d["Plan"], []) if "Scan" in n or "Gather" in n))
 
 
-print("Q4 regression diagnosis (indexes from 02_indexes.sql present)\n")
+print("Q4 regression diagnosis (indexes from Odunlade_Oluwaseun_301931438_02_indexes.sql present)\n")
 trial("A. default planner", [])
 trial("B. bitmap scans disabled (BRIN unusable)", ["SET enable_bitmapscan = off"])
 trial("C. nested loop forced (hash & merge join disabled)", ["SET enable_hashjoin = off", "SET enable_mergejoin = off"])

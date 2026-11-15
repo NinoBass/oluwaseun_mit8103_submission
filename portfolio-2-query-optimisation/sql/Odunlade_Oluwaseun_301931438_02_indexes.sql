@@ -1,5 +1,5 @@
 -- =====================================================================
--- Portfolio 2 - 02_indexes.sql
+-- Portfolio 2 - Odunlade_Oluwaseun_301931438_02_indexes.sql
 -- Optimisation indexes. Each one is justified by a specific query plan
 -- (see README.md section 3). Applied AFTER the "before" benchmark.
 -- =====================================================================

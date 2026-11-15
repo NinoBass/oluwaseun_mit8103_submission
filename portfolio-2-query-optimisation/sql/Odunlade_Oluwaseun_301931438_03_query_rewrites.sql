@@ -1,5 +1,5 @@
 -- =====================================================================
--- Portfolio 2 - 03_query_rewrites.sql
+-- Portfolio 2 - Odunlade_Oluwaseun_301931438_03_query_rewrites.sql
 -- Logical (query-level) optimisation: Q7 rewritten so that each fact
 -- table is aggregated ONCE (set-based) instead of once per vendor
 -- (correlated sub-query executed 144 times). Same result set.

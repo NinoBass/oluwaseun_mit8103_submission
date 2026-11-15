@@ -28,8 +28,8 @@ The same case study and the same data set are used in all five portfolio activit
 │   ├── diagrams/Odunlade_Oluwaseun_301931438_seunbaba_erd.mmd / .png
 │   └── evidence/
 ├── portfolio-2-query-optimisation/        7 workloads, EXPLAIN ANALYZE before/after, indexes, rewrites, MV
-│   ├── sql/  run_benchmark.py  q4_regression_diagnosis.py
-│   └── evidence/before/  evidence/after/  benchmark_summary.md
+│   ├── sql/  Odunlade_Oluwaseun_301931438_run_benchmark.py  Odunlade_Oluwaseun_301931438_q4_regression_diagnosis.py
+│   └── evidence/before/  evidence/after/  Odunlade_Oluwaseun_301931438_benchmark_summary.md
 ├── portfolio-3-transactions-concurrency/  place_order() / settle_payment(), COMMIT/ROLLBACK/SAVEPOINT,
 │   ├── sql/  scripts/concurrency_demos.py lost update, non-repeatable read, write skew, deadlock, 40-buyer stress test
 │   └── evidence/
@@ -67,7 +67,7 @@ The five `portfolio-*` folders and `README.md` follow the structure suggested in
 | II. Database schemas | [`portfolio-1-database-design/sql/Odunlade_Oluwaseun_301931438_01_schema.sql`](portfolio-1-database-design/sql/Odunlade_Oluwaseun_301931438_01_schema.sql), [`sharding/01_shard_node.sql`](portfolio-5-distributed-cloud/sharding/01_shard_node.sql), MongoDB `$jsonSchema` validators in [`01_migrate_from_postgres.py`](portfolio-4-nosql/mongodb/01_migrate_from_postgres.py) |
 | III. ER diagrams / database models | [`portfolio-1-database-design/diagrams/`](portfolio-1-database-design/diagrams/), document model in [P4 README](portfolio-4-nosql/README.md), Cassandra model in [`cassandra_design/`](portfolio-4-nosql/cassandra_design/) |
 | IV. NoSQL implementations | [`portfolio-4-nosql/mongodb/`](portfolio-4-nosql/mongodb/), [`portfolio-4-nosql/redis/`](portfolio-4-nosql/redis/), [`portfolio-5…/mongodb-replica-set/`](portfolio-5-distributed-cloud/mongodb-replica-set/) |
-| V. Query execution plans and performance results | [`portfolio-2-query-optimisation/evidence/`](portfolio-2-query-optimisation/evidence/) (`before/`, `after/`, `benchmark_summary.md`) |
+| V. Query execution plans and performance results | [`portfolio-2-query-optimisation/evidence/`](portfolio-2-query-optimisation/evidence/) (`before/`, `after/`, `Odunlade_Oluwaseun_301931438_benchmark_summary.md`) |
 | VI. Screenshots, configuration files, test results | `evidence/*.png` and `*.txt` in every portfolio; [`portfolio-5…/config/`](portfolio-5-distributed-cloud/config/), [`portfolio-4-nosql/config/`](portfolio-4-nosql/config/), [`cloud/terraform/`](portfolio-5-distributed-cloud/cloud/terraform/) |
 | VII. Technical documentation and README files | this README, one README per portfolio, [`docs/`](docs/), the LMS documentation above |
 
@@ -80,7 +80,7 @@ Each portfolio folder has its own `README.md` explaining **what was implemented,
 | **Technical correctness (8)** | Every script was executed, and its raw output is in each `evidence/` folder. Correctness is cross-validated: rewrites `diff`-ed against the originals (P2), invariants asserted in the concurrency demos (P3), SQL vs MongoDB 12/12 identical (P4 `05_sql_vs_mongodb_crosscheck.txt`), sharded vs single-node `EXCEPT` = 0 rows (P5 S5). |
 | **Database design quality (6)** | [P1 README](portfolio-1-database-design/Odunlade_Oluwaseun_301931438_P1_README.md): ERD, relational schema, 6 kinds of key, 11 DBMS-enforced rules, UNF→BCNF derivation from functional dependencies, justified denormalisation |
 | **Practical implementation (8)** | 16-table schema + deterministic 300k-order generator; `place_order()`/`settle_payment()`; MongoDB migration and transaction; Redis structures; 7 live database servers (primary, standby, 2 shards, 3-node replica set); full rebuild via [`scripts/run_all.sh`](scripts/run_all.sh) |
-| **Query and performance analysis (5)** | [P2 README](portfolio-2-query-optimisation/README.md) §2–§4: before/after plans for 7 queries, buffers, the Q4 regression experiment, index cost trade-off. Also P4 `explain()` and P5 replication latency. |
+| **Query and performance analysis (5)** | [P2 README](portfolio-2-query-optimisation/Odunlade_Oluwaseun_301931438_P2_README.md) §2–§4: before/after plans for 7 queries, buffers, the Q4 regression experiment, index cost trade-off. Also P4 `explain()` and P5 replication latency. |
 | **Advanced database concepts (5)** | MVCC, isolation anomalies and SSI (P3); BRIN, GIN-trigram, partial/covering indexes, materialised views (P2); aggregate modelling, `$jsonSchema`, optimistic transactions (P4); WAL streaming, `pg_rewind`, sharding, CAP/PACELC, causal consistency (P5). Each README has an "Advanced concepts applied" line. |
 | **Documentation and GitHub organisation (5)** | The brief's suggested folder structure; each portfolio README starts with an **"At a glance"** map from the brief's expected evidence to files; reproducible scripts; [`docs/DEVELOPMENT_LOG.md`](docs/DEVELOPMENT_LOG.md) |
 | **Technical reflection / individual understanding (3)** | [`docs/REFLECTION.md`](docs/REFLECTION.md); the reflection section of the LMS document; [`docs/VERIFICATION_GUIDE.md`](docs/VERIFICATION_GUIDE.md) |

@@ -19,12 +19,12 @@ $PSQL -c "\dt+ seunbaba.*" -c "\d seunbaba.customer_order" -c "\d seunbaba.inven
 echo "== Portfolio 2: benchmark before/after"
 cd "$ROOT/portfolio-2-query-optimisation"
 rm -rf evidence/before evidence/after
-python3 run_benchmark.py before
-$PSQL -e -f sql/02_indexes.sql > evidence/02_indexes_output.txt 2>&1
-$PSQL -f sql/04_materialized_view.sql > evidence/04_materialized_view_output.txt 2>&1
-python3 run_benchmark.py after
-python3 run_benchmark.py report
-python3 q4_regression_diagnosis.py > evidence/Q4_regression_diagnosis.txt
+python3 Odunlade_Oluwaseun_301931438_run_benchmark.py before
+$PSQL -e -f sql/Odunlade_Oluwaseun_301931438_02_indexes.sql > evidence/Odunlade_Oluwaseun_301931438_02_indexes_output.txt 2>&1
+$PSQL -f sql/Odunlade_Oluwaseun_301931438_04_materialized_view.sql > evidence/Odunlade_Oluwaseun_301931438_04_materialized_view_output.txt 2>&1
+python3 Odunlade_Oluwaseun_301931438_run_benchmark.py after
+python3 Odunlade_Oluwaseun_301931438_run_benchmark.py report
+python3 Odunlade_Oluwaseun_301931438_q4_regression_diagnosis.py > evidence/Odunlade_Oluwaseun_301931438_Q4_regression_diagnosis.txt
 
 echo "== Portfolio 3: transactions"
 cd "$ROOT/portfolio-3-transactions-concurrency"
