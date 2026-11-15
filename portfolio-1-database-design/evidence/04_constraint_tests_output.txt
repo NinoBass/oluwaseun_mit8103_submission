@@ -1,4 +1,4 @@
-SET search_path = ojahub, public;
+SET search_path = seunbaba, public;
 SET
 ==== Row counts after seeding ====
 SELECT 'customer' AS table_name, count(*) FROM customer UNION ALL
@@ -42,7 +42,7 @@ DETAIL:  Failing row contains (50002, test.user@gmail.com, 08031234567, Test, Us
 ==== T3 Domain: product price must be positive ====
 UPDATE product SET unit_price = -500 WHERE product_id = 10;
 psql:sql/04_constraint_tests.sql:31: ERROR:  new row for relation "product" violates check constraint "product_unit_price_check"
-DETAIL:  Failing row contains (10, 132, 9, OJH-002398, Infinix Smartphone 256GB Plus, Genuine Infinix Smartphone 256GB sold on OjaHub with nationwide ..., -500.00, 0.343, t, 2024-01-02 18:03:40.472698+01).
+DETAIL:  Failing row contains (10, 132, 9, SBB-002398, Infinix Smartphone 256GB Plus, Genuine Infinix Smartphone 256GB sold on SeunBaba with nationwide ..., -500.00, 0.343, t, 2024-01-02 18:03:40.472698+01).
 ==== T4 Referential integrity: order line for a product that does not exist ====
 INSERT INTO order_item (order_id, line_no, product_id, warehouse_id, quantity, unit_price)
 VALUES (1, 99, 999999, 1, 1, 1000);
