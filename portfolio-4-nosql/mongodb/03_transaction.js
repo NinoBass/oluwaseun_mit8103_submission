@@ -3,8 +3,8 @@
 // Multi-document ACID transaction in MongoDB (requires a replica set):
 // the checkout of Portfolio 3 re-implemented on the document model.
 // =====================================================================
-db = db.getSiblingDB("ojahub");
-const X = db.products.findOne({ sku: "OJH-000100" }), Y = db.products.findOne({ sku: "OJH-000101" });
+db = db.getSiblingDB("seunbaba");
+const X = db.products.findOne({ sku: "SBB-000100" }), Y = db.products.findOne({ sku: "SBB-000101" });
 const stockOf = id => db.products.findOne({ _id: id }, { "stock.wh1": 1 }).stock.wh1;
 const nextId = () => db.orders.find().sort({ _id: -1 }).limit(1).next()._id + 1;
 
@@ -12,7 +12,7 @@ function checkout(basket, label) {
   print(`\n######## ${label} ########`);
   basket.forEach(b => print(`  before: ${b.p.sku} stock.wh1 = ${stockOf(b.p._id)}, requested ${b.qty}`));
   const s = db.getMongo().startSession();
-  const sdb = s.getDatabase("ojahub");
+  const sdb = s.getDatabase("seunbaba");
   const orderId = nextId();
   s.startTransaction({ readConcern: { level: "snapshot" }, writeConcern: { w: "majority" } });
   try {
@@ -46,10 +46,10 @@ checkout([{ p: X, qty: 1 }, { p: Y, qty: 100000 }], "T2 abort: line 1 succeeds, 
 print("\n######## T3 write conflict: two concurrent transactions update the same product ########");
 const s1 = db.getMongo().startSession(), s2 = db.getMongo().startSession();
 s1.startTransaction(); s2.startTransaction();
-s1.getDatabase("ojahub").products.updateOne({ _id: X._id }, { $inc: { "stock.wh1": -1 } });
+s1.getDatabase("seunbaba").products.updateOne({ _id: X._id }, { $inc: { "stock.wh1": -1 } });
 print("  session 1 updated the product (uncommitted)");
 try {
-  s2.getDatabase("ojahub").products.updateOne({ _id: X._id }, { $inc: { "stock.wh1": -1 } });
+  s2.getDatabase("seunbaba").products.updateOne({ _id: X._id }, { $inc: { "stock.wh1": -1 } });
   print("  session 2 updated too (unexpected)");
 } catch (e) {
   print(`  session 2: ${e.codeName} (code ${e.code}), labels=${JSON.stringify(e.errorLabels)}`);

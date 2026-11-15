@@ -1,9 +1,9 @@
 // =====================================================================
-// Portfolio 4 - 02_queries.js   (run: mongosh --quiet ojahub 02_queries.js)
-// The same OjaHub workloads as Portfolio 2, re-expressed for the
+// Portfolio 4 - 02_queries.js   (run: mongosh --quiet seunbaba 02_queries.js)
+// The same SeunBaba workloads as Portfolio 2, re-expressed for the
 // document model, with explain() evidence and a cross-check against SQL.
 // =====================================================================
-db = db.getSiblingDB("ojahub");
+db = db.getSiblingDB("seunbaba");
 const hr = t => print("\n######## " + t + " ########");
 const brief = e => {               // compact executionStats summary
   const s = e.executionStats;
