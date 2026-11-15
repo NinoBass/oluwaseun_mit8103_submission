@@ -1,5 +1,5 @@
 -- =====================================================================
--- Portfolio 5 - sharding/01_shard_node.sql
+-- Portfolio 5 - sharding/Odunlade_Oluwaseun_301931438_01_shard_node.sql
 -- Run on EVERY shard server (ports 5434 and 5435), in database seunbaba_shard.
 -- Orders and their lines are sharded by customer_id, so one customer's
 -- orders AND lines always live on the same shard (co-location) and the

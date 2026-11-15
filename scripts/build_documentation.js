@@ -70,7 +70,7 @@ const figCell = (file, caption) => cell([
 const figTable = new Table({ width: { size: W, type: WidthType.DXA }, columnWidths: [half, half], rows: [
   new TableRow({ children: [
     figCell("portfolio-1-database-design/diagrams/Odunlade_Oluwaseun_301931438_seunbaba_erd.png", "Fig. 1  SeunBaba ER diagram (Portfolio 1)"),
-    figCell("portfolio-5-distributed-cloud/evidence/R3_failover.png", "Fig. 2  Crash, failover, pg_rewind and switchover (Portfolio 5)"),
+    figCell("portfolio-5-distributed-cloud/evidence/Odunlade_Oluwaseun_301931438_R3_failover.png", "Fig. 2  Crash, failover, pg_rewind and switchover (Portfolio 5)"),
   ] }) ] });
 const wide = (file, caption) => [
   new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 80, after: 0 }, keepNext: true, children: [scaled(file, 560)] }),

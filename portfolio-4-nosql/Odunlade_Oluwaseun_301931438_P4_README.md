@@ -14,7 +14,7 @@
 | **Graph** example | [§4](#4-wide-column-model-cassandra-design-only), graph discussion ("customers who bought X also bought Y") |
 | Implementation evidence | `evidence/01`–`05` (`.txt` and `.png`): migration, queries with `explain()`, transaction, Redis, SQL-vs-MongoDB cross-check |
 | Explanation of suitability | [§1](#1-why-nosql-at-all-for-seunbaba) (which workloads and why) and [§5](#5-comparison-and-polyglot-persistence-decision) (comparison and polyglot decision) |
-| Configuration | [`config/Odunlade_Oluwaseun_301931438_redis.conf`](config/Odunlade_Oluwaseun_301931438_redis.conf) (persistence deliberately off); MongoDB replica set member settings in [`../portfolio-5-distributed-cloud/config/mongod-rs0.conf`](../portfolio-5-distributed-cloud/config/mongod-rs0.conf) |
+| Configuration | [`config/Odunlade_Oluwaseun_301931438_redis.conf`](config/Odunlade_Oluwaseun_301931438_redis.conf) (persistence deliberately off); MongoDB replica set member settings in [`../portfolio-5-distributed-cloud/config/Odunlade_Oluwaseun_301931438_mongod-rs0.conf`](../portfolio-5-distributed-cloud/config/Odunlade_Oluwaseun_301931438_mongod-rs0.conf) |
 
 **How it was implemented.** An ETL script reads PostgreSQL and writes MongoDB documents. Queries, an aggregation pipeline and a multi-document transaction run in `mongosh`. Redis structures are driven from Python using real SeunBaba sales data.
 **How it was tested.** `explain("executionStats")` shows the index used and the keys/documents examined. Schema validation is tested with a deliberately malformed document. The migration is reconciled with SQL to the kobo (12/12 rows identical). The Redis flash-sale gate is stress-tested with 40 concurrent clients.

@@ -15,7 +15,7 @@ RDV="Redis $(redis-cli INFO server | sed -n 's/^redis_version:\(.*\)\r$/\1/p')"
 # ---- Portfolio 1
 if [ -n "${MERMAID_JS:-}" ]; then
   $R mermaid portfolio-1-database-design/diagrams/Odunlade_Oluwaseun_301931438_seunbaba_erd.mmd portfolio-1-database-design/diagrams/Odunlade_Oluwaseun_301931438_seunbaba_erd.png
-  $R mermaid portfolio-5-distributed-cloud/cloud/architecture.mmd portfolio-5-distributed-cloud/cloud/architecture.png
+  $R mermaid portfolio-5-distributed-cloud/cloud/Odunlade_Oluwaseun_301931438_architecture.mmd portfolio-5-distributed-cloud/cloud/Odunlade_Oluwaseun_301931438_architecture.png
 fi
 E=portfolio-1-database-design/evidence
 grep -E "^====|ERROR|order_id \||-----\+-|^ +1 \|" $E/Odunlade_Oluwaseun_301931438_04_constraint_tests_output.txt | sed '1,2d; s/^psql:sql\/Odunlade_Oluwaseun_301931438_04_constraint_tests.sql:[0-9]*: //' > $TMP/p1.txt
@@ -69,7 +69,7 @@ E=portfolio-5-distributed-cloud/evidence
 for f in $E/*.txt; do
   [ -e "$f" ] || continue
   b=$(basename "$f" .txt)
-  if [ "$b" = "S_sharding_demo" ]; then        # condense: headers, plan shape, remote SQL, results
+  if [ "$b" = "Odunlade_Oluwaseun_301931438_S_sharding_demo" ]; then        # condense: headers, plan shape, remote SQL, results
     grep -E "^====|Foreign Scan|Remote SQL|Aggregate|Append|shard[12]|^ +[A-Z][a-z]+ [A-Z][a-z]+ +\||^ +[0-9]+ +\| +[0-9]+ +\||side \||left_after|^ +0$" "$f" \
       | sed -E 's/^ {10,}/      /' | cut -c1-175 > $TMP/$b.txt
   else

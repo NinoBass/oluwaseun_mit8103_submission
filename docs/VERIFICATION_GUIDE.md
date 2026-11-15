@@ -105,7 +105,7 @@ RPO (recovery point objective) is the data you can lose: order 300052, committed
 Most operations are per customer, so pruning sends them to one shard (S2), and a customer's orders and lines are co-located. Sharding by date would put all of a sale day on one hot shard, and sharding by order_id would scatter a customer's history across every shard.
 
 **Q30. What are the limits of postgres_fdw sharding you found?**
-PostgreSQL 16 did not push the co-located join down (S3) and cannot push *partial* aggregates (S4), so rows are shipped to the coordinator. A full GROUP BY on the shard key *is* pushed down and runs asynchronously on both shards (S4b). A shard outage also breaks any global query (S_shard_failure), which is why each shard needs a replica.
+PostgreSQL 16 did not push the co-located join down (S3) and cannot push *partial* aggregates (S4), so rows are shipped to the coordinator. A full GROUP BY on the shard key *is* pushed down and runs asynchronously on both shards (S4b). A shard outage also breaks any global query (Odunlade_Oluwaseun_301931438_S_shard_failure), which is why each shard needs a replica.
 
 **Q31. Explain the CAP result you observed.**
 With 2 of 3 MongoDB members down, the survivor cannot form a majority and steps down. Writes are refused, while reads with `secondaryPreferred` still work but may be stale. During the partition the system chose Consistency over Availability for writes.
@@ -125,8 +125,8 @@ Majority acknowledgement means the write is durable on 2 of 3 nodes, not that it
 | `portfolio-3-transactions-concurrency/sql/Odunlade_Oluwaseun_301931438_01_checkout_functions.sql` | Steps 1–6 of `place_order()`, lock ordering, conditional coupon UPDATE, two-phase stock, idempotent `settle_payment()` |
 | `portfolio-3-transactions-concurrency/scripts/Odunlade_Oluwaseun_301931438_concurrency_demos.py` | Separate connections, `threading.Barrier`, the monitor connection reading `pg_locks`, how each invariant is checked |
 | `portfolio-4-nosql/mongodb/Odunlade_Oluwaseun_301931438_01_migrate_from_postgres.py` | Building aggregate documents from 5 SQL result sets, Decimal128, validators, index choices |
-| `portfolio-5-distributed-cloud/replication/03_failover.sh` | Crash, promote, measure RTO and RPO, `pg_rewind`, standby.signal, switchover |
-| `portfolio-5-distributed-cloud/sharding/02_coordinator.sql` | Hash partitions as foreign tables, `schema_name`, `async_capable`, `batch_size`, TRUNCATE forwarding |
+| `portfolio-5-distributed-cloud/replication/Odunlade_Oluwaseun_301931438_03_failover.sh` | Crash, promote, measure RTO and RPO, `pg_rewind`, standby.signal, switchover |
+| `portfolio-5-distributed-cloud/sharding/Odunlade_Oluwaseun_301931438_02_coordinator.sql` | Hash partitions as foreign tables, `schema_name`, `async_capable`, `batch_size`, TRUNCATE forwarding |
 
 ## Numbers to remember
 

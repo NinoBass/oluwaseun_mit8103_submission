@@ -1,5 +1,5 @@
 -- =====================================================================
--- Portfolio 5 - sharding/03_shard_demo.sql   (run on coordinator with psql -e)
+-- Portfolio 5 - sharding/Odunlade_Oluwaseun_301931438_03_shard_demo.sql   (run on coordinator with psql -e)
 -- =====================================================================
 SET enable_partitionwise_aggregate = on;   -- push GROUP BY down to each shard
 SET enable_partitionwise_join = on;        -- push co-located joins down to each shard

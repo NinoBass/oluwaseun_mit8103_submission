@@ -48,7 +48,7 @@ PostgreSQL 16.16, MongoDB 9.0.8, Redis 8.10.3, Python 3.12, on an Apple M5 Pro
 (macOS). The scripts also run on Linux.
   createdb seunbaba
   bash scripts/run_all.sh                 (Portfolios 1-4)
-  see portfolio-5-distributed-cloud/README.md section 6 for Portfolio 5
+  see portfolio-5-distributed-cloud/Odunlade_Oluwaseun_301931438_P5_README.md section 6 for Portfolio 5
 
 NOTES
 -----

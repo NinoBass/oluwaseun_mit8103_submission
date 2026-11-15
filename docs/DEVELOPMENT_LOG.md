@@ -32,7 +32,7 @@ A chronological record of how the portfolio was built. It covers the problems me
 
 When a defect changed the data (items 8 and 9), I did not patch individual result files. The whole pipeline was re-run (`scripts/run_all.sh`), every screenshot was re-rendered (`scripts/make_screenshots.sh`), and all README numbers were updated from the new outputs. The numbers in the documentation therefore all come from the same, final data set.
 
-The final evidence set was captured in one complete re-run on 15 November 2026 on an Apple M5 Pro (PostgreSQL 16.16, MongoDB 9.0.8, Redis 8.10.3). The one exception is `portfolio-5-distributed-cloud/evidence/R3_failover_first_attempt_FAILED.txt`, which is kept from the original Linux environment as a record of item 14.
+The final evidence set was captured in one complete re-run on 15 November 2026 on an Apple M5 Pro (PostgreSQL 16.16, MongoDB 9.0.8, Redis 8.10.3). The one exception is `portfolio-5-distributed-cloud/evidence/Odunlade_Oluwaseun_301931438_R3_failover_first_attempt_FAILED.txt`, which is kept from the original Linux environment as a record of item 14.
 
 ## Note on commit history
 

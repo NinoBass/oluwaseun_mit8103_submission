@@ -64,7 +64,7 @@ The five `portfolio-*` folders and `README.md` follow the structure suggested in
 | Required content | Where |
 |---|---|
 | I. SQL scripts | `portfolio-1…/sql/`, `portfolio-2…/sql/`, `portfolio-3…/sql/`, `portfolio-5…/sharding/` |
-| II. Database schemas | [`portfolio-1-database-design/sql/Odunlade_Oluwaseun_301931438_01_schema.sql`](portfolio-1-database-design/sql/Odunlade_Oluwaseun_301931438_01_schema.sql), [`sharding/01_shard_node.sql`](portfolio-5-distributed-cloud/sharding/01_shard_node.sql), MongoDB `$jsonSchema` validators in [`Odunlade_Oluwaseun_301931438_01_migrate_from_postgres.py`](portfolio-4-nosql/mongodb/Odunlade_Oluwaseun_301931438_01_migrate_from_postgres.py) |
+| II. Database schemas | [`portfolio-1-database-design/sql/Odunlade_Oluwaseun_301931438_01_schema.sql`](portfolio-1-database-design/sql/Odunlade_Oluwaseun_301931438_01_schema.sql), [`sharding/Odunlade_Oluwaseun_301931438_01_shard_node.sql`](portfolio-5-distributed-cloud/sharding/Odunlade_Oluwaseun_301931438_01_shard_node.sql), MongoDB `$jsonSchema` validators in [`Odunlade_Oluwaseun_301931438_01_migrate_from_postgres.py`](portfolio-4-nosql/mongodb/Odunlade_Oluwaseun_301931438_01_migrate_from_postgres.py) |
 | III. ER diagrams / database models | [`portfolio-1-database-design/diagrams/`](portfolio-1-database-design/diagrams/), document model in [P4 README](portfolio-4-nosql/Odunlade_Oluwaseun_301931438_P4_README.md), Cassandra model in [`cassandra_design/`](portfolio-4-nosql/cassandra_design/) |
 | IV. NoSQL implementations | [`portfolio-4-nosql/mongodb/`](portfolio-4-nosql/mongodb/), [`portfolio-4-nosql/redis/`](portfolio-4-nosql/redis/), [`portfolio-5…/mongodb-replica-set/`](portfolio-5-distributed-cloud/mongodb-replica-set/) |
 | V. Query execution plans and performance results | [`portfolio-2-query-optimisation/evidence/`](portfolio-2-query-optimisation/evidence/) (`before/`, `after/`, `Odunlade_Oluwaseun_301931438_benchmark_summary.md`) |
@@ -126,13 +126,13 @@ The final evidence was captured on 15 November 2026 on the machine above. An ear
 ```bash
 createdb seunbaba
 bash scripts/run_all.sh          # schema, deterministic seed (about 35 s), Portfolios 1-4 evidence
-# Portfolio 5: see portfolio-5-distributed-cloud/README.md section 6
+# Portfolio 5: see portfolio-5-distributed-cloud/Odunlade_Oluwaseun_301931438_P5_README.md section 6
 MERMAID_JS=/path/to/mermaid.min.js bash scripts/make_screenshots.sh   # needs node + playwright
 ```
 
 All data is **synthetic** and generated deterministically (`setseed(0.8103)`). No real customer data is used.
 
-**Design-only artefacts (clearly not executed):** `portfolio-4-nosql/cassandra_design/Odunlade_Oluwaseun_301931438_shipment_tracking.cql` and `portfolio-5-distributed-cloud/cloud/terraform/main.tf`. Everything else in the repository was executed, and its output is in the `evidence/` folders.
+**Design-only artefacts (clearly not executed):** `portfolio-4-nosql/cassandra_design/Odunlade_Oluwaseun_301931438_shipment_tracking.cql` and `portfolio-5-distributed-cloud/cloud/terraform/Odunlade_Oluwaseun_301931438_main.tf`. Everything else in the repository was executed, and its output is in the `evidence/` folders.
 
 ## Academic integrity and AI-use declaration
 

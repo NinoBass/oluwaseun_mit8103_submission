@@ -1,5 +1,5 @@
 -- =====================================================================
--- Portfolio 5 - sharding/02_coordinator.sql
+-- Portfolio 5 - sharding/Odunlade_Oluwaseun_301931438_02_coordinator.sql
 -- Run on the coordinator (the main SeunBaba server, port 5432, db seunbaba).
 -- Declarative hash partitioning whose partitions are FOREIGN tables on
 -- two shard servers (postgres_fdw). The application keeps talking to one
