@@ -15,7 +15,7 @@ timestamped timeline. Output is written to ../evidence/Dn_*.txt.
   D5  Flash-sale stress test: 40 concurrent buyers, 25 units
       naive application logic vs. place_order()
 
-Usage:  python3 concurrency_demos.py [D1 D2 ...]      (default: all)
+Usage:  python3 Odunlade_Oluwaseun_301931438_concurrency_demos.py [D1 D2 ...]      (default: all)
 """
 import os, sys, threading, time
 import psycopg2
@@ -24,7 +24,7 @@ from psycopg2 import errors
 HERE = os.path.dirname(os.path.abspath(__file__))
 EVID = os.path.join(HERE, "..", "evidence")
 DSN = os.environ.get("SEUNBABA_DSN", "host=localhost dbname=seunbaba user=postgres")
-SETUP_SQL = open(os.path.join(HERE, "..", "sql", "00_demo_setup.sql")).read()
+SETUP_SQL = open(os.path.join(HERE, "..", "sql", "Odunlade_Oluwaseun_301931438_00_demo_setup.sql")).read()
 
 
 class Timeline:
@@ -186,7 +186,7 @@ def d1_lost_update():
         tl.log("B", "application must ROLLBACK and RETRY the whole transaction")
     tl.log("monitor", f"final qty_on_hand = {stock(m, pid)[0]} (no silent loss)")
     A.close(); B.close(); mon.close()
-    tl.save("D1_lost_update.txt")
+    tl.save("Odunlade_Oluwaseun_301931438_D1_lost_update.txt")
 
 
 # ---------------------------------------------------------------------------
@@ -206,7 +206,7 @@ def d2_non_repeatable_read():
         tl.log("A", "==> NON-REPEATABLE READ (values differ inside one transaction)" if v1 != v2
                else "==> consistent snapshot: both reads see the same data")
         R.commit(); R.close(); W.close()
-    tl.save("D2_non_repeatable_read.txt")
+    tl.save("Odunlade_Oluwaseun_301931438_D2_non_repeatable_read.txt")
 
 
 # ---------------------------------------------------------------------------
@@ -247,7 +247,7 @@ def d3_write_skew():
         total = one(m, count_sql, (pid,))[0]
         tl.log("monitor", f"tickets held by customer 1207 = {total}  ==> rule {'VIOLATED' if total > 2 else 'respected'}")
         A.close(); B.close(); mon.close()
-    tl.save("D3_write_skew.txt")
+    tl.save("Odunlade_Oluwaseun_301931438_D3_write_skew.txt")
 
 
 # ---------------------------------------------------------------------------
@@ -296,7 +296,7 @@ def d4_deadlock():
     A.commit(); tl.log("A", "COMMIT")
     t.join()
     A.close(); B.close(); mon.close()
-    tl.save("D4_deadlock.txt")
+    tl.save("Odunlade_Oluwaseun_301931438_D4_deadlock.txt")
 
 
 # ---------------------------------------------------------------------------
@@ -361,7 +361,7 @@ def d5_flash_sale_stress(buyers=40):
                    f"{len(ok) == reserved == orders[1] == 25}")
         tl.say(f"   wall-clock                 : {el * 1000:.0f} ms")
     mon.close()
-    tl.save("D5_flash_sale_stress.txt")
+    tl.save("Odunlade_Oluwaseun_301931438_D5_flash_sale_stress.txt")
 
 
 DEMOS = {"D1": d1_lost_update, "D2": d2_non_repeatable_read, "D3": d3_write_skew,

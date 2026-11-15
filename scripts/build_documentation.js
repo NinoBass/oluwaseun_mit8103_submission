@@ -77,7 +77,7 @@ const wide = (file, caption) => [
   new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 60 }, children: [sm(caption, { italics: true })] })];
 const wideFigs = [
   ...wide("portfolio-2-query-optimisation/evidence/Odunlade_Oluwaseun_301931438_benchmark_summary.png", "Fig. 3  Query benchmark before and after optimisation, median of 7 runs (Portfolio 2)"),
-  ...wide("portfolio-3-transactions-concurrency/evidence/D5_flash_sale_stress.png", "Fig. 4  Flash-sale stress test: 40 concurrent buyers, 25 phones (Portfolio 3)"),
+  ...wide("portfolio-3-transactions-concurrency/evidence/Odunlade_Oluwaseun_301931438_D5_flash_sale_stress.png", "Fig. 4  Flash-sale stress test: 40 concurrent buyers, 25 phones (Portfolio 3)"),
 ];
 
 const rcols = [2900, 7126];

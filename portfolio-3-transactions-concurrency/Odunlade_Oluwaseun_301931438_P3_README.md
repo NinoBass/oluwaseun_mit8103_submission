@@ -6,14 +6,14 @@
 
 | Expected evidence (assessment brief) | Where to find it |
 |---|---|
-| Transaction showing **COMMIT** | T1 in [§3](#3-single-session-results-t1t6), [`sql/02_commit_rollback_demo.sql`](sql/02_commit_rollback_demo.sql) → [`evidence/02_commit_rollback_output.txt`](evidence/02_commit_rollback_output.txt) |
+| Transaction showing **COMMIT** | T1 in [§3](#3-single-session-results-t1t6), [`sql/Odunlade_Oluwaseun_301931438_02_commit_rollback_demo.sql`](sql/Odunlade_Oluwaseun_301931438_02_commit_rollback_demo.sql) → [`evidence/Odunlade_Oluwaseun_301931438_02_commit_rollback_output.txt`](evidence/Odunlade_Oluwaseun_301931438_02_commit_rollback_output.txt) |
 | Transaction showing **ROLLBACK** | T2 (automatic, on error), T3 (explicit), T4 (`ROLLBACK TO SAVEPOINT`) |
 | **Isolation** | D2 (READ COMMITTED vs REPEATABLE READ), D3 (REPEATABLE READ vs SERIALIZABLE), D1(d), and the level choice in [§5](#5-choosing-an-isolation-level-for-seunbaba) |
 | **Concurrency issue** | D1 lost update, D2 non-repeatable read, D3 write skew, D4 deadlock, D5 oversell under 40 concurrent buyers |
-| **Control mechanism** | `SELECT … FOR UPDATE` in fixed lock order, atomic conditional `UPDATE`, SERIALIZABLE with retry, CHECK constraints, idempotent payment callback ([`sql/01_checkout_functions.sql`](sql/01_checkout_functions.sql)) |
+| **Control mechanism** | `SELECT … FOR UPDATE` in fixed lock order, atomic conditional `UPDATE`, SERIALIZABLE with retry, CHECK constraints, idempotent payment callback ([`sql/Odunlade_Oluwaseun_301931438_01_checkout_functions.sql`](sql/Odunlade_Oluwaseun_301931438_01_checkout_functions.sql)) |
 | Screenshots / output evidence | `evidence/*.txt` (raw timelines) and `evidence/*.png` |
 
-**How it was implemented.** The checkout is a PL/pgSQL function, so a single call is a single transaction. The concurrency demos ([`scripts/concurrency_demos.py`](scripts/concurrency_demos.py)) open **separate real connections** and interleave their statements in a fixed order, so every anomaly is reproducible on demand. A third "monitor" connection reads `pg_stat_activity` and `pg_locks` while a session is blocked.
+**How it was implemented.** The checkout is a PL/pgSQL function, so a single call is a single transaction. The concurrency demos ([`scripts/Odunlade_Oluwaseun_301931438_concurrency_demos.py`](scripts/Odunlade_Oluwaseun_301931438_concurrency_demos.py)) open **separate real connections** and interleave their statements in a fixed order, so every anomaly is reproducible on demand. A third "monitor" connection reads `pg_stat_activity` and `pg_locks` while a session is blocked.
 **How it was tested.** Each demo prints the final database state and checks the invariant (for example `success == reserved == orders == 25`). Each anomaly is shown first *occurring*, then *prevented*.
 **Advanced concepts applied.** MVCC snapshots, EvalPlanQual re-check under READ COMMITTED, first-updater-wins, Serializable Snapshot Isolation (rw-antidependency, pivot), deadlock detection, lock ordering, non-transactional sequences, two-phase stock reservation.
 
@@ -30,10 +30,10 @@ During a flash sale ("25 Infinix phones at ₦99,000, 12:00 noon"), hundreds of 
 
 | File | Content |
 |---|---|
-| [`sql/00_demo_setup.sql`](sql/00_demo_setup.sql) | Idempotent reset: two flash-sale products with exactly 25 units each, coupon `FLASH3` (3 redemptions), and the `flash_sale_ticket` table |
-| [`sql/01_checkout_functions.sql`](sql/01_checkout_functions.sql) | **`place_order()`** and **`settle_payment()`**, PL/pgSQL functions that each run as one transaction |
-| [`sql/02_commit_rollback_demo.sql`](sql/02_commit_rollback_demo.sql) | Single-session demos T1–T6: COMMIT, automatic ROLLBACK, explicit ROLLBACK, SAVEPOINT, durability settings |
-| [`scripts/concurrency_demos.py`](scripts/concurrency_demos.py) | Multi-session demos D1–D5 using real, separate connections with controlled interleaving, a timestamped timeline and a lock monitor |
+| [`sql/Odunlade_Oluwaseun_301931438_00_demo_setup.sql`](sql/Odunlade_Oluwaseun_301931438_00_demo_setup.sql) | Idempotent reset: two flash-sale products with exactly 25 units each, coupon `FLASH3` (3 redemptions), and the `flash_sale_ticket` table |
+| [`sql/Odunlade_Oluwaseun_301931438_01_checkout_functions.sql`](sql/Odunlade_Oluwaseun_301931438_01_checkout_functions.sql) | **`place_order()`** and **`settle_payment()`**, PL/pgSQL functions that each run as one transaction |
+| [`sql/Odunlade_Oluwaseun_301931438_02_commit_rollback_demo.sql`](sql/Odunlade_Oluwaseun_301931438_02_commit_rollback_demo.sql) | Single-session demos T1–T6: COMMIT, automatic ROLLBACK, explicit ROLLBACK, SAVEPOINT, durability settings |
+| [`scripts/Odunlade_Oluwaseun_301931438_concurrency_demos.py`](scripts/Odunlade_Oluwaseun_301931438_concurrency_demos.py) | Multi-session demos D1–D5 using real, separate connections with controlled interleaving, a timestamped timeline and a lock monitor |
 | `evidence/` | Captured output (`.txt`) and screenshots (`.png`) of every run |
 
 The concurrency design of `place_order()`:
@@ -45,7 +45,7 @@ The concurrency design of `place_order()`:
 
 ## 3. Single-session results (T1–T6)
 
-![commit rollback](evidence/02_commit_rollback.png)
+![commit rollback](evidence/Odunlade_Oluwaseun_301931438_02_commit_rollback.png)
 
 | Test | What happened | ACID property shown |
 |---|---|---|
@@ -61,7 +61,7 @@ The concurrency design of `place_order()`:
 ## 4. Concurrency results (D1–D5)
 
 ### D1: Lost update and three fixes
-![D1](evidence/D1_lost_update.png)
+![D1](evidence/Odunlade_Oluwaseun_301931438_D1_lost_update.png)
 
 * **(a) Naive read-modify-write under READ COMMITTED.** Both clerks read 25 and both write 24. Two phones were sold, but stock only dropped by one. This is a **lost update**. READ COMMITTED does not prevent it, because each statement is individually correct.
 * **(b) `SELECT … FOR UPDATE`.** B blocks. The monitor connection shows B `state=active wait=Lock:transactionid blocked_by=[A's pid]`, and `pg_locks` shows B's `ShareLock` on A's transaction ID with `granted=False`. When A commits, B reads 24 and writes 23, which is correct.
@@ -69,22 +69,22 @@ The concurrency design of `place_order()`:
 * **(d) Same naive code under REPEATABLE READ.** PostgreSQL refuses B's write with **`40001 could not serialize access due to concurrent update`** (first updater wins). Nothing is lost, but the application must retry the transaction.
 
 ### D2: Non-repeatable read
-![D2](evidence/D2_non_repeatable_read.png)
+![D2](evidence/Odunlade_Oluwaseun_301931438_D2_non_repeatable_read.png)
 
 A finance report reads the stock value twice while a restock commits in between. Under **READ COMMITTED** each *statement* gets a fresh snapshot, so the report sees ₦2,962,500 and then ₦4,147,500 inside one transaction. Under **REPEATABLE READ** the snapshot is taken at the first statement and kept for the whole transaction, so both reads return ₦2,962,500. With MVCC the report never blocks the restock and the restock never blocks the report: readers and writers do not lock each other.
 
 ### D3: Write skew, which only SERIALIZABLE prevents
-![D3](evidence/D3_write_skew.png)
+![D3](evidence/Odunlade_Oluwaseun_301931438_D3_write_skew.png)
 
 The rule is "maximum 2 flash-sale tickets per customer", checked in application code with `count(*)` followed by `INSERT`. The customer already has 1 ticket and taps on phone and laptop at once. Each transaction reads 1 and inserts a *different* new row, so there is no row-level write conflict. Under **REPEATABLE READ** both commit and the customer ends up with **3 tickets**, which violates the rule. Under **SERIALIZABLE**, PostgreSQL's Serializable Snapshot Isolation (SSI) tracks the read/write dependencies (rw-antidependencies) through predicate locks. It cancels B at commit (`40001 … Canceled on identification as a pivot`), the retry sees 2 tickets, and the request is refused. This is the one anomaly where an extra lock on an existing row does not help, because the conflicting row does not exist yet (a phantom).
 
 ### D4: Deadlock and prevention by lock ordering
-![D4](evidence/D4_deadlock.png)
+![D4](evidence/Odunlade_Oluwaseun_301931438_D4_deadlock.png)
 
 Session A locks FLASH-001 and then wants FLASH-002, while B locks FLASH-002 and then wants FLASH-001. After `deadlock_timeout` (1 s), PostgreSQL's deadlock detector finds the cycle and aborts one victim with **`40P01 deadlock detected`** (*Process … waits for ShareLock on transaction …; blocked by process …*). The other session then commits. Running the same conflict through `place_order()`, with the two baskets in **opposite order**, B simply **waits** for 1.5 s, longer than the deadlock timeout, and then succeeds. Because the function sorts lock acquisition by product_id, a cycle cannot occur.
 
 ### D5: Flash-sale stress test (40 buyers, 25 phones)
-![D5](evidence/D5_flash_sale_stress.png)
+![D5](evidence/Odunlade_Oluwaseun_301931438_D5_flash_sale_stress.png)
 
 | | Naive application logic | `place_order()` |
 |---|---:|---:|
@@ -107,9 +107,9 @@ All 40 threads start at the same instant using a `threading.Barrier`. The naive 
 ## 6. How to run
 
 ```bash
-psql -d seunbaba -f sql/01_checkout_functions.sql
-psql -d seunbaba -f sql/00_demo_setup.sql
-psql -d seunbaba -e -f sql/02_commit_rollback_demo.sql
+psql -d seunbaba -f sql/Odunlade_Oluwaseun_301931438_01_checkout_functions.sql
+psql -d seunbaba -f sql/Odunlade_Oluwaseun_301931438_00_demo_setup.sql
+psql -d seunbaba -e -f sql/Odunlade_Oluwaseun_301931438_02_commit_rollback_demo.sql
 pip install psycopg2-binary
-python3 scripts/concurrency_demos.py          # or: D1 D3 ...
+python3 scripts/Odunlade_Oluwaseun_301931438_concurrency_demos.py          # or: D1 D3 ...
 ```

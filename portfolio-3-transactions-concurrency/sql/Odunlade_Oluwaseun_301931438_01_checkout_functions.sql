@@ -1,5 +1,5 @@
 -- =====================================================================
--- Portfolio 3 - 01_checkout_functions.sql
+-- Portfolio 3 - Odunlade_Oluwaseun_301931438_01_checkout_functions.sql
 -- The SeunBaba checkout as ONE atomic unit of work.
 --
 -- place_order()     reserve stock + create order/lines + redeem coupon + start payment

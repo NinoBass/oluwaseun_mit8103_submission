@@ -122,8 +122,8 @@ Majority acknowledgement means the write is durable on 2 of 3 nodes, not that it
 | `portfolio-1-database-design/sql/Odunlade_Oluwaseun_301931438_01_schema.sql` | Key choices, CHECKs, partial and expression indexes, the address-ownership trigger, the generated column, the time-zone setting |
 | `portfolio-1-database-design/sql/Odunlade_Oluwaseun_301931438_03_seed_data.sql` | `setseed` for repeatability, weighted city choice, skewed customers and products, why `+ g * 0` is needed for volatile `random()` in LATERAL |
 | `portfolio-2-query-optimisation/Odunlade_Oluwaseun_301931438_run_benchmark.py` | Parses `-- @Qn` blocks, warm-up plus 7 runs, median of `Execution Time` from `EXPLAIN (FORMAT JSON)`, saves plans and results |
-| `portfolio-3-transactions-concurrency/sql/01_checkout_functions.sql` | Steps 1–6 of `place_order()`, lock ordering, conditional coupon UPDATE, two-phase stock, idempotent `settle_payment()` |
-| `portfolio-3-transactions-concurrency/scripts/concurrency_demos.py` | Separate connections, `threading.Barrier`, the monitor connection reading `pg_locks`, how each invariant is checked |
+| `portfolio-3-transactions-concurrency/sql/Odunlade_Oluwaseun_301931438_01_checkout_functions.sql` | Steps 1–6 of `place_order()`, lock ordering, conditional coupon UPDATE, two-phase stock, idempotent `settle_payment()` |
+| `portfolio-3-transactions-concurrency/scripts/Odunlade_Oluwaseun_301931438_concurrency_demos.py` | Separate connections, `threading.Barrier`, the monitor connection reading `pg_locks`, how each invariant is checked |
 | `portfolio-4-nosql/mongodb/01_migrate_from_postgres.py` | Building aggregate documents from 5 SQL result sets, Decimal128, validators, index choices |
 | `portfolio-5-distributed-cloud/replication/03_failover.sh` | Crash, promote, measure RTO and RPO, `pg_rewind`, standby.signal, switchover |
 | `portfolio-5-distributed-cloud/sharding/02_coordinator.sql` | Hash partitions as foreign tables, `schema_name`, `async_capable`, `batch_size`, TRUNCATE forwarding |

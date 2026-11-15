@@ -1,5 +1,5 @@
 -- =====================================================================
--- Portfolio 3 - 00_demo_setup.sql  (idempotent: re-run before every demo)
+-- Portfolio 3 - Odunlade_Oluwaseun_301931438_00_demo_setup.sql  (idempotent: re-run before every demo)
 -- A "flash sale" product with exactly 25 units in Lagos, and a coupon
 -- that may be redeemed only 3 times. These small numbers make race
 -- conditions visible.

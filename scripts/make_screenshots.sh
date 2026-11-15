@@ -46,11 +46,11 @@ $R term $TMP/bench.txt $E/Odunlade_Oluwaseun_301931438_benchmark_summary.png "py
 # ---- Portfolio 3
 E=portfolio-3-transactions-concurrency/evidence
 grep -E "^(##########|psql:|ERROR| SBB|ROLLBACK$|COMMIT$| PAID|      sku| order_id| orders_| +[0-9]{6} \|| +[0-9]+$| FLASH3| coupon_code)" \
-  $E/02_commit_rollback_output.txt | sed 's/^psql:sql\/02_commit_rollback_demo.sql:[0-9]*: //' > $TMP/p3.txt
-$R term $TMP/p3.txt $E/02_commit_rollback.png "psql -f 02_commit_rollback_demo.sql (condensed)"
-for f in D1_lost_update D2_non_repeatable_read D3_write_skew D4_deadlock D5_flash_sale_stress; do
+  $E/Odunlade_Oluwaseun_301931438_02_commit_rollback_output.txt | sed 's/^psql:sql\/Odunlade_Oluwaseun_301931438_02_commit_rollback_demo.sql:[0-9]*: //' > $TMP/p3.txt
+$R term $TMP/p3.txt $E/Odunlade_Oluwaseun_301931438_02_commit_rollback.png "psql -f Odunlade_Oluwaseun_301931438_02_commit_rollback_demo.sql (condensed)"
+for f in Odunlade_Oluwaseun_301931438_D1_lost_update Odunlade_Oluwaseun_301931438_D2_non_repeatable_read Odunlade_Oluwaseun_301931438_D3_write_skew Odunlade_Oluwaseun_301931438_D4_deadlock Odunlade_Oluwaseun_301931438_D5_flash_sale_stress; do
   cut -c1-175 $E/$f.txt > $TMP/$f.txt
-  $R term $TMP/$f.txt $E/$f.png "python3 concurrency_demos.py ${f%%_*}  ($PGV, separate connections)"
+  $R term $TMP/$f.txt $E/$f.png "python3 Odunlade_Oluwaseun_301931438_concurrency_demos.py ${f%%_*}  ($PGV, separate connections)"
 done
 
 # ---- Portfolio 4

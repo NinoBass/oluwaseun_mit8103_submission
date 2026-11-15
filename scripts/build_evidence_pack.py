@@ -20,12 +20,12 @@ SECTIONS = [
         ("portfolio-2-query-optimisation/evidence/Odunlade_Oluwaseun_301931438_Q4_regression_diagnosis.png", "Q4 plan choice: controlled planner experiment"),
     ]),
     ("Portfolio 3 - Transactions and Concurrency", [
-        ("portfolio-3-transactions-concurrency/evidence/02_commit_rollback.png", "COMMIT, automatic ROLLBACK, explicit ROLLBACK, SAVEPOINT"),
-        ("portfolio-3-transactions-concurrency/evidence/D1_lost_update.png", "D1 lost update and three fixes, with lock monitor"),
-        ("portfolio-3-transactions-concurrency/evidence/D2_non_repeatable_read.png", "D2 non-repeatable read: READ COMMITTED vs REPEATABLE READ"),
-        ("portfolio-3-transactions-concurrency/evidence/D3_write_skew.png", "D3 write skew: REPEATABLE READ vs SERIALIZABLE"),
-        ("portfolio-3-transactions-concurrency/evidence/D4_deadlock.png", "D4 deadlock detection and prevention by lock ordering"),
-        ("portfolio-3-transactions-concurrency/evidence/D5_flash_sale_stress.png", "D5 flash-sale stress test, 40 concurrent buyers"),
+        ("portfolio-3-transactions-concurrency/evidence/Odunlade_Oluwaseun_301931438_02_commit_rollback.png", "COMMIT, automatic ROLLBACK, explicit ROLLBACK, SAVEPOINT"),
+        ("portfolio-3-transactions-concurrency/evidence/Odunlade_Oluwaseun_301931438_D1_lost_update.png", "D1 lost update and three fixes, with lock monitor"),
+        ("portfolio-3-transactions-concurrency/evidence/Odunlade_Oluwaseun_301931438_D2_non_repeatable_read.png", "D2 non-repeatable read: READ COMMITTED vs REPEATABLE READ"),
+        ("portfolio-3-transactions-concurrency/evidence/Odunlade_Oluwaseun_301931438_D3_write_skew.png", "D3 write skew: REPEATABLE READ vs SERIALIZABLE"),
+        ("portfolio-3-transactions-concurrency/evidence/Odunlade_Oluwaseun_301931438_D4_deadlock.png", "D4 deadlock detection and prevention by lock ordering"),
+        ("portfolio-3-transactions-concurrency/evidence/Odunlade_Oluwaseun_301931438_D5_flash_sale_stress.png", "D5 flash-sale stress test, 40 concurrent buyers"),
     ]),
     ("Portfolio 4 - NoSQL and Advanced Data Models", [
         ("portfolio-4-nosql/evidence/01_migration.png", "PostgreSQL to MongoDB migration"),

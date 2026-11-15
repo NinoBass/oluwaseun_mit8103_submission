@@ -31,7 +31,7 @@ The same case study and the same data set are used in all five portfolio activit
 │   ├── sql/  Odunlade_Oluwaseun_301931438_run_benchmark.py  Odunlade_Oluwaseun_301931438_q4_regression_diagnosis.py
 │   └── evidence/before/  evidence/after/  Odunlade_Oluwaseun_301931438_benchmark_summary.md
 ├── portfolio-3-transactions-concurrency/  place_order() / settle_payment(), COMMIT/ROLLBACK/SAVEPOINT,
-│   ├── sql/  scripts/concurrency_demos.py lost update, non-repeatable read, write skew, deadlock, 40-buyer stress test
+│   ├── sql/  scripts/Odunlade_Oluwaseun_301931438_concurrency_demos.py lost update, non-repeatable read, write skew, deadlock, 40-buyer stress test
 │   └── evidence/
 ├── portfolio-4-nosql/                     MongoDB document model + transactions, Redis, Cassandra design
 │   ├── mongodb/  redis/  cassandra_design/  config/redis.conf  crosscheck_sql_vs_mongo.py

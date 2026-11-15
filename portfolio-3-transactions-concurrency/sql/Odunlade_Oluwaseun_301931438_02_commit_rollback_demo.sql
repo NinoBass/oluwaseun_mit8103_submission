@@ -1,8 +1,8 @@
 -- =====================================================================
--- Portfolio 3 - 02_commit_rollback_demo.sql
+-- Portfolio 3 - Odunlade_Oluwaseun_301931438_02_commit_rollback_demo.sql
 -- Single-session demonstrations of COMMIT, automatic ROLLBACK on error,
 -- explicit ROLLBACK, SAVEPOINT / ROLLBACK TO SAVEPOINT, and durability.
--- Run:  psql -d seunbaba -e -f sql/02_commit_rollback_demo.sql
+-- Run:  psql -d seunbaba -e -f sql/Odunlade_Oluwaseun_301931438_02_commit_rollback_demo.sql
 -- =====================================================================
 SET search_path = seunbaba, public;
 \set QUIET off

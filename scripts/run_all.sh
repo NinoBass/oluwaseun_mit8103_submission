@@ -28,10 +28,10 @@ python3 Odunlade_Oluwaseun_301931438_q4_regression_diagnosis.py > evidence/Odunl
 
 echo "== Portfolio 3: transactions"
 cd "$ROOT/portfolio-3-transactions-concurrency"
-$PSQL -q -v ON_ERROR_STOP=1 -f sql/01_checkout_functions.sql
-$PSQL -q -f sql/00_demo_setup.sql > /dev/null
-$PSQL -e -f sql/02_commit_rollback_demo.sql > evidence/02_commit_rollback_output.txt 2>&1 || true
-python3 scripts/concurrency_demos.py > /dev/null
+$PSQL -q -v ON_ERROR_STOP=1 -f sql/Odunlade_Oluwaseun_301931438_01_checkout_functions.sql
+$PSQL -q -f sql/Odunlade_Oluwaseun_301931438_00_demo_setup.sql > /dev/null
+$PSQL -e -f sql/Odunlade_Oluwaseun_301931438_02_commit_rollback_demo.sql > evidence/Odunlade_Oluwaseun_301931438_02_commit_rollback_output.txt 2>&1 || true
+python3 scripts/Odunlade_Oluwaseun_301931438_concurrency_demos.py > /dev/null
 
 echo "== Portfolio 4: MongoDB + Redis"
 cd "$ROOT/portfolio-4-nosql"
