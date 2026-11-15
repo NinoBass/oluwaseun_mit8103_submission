@@ -87,7 +87,7 @@ const rubric = [
   ["Practical implementation (8)", "16-table schema + 300k-order generator; transactional checkout functions; MongoDB/Redis implementations; 7 live database servers; one-command rebuild (scripts/run_all.sh)."],
   ["Query & performance analysis (5)", "Portfolio 2: plans, buffers and median timings for 7 queries; regression diagnosed by controlled experiment; index cost trade-offs."],
   ["Advanced concepts (5)", "MVCC and SSI, BRIN/GIN/partial indexes, materialised views, aggregate modelling, optimistic transactions, WAL replication, pg_rewind, sharding, CAP/PACELC."],
-  ["Documentation & GitHub (5)", "Brief's folder structure; each README opens with an evidence map (deliverable to file); docs/DEVELOPMENT_LOG.md records 17 problems and fixes."],
+  ["Documentation & GitHub (5)", "Brief's folder structure; each README opens with an evidence map (deliverable to file); docs/DEVELOPMENT_LOG.md records 23 problems and fixes."],
   ["Reflection & understanding (3)", "Section 4 above; docs/REFLECTION.md; docs/VERIFICATION_GUIDE.md (32 questions answered, code walkthroughs)."],
 ];
 const rubricTable = new Table({ width: { size: W, type: WidthType.DXA }, columnWidths: rcols, rows: [
