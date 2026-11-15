@@ -9,11 +9,11 @@ server stopped
 
 ### customer 1207 lives on shard2 -> unavailable ###
 ERROR:  could not connect to server "shard2"
-DETAIL:  connection to server at "localhost" (127.0.0.1), port 5435 failed: Connection refused
+DETAIL:  connection to server at "localhost" (::1), port 5435 failed: Connection refused
 	Is the server running on that host and accepting TCP/IP connections?
 ### company-wide report needs every shard -> fails ###
 ERROR:  could not connect to server "shard2"
-DETAIL:  connection to server at "localhost" (127.0.0.1), port 5435 failed: Connection refused
+DETAIL:  connection to server at "localhost" (::1), port 5435 failed: Connection refused
 	Is the server running on that host and accepting TCP/IP connections?
 
 ### restarting shard2 ###
