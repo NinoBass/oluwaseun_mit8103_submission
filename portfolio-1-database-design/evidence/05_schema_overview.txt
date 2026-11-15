@@ -1,0 +1,78 @@
+                                            List of relations
+ Schema |        Name        | Type  |  Owner   | Persistence | Access method |    Size    | Description 
+--------+--------------------+-------+----------+-------------+---------------+------------+-------------
+ ojahub | category           | table | postgres | permanent   | heap          | 8192 bytes | 
+ ojahub | coupon             | table | postgres | permanent   | heap          | 8192 bytes | 
+ ojahub | customer           | table | postgres | permanent   | heap          | 5816 kB    | 
+ ojahub | customer_address   | table | postgres | permanent   | heap          | 5536 kB    | 
+ ojahub | customer_order     | table | postgres | permanent   | heap          | 31 MB      | 
+ ojahub | inventory          | table | postgres | permanent   | heap          | 1032 kB    | 
+ ojahub | inventory_movement | table | postgres | permanent   | heap          | 43 MB      | 
+ ojahub | order_item         | table | postgres | permanent   | heap          | 42 MB      | 
+ ojahub | payment            | table | postgres | permanent   | heap          | 32 MB      | 
+ ojahub | product            | table | postgres | permanent   | heap          | 1440 kB    | 
+ ojahub | product_review     | table | postgres | permanent   | heap          | 5392 kB    | 
+ ojahub | shipment           | table | postgres | permanent   | heap          | 27 MB      | 
+ ojahub | shipment_event     | table | postgres | permanent   | heap          | 79 MB      | 
+ ojahub | state_region       | table | postgres | permanent   | heap          | 8192 bytes | 
+ ojahub | vendor             | table | postgres | permanent   | heap          | 16 kB      | 
+ ojahub | warehouse          | table | postgres | permanent   | heap          | 8192 bytes | 
+(16 rows)
+
+                                                          Table "ojahub.customer_order"
+       Column        |           Type           | Collation | Nullable |                                 Default                                  
+---------------------+--------------------------+-----------+----------+--------------------------------------------------------------------------
+ order_id            | bigint                   |           | not null | generated always as identity
+ customer_id         | bigint                   |           | not null | 
+ shipping_address_id | bigint                   |           | not null | 
+ coupon_code         | character varying(20)    |           |          | 
+ order_status        | character varying(12)    |           | not null | 'PENDING'::character varying
+ order_date          | timestamp with time zone |           | not null | now()
+ subtotal            | numeric(14,2)            |           | not null | 0
+ discount_amount     | numeric(14,2)            |           | not null | 0
+ delivery_fee        | numeric(10,2)            |           | not null | 0
+ total_amount        | numeric(14,2)            |           |          | generated always as ((subtotal - discount_amount + delivery_fee)) stored
+Indexes:
+    "customer_order_pkey" PRIMARY KEY, btree (order_id)
+Check constraints:
+    "ck_order_discount" CHECK (discount_amount <= subtotal)
+    "ck_order_status" CHECK (order_status::text = ANY (ARRAY['PENDING'::character varying, 'PAID'::character varying, 'SHIPPED'::character varying, 'DELIVERED'::character varying, 'CANCELLED'::character varying, 'REFUNDED'::character varying]::text[]))
+    "customer_order_delivery_fee_check" CHECK (delivery_fee >= 0::numeric)
+    "customer_order_discount_amount_check" CHECK (discount_amount >= 0::numeric)
+    "customer_order_subtotal_check" CHECK (subtotal >= 0::numeric)
+Foreign-key constraints:
+    "customer_order_coupon_code_fkey" FOREIGN KEY (coupon_code) REFERENCES ojahub.coupon(coupon_code) ON DELETE RESTRICT
+    "customer_order_customer_id_fkey" FOREIGN KEY (customer_id) REFERENCES ojahub.customer(customer_id) ON DELETE RESTRICT
+    "customer_order_shipping_address_id_fkey" FOREIGN KEY (shipping_address_id) REFERENCES ojahub.customer_address(address_id) ON DELETE RESTRICT
+Referenced by:
+    TABLE "ojahub.inventory_movement" CONSTRAINT "inventory_movement_order_id_fkey" FOREIGN KEY (order_id) REFERENCES ojahub.customer_order(order_id) ON DELETE SET NULL
+    TABLE "ojahub.order_item" CONSTRAINT "order_item_order_id_fkey" FOREIGN KEY (order_id) REFERENCES ojahub.customer_order(order_id) ON DELETE CASCADE
+    TABLE "ojahub.payment" CONSTRAINT "payment_order_id_fkey" FOREIGN KEY (order_id) REFERENCES ojahub.customer_order(order_id) ON DELETE RESTRICT
+    TABLE "ojahub.shipment" CONSTRAINT "shipment_order_id_fkey" FOREIGN KEY (order_id) REFERENCES ojahub.customer_order(order_id) ON DELETE RESTRICT
+Triggers:
+    customer_order_address_check BEFORE INSERT OR UPDATE OF shipping_address_id, customer_id ON ojahub.customer_order FOR EACH ROW EXECUTE FUNCTION ojahub.trg_check_order_address()
+
+                         Table "ojahub.inventory"
+    Column     |           Type           | Collation | Nullable | Default 
+---------------+--------------------------+-----------+----------+---------
+ product_id    | bigint                   |           | not null | 
+ warehouse_id  | smallint                 |           | not null | 
+ qty_on_hand   | integer                  |           | not null | 0
+ qty_reserved  | integer                  |           | not null | 0
+ reorder_level | integer                  |           | not null | 10
+ updated_at    | timestamp with time zone |           | not null | now()
+Indexes:
+    "inventory_pkey" PRIMARY KEY, btree (product_id, warehouse_id)
+Check constraints:
+    "ck_inventory_reserved_le_onhand" CHECK (qty_reserved <= qty_on_hand)
+    "inventory_qty_on_hand_check" CHECK (qty_on_hand >= 0)
+    "inventory_qty_reserved_check" CHECK (qty_reserved >= 0)
+    "inventory_reorder_level_check" CHECK (reorder_level >= 0)
+Foreign-key constraints:
+    "inventory_product_id_fkey" FOREIGN KEY (product_id) REFERENCES ojahub.product(product_id) ON DELETE CASCADE
+    "inventory_warehouse_id_fkey" FOREIGN KEY (warehouse_id) REFERENCES ojahub.warehouse(warehouse_id) ON DELETE RESTRICT
+Referenced by:
+    TABLE "ojahub.inventory_movement" CONSTRAINT "inventory_movement_product_id_warehouse_id_fkey" FOREIGN KEY (product_id, warehouse_id) REFERENCES ojahub.inventory(product_id, warehouse_id) ON DELETE CASCADE
+Triggers:
+    inventory_touch BEFORE UPDATE ON ojahub.inventory FOR EACH ROW EXECUTE FUNCTION ojahub.trg_touch_updated_at()
+
