@@ -7,7 +7,7 @@
 | **Programme** | Master of Information Technology, MIVA Open University (School of Postgraduate Studies) |
 | **Session** | 2026/2027, First Semester Continuous Assessment (40 marks) |
 | **Repository** | https://github.com/NinoBass/oluwaseun_mit8103_submission |
-| **Portfolio documentation (2–3 pages)** | [PDF](Odunlade_Oluwaseun_301931438/Odunlade_Oluwaseun_301931438_Documentation.pdf) · [Word](Odunlade_Oluwaseun_301931438/Odunlade_Oluwaseun_301931438_Documentation.docx) · [Evidence pack](Odunlade_Oluwaseun_301931438/Odunlade_Oluwaseun_301931438_Evidence.pdf) |
+| **Portfolio documentation (2–3 pages)** | [PDF](Odunlade_Oluwaseun_301931438_Documentation.pdf) · [Word](Odunlade_Oluwaseun_301931438_Documentation.docx) · [Evidence pack](Odunlade_Oluwaseun_301931438_Evidence.pdf) |
 
 ## Selected organisation (case study)
 
@@ -51,14 +51,13 @@ The same case study and the same data set are used in all five portfolio activit
 │   ├── render_evidence.js                 Mermaid / terminal-output -> PNG (headless Chromium)
 │   ├── build_documentation.js             builds the 3-page LMS Word document
 │   └── build_evidence_pack.py             builds the evidence-pack PDF
-└── Odunlade_Oluwaseun_301931438/          LMS submission folder (named Surname_Firstname_StudentID)
-    ├── Odunlade_Oluwaseun_301931438_Documentation.pdf    the 2-3 page portfolio documentation
-    ├── Odunlade_Oluwaseun_301931438_Documentation.docx   the same, in Word
-    ├── Odunlade_Oluwaseun_301931438_Evidence.pdf         25 captioned screenshots
-    └── Odunlade_Oluwaseun_301931438_README.txt
+├── Odunlade_Oluwaseun_301931438_Documentation.pdf   the 2-3 page portfolio documentation
+├── Odunlade_Oluwaseun_301931438_Documentation.docx  the same, in Word
+├── Odunlade_Oluwaseun_301931438_Evidence.pdf        25 captioned screenshots
+└── Odunlade_Oluwaseun_301931438_README.txt          LMS readme
 ```
 
-The five `portfolio-*` folders and `README.md` follow the structure suggested in the brief. `docs/` and `scripts/` hold material shared by all five portfolios, and the LMS submission folder is kept here as well so the documentation can be read on GitHub.
+The five `portfolio-*` folders and `README.md` follow the structure suggested in the brief. `docs/` and `scripts/` hold material shared by all five portfolios, and the four LMS files sit at the root, so the uploaded folder `Odunlade_Oluwaseun_301931438/` is simply this repository.
 
 ## GitHub repository requirements (§5 of the brief)
 
@@ -96,7 +95,7 @@ Each portfolio folder has its own `README.md` explaining **what was implemented,
 | GitHub repository properly organised | Yes. Suggested structure, per-portfolio README + `sql/`/`scripts/` + `evidence/` |
 | Practical work and supporting evidence included | Yes. 25 screenshots plus raw `.txt` outputs, plans, logs and server configuration files |
 | README / documentation explains the work | Yes. Each README covers how it was implemented, how it was tested, results and analysis |
-| Required files submitted through the LMS | [`Odunlade_Oluwaseun_301931438/`](Odunlade_Oluwaseun_301931438/): documentation (pdf and docx), evidence pack, README.txt. Every name follows `Surname_Firstname_StudentID_DocumentType`, with no spaces |
+| Required files submitted through the LMS | Folder `Odunlade_Oluwaseun_301931438/` = this repository, with the documentation (pdf and docx), evidence pack and README.txt at its root. Every name follows `Surname_Firstname_StudentID_DocumentType`, with no spaces |
 | GitHub link works and is accessible to the assessor | **Student action:** make the repository private and give the assessor access before submitting |
 | Sources, datasets, libraries referenced | Yes. References and tools below; the data set is synthetic and self-generated |
 | AI use declared | Yes. Below, and in the LMS document §6 |
