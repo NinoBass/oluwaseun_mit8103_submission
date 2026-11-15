@@ -6,7 +6,7 @@
 -- REFRESH ... CONCURRENTLY), then answer reports from ~400k small rows
 -- that are already filtered, joined and summed.
 -- =====================================================================
-SET search_path = ojahub, public;
+SET search_path = seunbaba, public;
 
 DROP MATERIALIZED VIEW IF EXISTS mv_daily_product_sales;
 CREATE MATERIALIZED VIEW mv_daily_product_sales AS

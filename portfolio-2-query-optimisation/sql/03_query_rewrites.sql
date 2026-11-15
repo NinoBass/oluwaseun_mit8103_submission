@@ -4,7 +4,7 @@
 -- table is aggregated ONCE (set-based) instead of once per vendor
 -- (correlated sub-query executed 144 times). Same result set.
 -- =====================================================================
-SET search_path = ojahub, public;
+SET search_path = seunbaba, public;
 
 -- @Q7b
 WITH sales AS (
