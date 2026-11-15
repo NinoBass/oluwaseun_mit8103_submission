@@ -1,0 +1,154 @@
+SET search_path = ojahub, public;
+SET
+CREATE OR REPLACE TEMP VIEW flash_stock AS
+SELECT p.sku, i.qty_on_hand, i.qty_reserved, i.qty_on_hand - i.qty_reserved AS available
+FROM product p JOIN inventory i USING (product_id)
+WHERE p.sku LIKE 'OJH-FLASH-%' ORDER BY p.sku;
+CREATE VIEW
+########## T1  COMMIT: successful checkout of 2 phones + 1 earbuds ##########
+SELECT * FROM flash_stock;
+      sku      | qty_on_hand | qty_reserved | available 
+---------------+-------------+--------------+-----------
+ OJH-FLASH-001 |          25 |            0 |        25
+ OJH-FLASH-002 |          25 |            0 |        25
+
+SELECT count(*) AS orders_before FROM customer_order 
+BEGIN;
+BEGIN
+SELECT place_order(
+         1207,
+         jsonb_build_array(
+            jsonb_build_object('product_id', (SELECT product_id FROM product WHERE sku = 'OJH-FLASH-001'), 'qty', 2),
+            jsonb_build_object('product_id', (SELECT product_id FROM product WHERE sku = 'OJH-FLASH-002'), 'qty', 1)),
+         'FLASH3', 'CARD') AS new_order_id 
+SELECT order_id, order_status, subtotal, discount_amount, delivery_fee, total_amount
+FROM customer_order WHERE order_id = 300002;
+ order_id | order_status | subtotal  | discount_amount | delivery_fee | total_amount 
+----------+--------------+-----------+-----------------+--------------+--------------
+   300002 | PENDING      | 217500.00 |       108750.00 |      2500.00 |    111250.00
+
+COMMIT;
+COMMIT
+SELECT * FROM flash_stock;
+      sku      | qty_on_hand | qty_reserved | available 
+---------------+-------------+--------------+-----------
+ OJH-FLASH-001 |          25 |            2 |        23
+ OJH-FLASH-002 |          25 |            1 |        24
+
+SELECT settle_payment(300002, true);
+ settle_payment 
+----------------
+ PAID
+
+SELECT * FROM flash_stock;
+      sku      | qty_on_hand | qty_reserved | available 
+---------------+-------------+--------------+-----------
+ OJH-FLASH-001 |          23 |            0 |        23
+ OJH-FLASH-002 |          24 |            0 |        24
+
+SELECT o.order_id, o.order_status, p.payment_status, p.amount, p.gateway_ref
+FROM customer_order o JOIN payment p USING (order_id) WHERE o.order_id = 300002;
+ order_id | order_status | payment_status |  amount   |   gateway_ref   
+----------+--------------+----------------+-----------+-----------------
+   300002 | PAID         | SUCCESSFUL     | 111250.00 | PSK-LIVE-300002
+
+########## T2  AUTOMATIC ROLLBACK: basket asks for more phones than exist ##########
+SELECT count(*) AS orders_before FROM customer_order;
+ orders_before 
+---------------
+        300001
+
+BEGIN;
+BEGIN
+SELECT place_order(
+         1207,
+         jsonb_build_array(
+            jsonb_build_object('product_id', (SELECT product_id FROM product WHERE sku = 'OJH-FLASH-002'), 'qty', 1),
+            jsonb_build_object('product_id', (SELECT product_id FROM product WHERE sku = 'OJH-FLASH-001'), 'qty', 30)));
+psql:sql/02_commit_rollback_demo.sql:45: ERROR:  Insufficient stock for product 8001 (requested 30)
+CONTEXT:  PL/pgSQL function place_order(bigint,jsonb,text,text) line 55 at RAISE
+SELECT 'this statement is refused because the transaction is aborted';
+psql:sql/02_commit_rollback_demo.sql:46: ERROR:  current transaction is aborted, commands ignored until end of transaction block
+COMMIT;
+ROLLBACK
+SELECT count(*) AS orders_after FROM customer_order;
+ orders_after 
+--------------
+       300001
+
+SELECT * FROM flash_stock;
+      sku      | qty_on_hand | qty_reserved | available 
+---------------+-------------+--------------+-----------
+ OJH-FLASH-001 |          23 |            0 |        23
+ OJH-FLASH-002 |          24 |            0 |        24
+
+########## T3  EXPLICIT ROLLBACK: agent cancels a manual stock adjustment ##########
+BEGIN;
+BEGIN
+UPDATE inventory SET qty_on_hand = qty_on_hand + 100
+WHERE product_id = (SELECT product_id FROM product WHERE sku = 'OJH-FLASH-001') AND warehouse_id = 1;
+UPDATE 1
+SELECT * FROM flash_stock;
+      sku      | qty_on_hand | qty_reserved | available 
+---------------+-------------+--------------+-----------
+ OJH-FLASH-001 |         123 |            0 |       123
+ OJH-FLASH-002 |          24 |            0 |        24
+
+ROLLBACK;
+ROLLBACK
+SELECT * FROM flash_stock;
+      sku      | qty_on_hand | qty_reserved | available 
+---------------+-------------+--------------+-----------
+ OJH-FLASH-001 |          23 |            0 |        23
+ OJH-FLASH-002 |          24 |            0 |        24
+
+########## T4  SAVEPOINT: coupon fails, checkout continues without it ##########
+BEGIN;
+BEGIN
+SAVEPOINT try_with_coupon;
+SAVEPOINT
+SELECT place_order(50,
+         jsonb_build_array(jsonb_build_object('product_id', (SELECT product_id FROM product WHERE sku = 'OJH-FLASH-002'), 'qty', 1)),
+         'BLACKFRI24');
+psql:sql/02_commit_rollback_demo.sql:64: ERROR:  Coupon BLACKFRI24 is invalid, expired or fully redeemed
+CONTEXT:  PL/pgSQL function place_order(bigint,jsonb,text,text) line 85 at RAISE
+ROLLBACK TO SAVEPOINT try_with_coupon;
+ROLLBACK
+SELECT place_order(50,
+         jsonb_build_array(jsonb_build_object('product_id', (SELECT product_id FROM product WHERE sku = 'OJH-FLASH-002'), 'qty', 1)),
+         NULL) AS saved_order_id 
+COMMIT;
+COMMIT
+SELECT order_id, coupon_code, order_status, total_amount FROM customer_order WHERE order_id = 300005;
+ order_id | coupon_code | order_status | total_amount 
+----------+-------------+--------------+--------------
+   300005 |             | PENDING      |     22000.00
+
+SELECT * FROM flash_stock;
+      sku      | qty_on_hand | qty_reserved | available 
+---------------+-------------+--------------+-----------
+ OJH-FLASH-001 |          23 |            0 |        23
+ OJH-FLASH-002 |          24 |            1 |        23
+
+########## T5  Coupon limit (3 redemptions) enforced transactionally ##########
+SELECT coupon_code, max_redemptions, times_redeemed FROM coupon WHERE coupon_code = 'FLASH3';
+ coupon_code | max_redemptions | times_redeemed 
+-------------+-----------------+----------------
+ FLASH3      |               3 |              1
+
+########## T6  DURABILITY: commit is flushed to WAL before success is returned ##########
+SHOW synchronous_commit;
+ synchronous_commit 
+--------------------
+ on
+
+SHOW fsync;
+ fsync 
+-------
+ on
+
+SELECT pg_current_wal_lsn() AS wal_position_after_commits;
+ wal_position_after_commits 
+----------------------------
+ 2/3945BC48
+
