@@ -1,6 +1,6 @@
 -- =====================================================================
 -- Portfolio 5 - sharding/02_coordinator.sql
--- Run on the coordinator (the main OjaHub server, port 5432, db ojahub).
+-- Run on the coordinator (the main SeunBaba server, port 5432, db seunbaba).
 -- Declarative hash partitioning whose partitions are FOREIGN tables on
 -- two shard servers (postgres_fdw). The application keeps talking to one
 -- logical table; the coordinator routes rows and queries to the shards.
@@ -13,9 +13,9 @@ CREATE SCHEMA dist;
 
 -- async_capable: both shards are scanned in parallel; batch_size: bulk INSERTs
 CREATE SERVER shard1 FOREIGN DATA WRAPPER postgres_fdw
-    OPTIONS (host 'localhost', port '5434', dbname 'ojahub_shard', async_capable 'true', batch_size '1000', fetch_size '10000');
+    OPTIONS (host 'localhost', port '5434', dbname 'seunbaba_shard', async_capable 'true', batch_size '1000', fetch_size '10000');
 CREATE SERVER shard2 FOREIGN DATA WRAPPER postgres_fdw
-    OPTIONS (host 'localhost', port '5435', dbname 'ojahub_shard', async_capable 'true', batch_size '1000', fetch_size '10000');
+    OPTIONS (host 'localhost', port '5435', dbname 'seunbaba_shard', async_capable 'true', batch_size '1000', fetch_size '10000');
 CREATE USER MAPPING FOR CURRENT_USER SERVER shard1 OPTIONS (user 'postgres');
 CREATE USER MAPPING FOR CURRENT_USER SERVER shard2 OPTIONS (user 'postgres');
 
@@ -44,14 +44,14 @@ TRUNCATE dist.order_item, dist.customer_order;
 -- Load 2026 orders from the single-node schema; rows are routed by hash(customer_id).
 INSERT INTO dist.customer_order
 SELECT o.order_id, o.customer_id, o.order_date, o.order_status, a.state_code, sr.geo_zone, o.total_amount
-FROM ojahub.customer_order o
-JOIN ojahub.customer_address a ON a.address_id = o.shipping_address_id
-JOIN ojahub.state_region sr ON sr.state_code = a.state_code
+FROM seunbaba.customer_order o
+JOIN seunbaba.customer_address a ON a.address_id = o.shipping_address_id
+JOIN seunbaba.state_region sr ON sr.state_code = a.state_code
 WHERE o.order_date >= '2026-01-01 00:00+01' AND o.order_date < '2026-11-01 00:00+01';
 
 INSERT INTO dist.order_item
 SELECT oi.order_id, o.customer_id, oi.line_no, oi.product_id, oi.quantity, oi.unit_price
-FROM ojahub.order_item oi JOIN ojahub.customer_order o USING (order_id)
+FROM seunbaba.order_item oi JOIN seunbaba.customer_order o USING (order_id)
 WHERE o.order_date >= '2026-01-01 00:00+01' AND o.order_date < '2026-11-01 00:00+01';
 
 ANALYZE dist.customer_order, dist.order_item;

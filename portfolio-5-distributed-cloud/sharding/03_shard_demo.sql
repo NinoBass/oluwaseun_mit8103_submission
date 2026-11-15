@@ -43,8 +43,8 @@ WITH sharded AS (
     WHERE order_status IN ('PAID','SHIPPED','DELIVERED') GROUP BY 1),
 single AS (
     SELECT sr.geo_zone, count(*) n, sum(o.total_amount) rev
-    FROM ojahub.customer_order o JOIN ojahub.customer_address a ON a.address_id = o.shipping_address_id
-    JOIN ojahub.state_region sr ON sr.state_code = a.state_code
+    FROM seunbaba.customer_order o JOIN seunbaba.customer_address a ON a.address_id = o.shipping_address_id
+    JOIN seunbaba.state_region sr ON sr.state_code = a.state_code
     WHERE o.order_date >= '2026-01-01 00:00+01' AND o.order_date < '2026-11-01 00:00+01'
       AND o.order_status IN ('PAID','SHIPPED','DELIVERED') GROUP BY 1)
 SELECT 'only in sharded' AS side, * FROM (TABLE sharded EXCEPT TABLE single) a

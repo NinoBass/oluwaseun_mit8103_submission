@@ -1,6 +1,6 @@
 -- =====================================================================
 -- Portfolio 5 - sharding/01_shard_node.sql
--- Run on EVERY shard server (ports 5434 and 5435), in database ojahub_shard.
+-- Run on EVERY shard server (ports 5434 and 5435), in database seunbaba_shard.
 -- Orders and their lines are sharded by customer_id, so one customer's
 -- orders AND lines always live on the same shard (co-location) and the
 -- "my orders" page never needs a cross-shard join.
