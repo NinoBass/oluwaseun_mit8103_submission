@@ -283,7 +283,7 @@ INSERT INTO shipment (order_id, warehouse_id, courier_name, tracking_number, shi
 SELECT o.order_id,
        (SELECT min(warehouse_id) FROM order_item oi WHERE oi.order_id = o.order_id),
        (ARRAY['GIG Logistics','DHL Nigeria','Kwik Delivery','Sendbox','SeunBaba Express'])[1 + (o.order_id % 5)::int],
-       'OJX' || lpad(o.order_id::text, 9, '0'),
+       'SBX' || lpad(o.order_id::text, 9, '0'),
        CASE o.order_status WHEN 'SHIPPED' THEN 'IN_TRANSIT' WHEN 'REFUNDED' THEN 'RETURNED' ELSE 'DELIVERED' END,
        o.order_date + INTERVAL '1 day' + random() * INTERVAL '10 hours',
        NULL
