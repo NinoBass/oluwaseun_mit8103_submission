@@ -1,13 +1,13 @@
 # Portfolio 1 – Database Design and Modelling
 
-**Student:** Odunlade Oluwaseun (301931438) · **Case study:** OjaHub Commerce Ltd · **DBMS:** PostgreSQL 16.15
+**Student:** Odunlade Oluwaseun (301931438) · **Case study:** SeunBaba Commerce Ltd · **DBMS:** PostgreSQL 16.16
 
 ## At a glance: evidence for the marker
 
 | Expected evidence (assessment brief) | Where to find it |
 |---|---|
 | Chosen case study description | [§1 Case study statement](#1-case-study-statement) |
-| ER diagram | [§2](#2-conceptual-model-er-diagram): [`diagrams/ojahub_erd.png`](diagrams/ojahub_erd.png) (source [`ojahub_erd.mmd`](diagrams/ojahub_erd.mmd)) |
+| ER diagram | [§2](#2-conceptual-model-er-diagram): [`diagrams/seunbaba_erd.png`](diagrams/seunbaba_erd.png) (source [`seunbaba_erd.mmd`](diagrams/seunbaba_erd.mmd)) |
 | Relational schema | [§3](#3-relational-schema-logical-model) (logical) and [`sql/01_schema.sql`](sql/01_schema.sql) (physical DDL) |
 | Keys | [§4 Keys](#4-keys): surrogate, natural, composite, alternate, composite FK, recursive FK |
 | Constraints | [§5](#5-constraints-business-rules-enforced-in-the-database), proven by [`sql/04_constraint_tests.sql`](sql/04_constraint_tests.sql) → [`evidence/04_constraint_tests_output.txt`](evidence/04_constraint_tests_output.txt) |
@@ -21,7 +21,7 @@
 
 | Item | Description |
 |---|---|
-| **Organisation (simulated)** | **OjaHub Commerce Ltd**, a multi-vendor online marketplace based in Ikeja, Lagos. Its name comes from the Yoruba word *ọjà* (market). Independent Nigerian vendors list products, and OjaHub handles checkout, payment collection, warehousing and last-mile delivery from four fulfilment hubs: Lagos, Abuja, Port Harcourt and Kano. |
+| **Organisation (simulated)** | **SeunBaba Commerce Ltd**, a multi-vendor online marketplace based in Ikeja, Lagos. Its name comes from the Yoruba word *ọjà* (market). Independent Nigerian vendors list products, and SeunBaba handles checkout, payment collection, warehousing and last-mile delivery from four fulfilment hubs: Lagos, Abuja, Port Harcourt and Kano. |
 | **Nature of business** | B2C e-commerce in Naira. Customers pay by card, bank transfer, USSD, wallet or pay-on-delivery. Demand is concentrated in Lagos, and there are seasonal peaks around "Detty December", Black Friday and Sallah. |
 | **Database users** | Customers (web/mobile app), vendors (seller portal), warehouse staff (pick, pack and stock), customer-service agents, the finance team (payment reconciliation) and management (sales dashboards). |
 | **Major data stored** | Customers and delivery addresses, vendors, a two-level product category tree, products, stock per warehouse, coupons, orders and order lines, payment attempts, shipments, courier tracking events, product reviews and a stock-movement audit trail. |
@@ -29,9 +29,9 @@
 
 ## 2. Conceptual model (ER diagram)
 
-![OjaHub ER diagram](diagrams/ojahub_erd.png)
+![SeunBaba ER diagram](diagrams/seunbaba_erd.png)
 
-The diagram source is in [`diagrams/ojahub_erd.mmd`](diagrams/ojahub_erd.mmd) (Mermaid, crow's-foot notation). It is rendered to PNG by [`../scripts/render_evidence.js`](../scripts/render_evidence.js).
+The diagram source is in [`diagrams/seunbaba_erd.mmd`](diagrams/seunbaba_erd.mmd) (Mermaid, crow's-foot notation). It is rendered to PNG by [`../scripts/render_evidence.js`](../scripts/render_evidence.js).
 
 Key modelling decisions:
 
@@ -99,7 +99,7 @@ The physical implementation is in [`sql/01_schema.sql`](sql/01_schema.sql).
 
 ## 6. Normalisation
 
-**Starting point: the un-normalised order form.** Before the design, OjaHub's (fictional) pilot ran on a spreadsheet with one row per order:
+**Starting point: the un-normalised order form.** Before the design, SeunBaba's (fictional) pilot ran on a spreadsheet with one row per order:
 
 ```
 ORDER_FORM(order_no, order_date, cust_email, cust_name, cust_phone, delivery_address, city, state, geo_zone,
@@ -145,11 +145,11 @@ tracking_no         → courier, shipment_status
 ## 7. How to build and test
 
 ```bash
-createdb ojahub
-psql -d ojahub -v ON_ERROR_STOP=1 -f sql/01_schema.sql
-psql -d ojahub -v ON_ERROR_STOP=1 -f sql/02_reference_data.sql
-psql -d ojahub -v ON_ERROR_STOP=1 -f sql/03_seed_data.sql      # about 70 s on 4 vCPU
-psql -d ojahub -e -f sql/04_constraint_tests.sql
+createdb seunbaba
+psql -d seunbaba -v ON_ERROR_STOP=1 -f sql/01_schema.sql
+psql -d seunbaba -v ON_ERROR_STOP=1 -f sql/02_reference_data.sql
+psql -d seunbaba -v ON_ERROR_STOP=1 -f sql/03_seed_data.sql      # about 35 s on an Apple M5 Pro
+psql -d seunbaba -e -f sql/04_constraint_tests.sql
 ```
 
 The seed is deterministic (`setseed(0.8103)`) and fully synthetic, with no real personal data. Volumes: 50,000 customers, 8,000 products, 300,000 orders, 642,738 order lines, 1.12 million tracking events. Table sizes are in [`evidence/05_schema_overview.txt`](evidence/05_schema_overview.txt).
