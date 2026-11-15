@@ -34,14 +34,16 @@ The same case study and the same data set are used in all five portfolio activit
 │   ├── sql/  scripts/concurrency_demos.py lost update, non-repeatable read, write skew, deadlock, 40-buyer stress test
 │   └── evidence/
 ├── portfolio-4-nosql/                     MongoDB document model + transactions, Redis, Cassandra design
-│   ├── mongodb/  redis/  cassandra_design/  crosscheck_sql_vs_mongo.py
+│   ├── mongodb/  redis/  cassandra_design/  config/redis.conf  crosscheck_sql_vs_mongo.py
 │   └── evidence/
 ├── portfolio-5-distributed-cloud/         streaming replication, failover + pg_rewind, postgres_fdw sharding,
-│   ├── replication/  sharding/  mongodb-replica-set/  cloud/terraform/  MongoDB elections, AWS design
+│   ├── replication/  sharding/  mongodb-replica-set/  MongoDB elections, AWS design
+│   ├── config/   server configuration (primary, standby, shards, MongoDB replica set)
+│   ├── cloud/    architecture diagram + terraform/ (design only)
 │   └── evidence/
 ├── docs/
 │   ├── REFLECTION.md                      individual technical reflection (design choices, challenges, lessons)
-│   ├── DEVELOPMENT_LOG.md                 17 problems met, diagnosis and fix, with commit references
+│   ├── DEVELOPMENT_LOG.md                 23 problems met, diagnosis and fix, with commit references
 │   └── VERIFICATION_GUIDE.md              32 likely verification questions with answers + code walkthroughs
 ├── scripts/
 │   ├── run_all.sh                         rebuilds the database and regenerates all evidence of P1-P4
@@ -49,9 +51,26 @@ The same case study and the same data set are used in all five portfolio activit
 │   ├── render_evidence.js                 Mermaid / terminal-output -> PNG (headless Chromium)
 │   ├── build_documentation.js             builds the 3-page LMS Word document
 │   └── build_evidence_pack.py             builds the evidence-pack PDF
-├── Odunlade_Oluwaseun_301931438/          LMS submission folder (documentation, evidence pack, README)
-└── Odunlade_Oluwaseun_301931438.zip       the same folder, zipped for upload
+└── Odunlade_Oluwaseun_301931438/          LMS submission folder (named Surname_Firstname_StudentID)
+    ├── Odunlade_Oluwaseun_301931438_Documentation.pdf    the 2-3 page portfolio documentation
+    ├── Odunlade_Oluwaseun_301931438_Documentation.docx   the same, in Word
+    ├── Odunlade_Oluwaseun_301931438_Evidence.pdf         25 captioned screenshots
+    └── Odunlade_Oluwaseun_301931438_README.txt
 ```
+
+The five `portfolio-*` folders and `README.md` follow the structure suggested in the brief. `docs/` and `scripts/` hold material shared by all five portfolios, and the LMS submission folder is kept here as well so the documentation can be read on GitHub.
+
+## GitHub repository requirements (§5 of the brief)
+
+| Required content | Where |
+|---|---|
+| I. SQL scripts | `portfolio-1…/sql/`, `portfolio-2…/sql/`, `portfolio-3…/sql/`, `portfolio-5…/sharding/` |
+| II. Database schemas | [`portfolio-1-database-design/sql/01_schema.sql`](portfolio-1-database-design/sql/01_schema.sql), [`sharding/01_shard_node.sql`](portfolio-5-distributed-cloud/sharding/01_shard_node.sql), MongoDB `$jsonSchema` validators in [`01_migrate_from_postgres.py`](portfolio-4-nosql/mongodb/01_migrate_from_postgres.py) |
+| III. ER diagrams / database models | [`portfolio-1-database-design/diagrams/`](portfolio-1-database-design/diagrams/), document model in [P4 README](portfolio-4-nosql/README.md), Cassandra model in [`cassandra_design/`](portfolio-4-nosql/cassandra_design/) |
+| IV. NoSQL implementations | [`portfolio-4-nosql/mongodb/`](portfolio-4-nosql/mongodb/), [`portfolio-4-nosql/redis/`](portfolio-4-nosql/redis/), [`portfolio-5…/mongodb-replica-set/`](portfolio-5-distributed-cloud/mongodb-replica-set/) |
+| V. Query execution plans and performance results | [`portfolio-2-query-optimisation/evidence/`](portfolio-2-query-optimisation/evidence/) (`before/`, `after/`, `benchmark_summary.md`) |
+| VI. Screenshots, configuration files, test results | `evidence/*.png` and `*.txt` in every portfolio; [`portfolio-5…/config/`](portfolio-5-distributed-cloud/config/), [`portfolio-4-nosql/config/`](portfolio-4-nosql/config/), [`cloud/terraform/`](portfolio-5-distributed-cloud/cloud/terraform/) |
+| VII. Technical documentation and README files | this README, one README per portfolio, [`docs/`](docs/), the LMS documentation above |
 
 Each portfolio folder has its own `README.md` explaining **what was implemented, how it was tested, the evidence, and the analysis**.
 
