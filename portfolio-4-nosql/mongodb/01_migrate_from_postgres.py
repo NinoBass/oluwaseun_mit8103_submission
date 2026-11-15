@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Portfolio 4 - migrate OjaHub data from PostgreSQL (Portfolio 1) into MongoDB 8.0.
+Portfolio 4 - migrate SeunBaba data from PostgreSQL (Portfolio 1) into MongoDB 8.0.
 
 Document model (see ../README.md for the reasoning):
   products   one document per product. Category-specific "attributes" sub-document
@@ -21,7 +21,7 @@ import psycopg2, psycopg2.extras
 from pymongo import MongoClient, ASCENDING, DESCENDING, TEXT
 from bson.decimal128 import Decimal128
 
-PG = "host=localhost dbname=ojahub user=postgres"
+PG = "host=localhost dbname=seunbaba user=postgres"
 MONGO = "mongodb://localhost:27017/?replicaSet=rs0"
 SINCE = "2026-01-01 00:00+01"
 
@@ -68,10 +68,10 @@ def main():
     t0 = time.time()
     pg = psycopg2.connect(PG)
     cur = pg.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cur.execute("SET search_path = ojahub, public")
+    cur.execute("SET search_path = seunbaba, public")
     mc = MongoClient(MONGO)
-    mc.drop_database("ojahub")
-    db = mc.ojahub
+    mc.drop_database("seunbaba")
+    db = mc.seunbaba
 
     # ---------------- schema validation (MongoDB is schema-flexible, not schema-less) -------
     db.create_collection("orders", validator={"$jsonSchema": {
@@ -89,7 +89,7 @@ def main():
         validationAction="error")
     db.create_collection("products", validator={"$jsonSchema": {
         "bsonType": "object", "required": ["_id", "sku", "name", "price", "category"],
-        "properties": {"price": {"bsonType": "decimal"}, "sku": {"bsonType": "string", "pattern": "^OJH-"}}}})
+        "properties": {"price": {"bsonType": "decimal"}, "sku": {"bsonType": "string", "pattern": "^SBB-"}}}})
 
     # ---------------- products ----------------
     cur.execute("""
