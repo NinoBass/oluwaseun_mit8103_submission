@@ -12,15 +12,15 @@ Portfolio 5 - streaming replication behaviour, measured.
 import statistics, threading, time
 import psycopg2
 
-PRIMARY = "host=localhost port=5432 dbname=ojahub user=postgres"
-STANDBY = "host=localhost port=5433 dbname=ojahub user=postgres"
+PRIMARY = "host=localhost port=5432 dbname=seunbaba user=postgres"
+STANDBY = "host=localhost port=5433 dbname=seunbaba user=postgres"
 
 
 def connect(dsn):
     c = psycopg2.connect(dsn)
     c.autocommit = True
     cur = c.cursor()
-    cur.execute("SET search_path = ojahub, public")
+    cur.execute("SET search_path = seunbaba, public")
     return c, cur
 
 
