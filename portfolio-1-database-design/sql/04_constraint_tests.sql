@@ -2,9 +2,9 @@
 -- Portfolio 1 - 04_constraint_tests.sql
 -- Each statement below is EXPECTED TO FAIL. It proves that a business
 -- rule is enforced by the database itself rather than by application code.
--- Run with:  psql -d ojahub -e -f 04_constraint_tests.sql   (no ON_ERROR_STOP)
+-- Run with:  psql -d seunbaba -e -f 04_constraint_tests.sql   (no ON_ERROR_STOP)
 -- =====================================================================
-SET search_path = ojahub, public;
+SET search_path = seunbaba, public;
 \echo '==== Row counts after seeding ===='
 SELECT 'customer' AS table_name, count(*) FROM customer UNION ALL
 SELECT 'customer_address', count(*) FROM customer_address UNION ALL
