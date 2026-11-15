@@ -1,0 +1,89 @@
+-- Q4 (before)
+WITH sales AS (
+    SELECT p.product_id, p.product_name, parent.category_name AS top_category,
+           sum(oi.quantity)                 AS units,
+           sum(oi.quantity * oi.unit_price) AS revenue
+    FROM customer_order o
+    JOIN order_item oi    ON oi.order_id = o.order_id
+    JOIN product p        ON p.product_id = oi.product_id
+    JOIN category leaf    ON leaf.category_id = p.category_id
+    JOIN category parent  ON parent.category_id = leaf.parent_category_id
+    WHERE o.order_date >= TIMESTAMPTZ '2026-08-02 00:00+01'
+      AND o.order_status <> 'CANCELLED'
+    GROUP BY p.product_id, p.product_name, parent.category_name
+)
+SELECT top_category, rnk, product_name, units, revenue
+FROM (SELECT s.*, dense_rank() OVER (PARTITION BY top_category ORDER BY revenue DESC) AS rnk FROM sales s) r
+WHERE rnk <= 5
+ORDER BY top_category, rnk;
+
+Incremental Sort  (cost=31002.87..36918.44 rows=70043 width=89) (actual time=133.958..134.450 rows=40 loops=1)
+  Sort Key: r.top_category, r.rnk
+  Presorted Key: r.top_category
+  Full-sort Groups: 2  Sort Method: quicksort  Average Memory: 28kB  Peak Memory: 28kB
+  Buffers: shared hit=9935
+  ->  Subquery Scan on r  (cost=30977.56..33078.85 rows=70043 width=89) (actual time=132.912..134.424 rows=40 loops=1)
+        Buffers: shared hit=9935
+        ->  WindowAgg  (cost=30977.56..32378.42 rows=70043 width=97) (actual time=132.910..134.416 rows=40 loops=1)
+              Run Condition: (dense_rank() OVER (?) <= 5)
+              Buffers: shared hit=9935
+              ->  Sort  (cost=30977.56..31152.67 rows=70043 width=81) (actual time=132.901..133.726 rows=7954 loops=1)
+                    Sort Key: s.top_category, s.revenue DESC
+                    Sort Method: quicksort  Memory: 848kB
+                    Buffers: shared hit=9935
+                    ->  Subquery Scan on s  (cost=23764.55..25340.52 rows=70043 width=81) (actual time=120.881..124.635 rows=7954 loops=1)
+                          Buffers: shared hit=9935
+                          ->  Finalize HashAggregate  (cost=23764.55..24640.09 rows=70043 width=89) (actual time=120.880..123.840 rows=7954 loops=1)
+                                Group Key: p.product_id, parent.category_name
+                                Batches: 1  Memory Usage: 5649kB
+                                Buffers: shared hit=9935
+                                ->  Gather  (cost=16833.12..23034.93 rows=58370 width=89) (actual time=99.485..105.844 rows=20610 loops=1)
+                                      Workers Planned: 2
+                                      Workers Launched: 2
+                                      Buffers: shared hit=9935
+                                      ->  Partial HashAggregate  (cost=15833.12..16197.93 rows=29185 width=89) (actual time=95.228..99.144 rows=6870 loops=3)
+                                            Group Key: p.product_id, parent.category_name
+                                            Batches: 1  Memory Usage: 4881kB
+                                            Buffers: shared hit=9935
+                                            Worker 0:  Batches: 1  Memory Usage: 4881kB
+                                            Worker 1:  Batches: 1  Memory Usage: 3857kB
+                                            ->  Hash Join  (cost=6408.62..15395.34 rows=29185 width=59) (actual time=46.444..79.348 rows=23320 loops=3)
+                                                  Hash Cond: (leaf.parent_category_id = parent.category_id)
+                                                  Buffers: shared hit=9935
+                                                  ->  Hash Join  (cost=6406.95..15309.12 rows=29185 width=51) (actual time=46.365..75.423 rows=23320 loops=3)
+                                                        Hash Cond: (p.category_id = leaf.category_id)
+                                                        Buffers: shared hit=9904
+                                                        ->  Hash Join  (cost=6405.27..15220.01 rows=29185 width=51) (actual time=46.340..71.330 rows=23320 loops=3)
+                                                              Hash Cond: (oi.product_id = p.product_id)
+                                                              Buffers: shared hit=9901
+                                                              ->  Parallel Hash Join  (cost=6046.27..14784.36 rows=29185 width=18) (actual time=42.937..61.306 rows=23320 loops=3)
+                                                                    Hash Cond: (oi.order_id = o.order_id)
+                                                                    Buffers: shared hit=9358
+                                                                    ->  Parallel Seq Scan on order_item oi  (cost=0.00..8035.08 rows=267808 width=26) (actual time=0.016..18.738 rows=214246 loops=3)
+                                                                          Buffers: shared hit=5357
+                                                                    ->  Parallel Hash  (cost=5876.00..5876.00 rows=13622 width=8) (actual time=12.106..12.108 rows=10892 loops=3)
+                                                                          Buckets: 32768  Batches: 1  Memory Usage: 1568kB
+                                                                          Buffers: shared hit=4001
+                                                                          ->  Parallel Seq Scan on customer_order o  (cost=0.00..5876.00 rows=13622 width=8) (actual time=1.849..9.798 rows=10892 loops=3)
+                                                                                Filter: ((order_date >= '2026-08-02 00:00:00+01'::timestamp with time zone) AND ((order_status)::text <> 'CANCELLED'::text))
+                                                                                Rows Removed by Filter: 89108
+                                                                                Buffers: shared hit=4001
+                                                              ->  Hash  (cost=259.00..259.00 rows=8000 width=41) (actual time=3.362..3.363 rows=8000 loops=3)
+                                                                    Buckets: 8192  Batches: 1  Memory Usage: 647kB
+                                                                    Buffers: shared hit=537
+                                                                    ->  Seq Scan on product p  (cost=0.00..259.00 rows=8000 width=41) (actual time=0.005..1.569 rows=8000 loops=3)
+                                                                          Buffers: shared hit=537
+                                                        ->  Hash  (cost=1.30..1.30 rows=30 width=8) (actual time=0.011..0.012 rows=30 loops=3)
+                                                              Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                                                              Buffers: shared hit=3
+                                                              ->  Seq Scan on category leaf  (cost=0.00..1.30 rows=30 width=8) (actual time=0.002..0.005 rows=30 loops=3)
+                                                                    Buffers: shared hit=3
+                                                  ->  Hash  (cost=1.30..1.30 rows=30 width=16) (actual time=0.031..0.032 rows=30 loops=3)
+                                                        Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                                                        Buffers: shared hit=3
+                                                        ->  Seq Scan on category parent  (cost=0.00..1.30 rows=30 width=16) (actual time=0.014..0.017 rows=30 loops=3)
+                                                              Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=29
+Planning Time: 0.790 ms
+Execution Time: 135.058 ms
