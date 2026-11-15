@@ -15,21 +15,21 @@ ZREVRANGE bestsellers:2026-10 0 4 WITHSCORES ->
    OJH-001892  units=145
    OJH-000704  units=114
 ZREVRANK of OJH-000100 -> None
-top-5 latency: PostgreSQL aggregate 45.09 ms  vs  Redis ZREVRANGE 0.454 ms (median of 20)
+top-5 latency: PostgreSQL aggregate 22.83 ms  vs  Redis ZREVRANGE 0.232 ms (median of 20)
 
 ######## R4  Cache-aside for the product detail page (TTL 300 s) ########
-example cached value: {"id": 88, "sku": "OJH-000022", "name": "itel Smartphone 64GB Pro", "price": "1085050.00", "vendor": "Naija Mart 34", "category": "Smartphones", "avg_rating": "3.80", "reviews": 35, "available": 609}
+example cached value: {"id": 88, "sku": "OJH-000022", "name": "itel Smartphone 64GB Pro", "price": "1085050.00", "vendor": "Naija Mart 34", "category": "Smartphones", "avg_rating": "3.46", "reviews": 50, "available": 609}
 requests=10,000  hits=6,181  misses=3,819  hit-ratio=61.8%  -> 62% of page views never reach PostgreSQL
-median latency: PostgreSQL query 0.389 ms | cache hit 0.089 ms | cache miss (query + SET) 0.810 ms
+median latency: PostgreSQL query 0.204 ms | cache hit 0.104 ms | cache miss (query + SET) 0.379 ms
 Invalidation rule: when price/stock changes, the writer runs DEL product:{id} after its SQL COMMIT.
 
 ######## R5  Flash sale in Redis: 40 buyers, 25 units (compare Portfolio 3, test D5) ########
-GET -> check in app -> SET                           success=40  stock left=22  -> WRONG (40 sold + 22 left != 25)  (52 ms)
-DECR (+ INCR compensation)                           success=25  stock left= 0  -> CORRECT  (40 ms)
-Lua script: check + DECRBY + SADD buyer, atomically  success=25  stock left= 0  -> CORRECT  (40 ms)
+GET -> check in app -> SET                           success=40  stock left=23  -> WRONG (40 sold + 23 left != 25)  (22 ms)
+DECR (+ INCR compensation)                           success=25  stock left= 0  -> CORRECT  (16 ms)
+Lua script: check + DECRBY + SADD buyer, atomically  success=25  stock left= 0  -> CORRECT  (15 ms)
 Redis executes each command / script on one thread, so DECR and Lua are atomic without locks.
 Design: Redis gates the stampede in milliseconds; only the 25 winners call place_order() in PostgreSQL,
 which stays the system of record (Redis here runs without persistence: --save '' --appendonly no).
 
 ######## Memory footprint ########
-DBSIZE=3824 keys  used_memory=3.43M
+DBSIZE=3824 keys  used_memory=3.01M
