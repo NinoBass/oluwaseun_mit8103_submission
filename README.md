@@ -95,7 +95,7 @@ Each portfolio folder has its own `README.md` explaining **what was implemented,
 | GitHub repository properly organised | Yes. Suggested structure, per-portfolio README + `sql/`/`scripts/` + `evidence/` |
 | Practical work and supporting evidence included | Yes. 25 screenshots plus raw `.txt` outputs, plans, logs and server configuration files |
 | README / documentation explains the work | Yes. Each README covers how it was implemented, how it was tested, results and analysis |
-| Required files submitted through the LMS | Folder `Odunlade_Oluwaseun_301931438/` = this repository, with the documentation (pdf and docx), evidence pack and README.txt at its root. Every name follows `Surname_Firstname_StudentID_DocumentType`, with no spaces |
+| Required files submitted through the LMS | Folder `Odunlade_Oluwaseun_301931438/` = this repository, with the documentation (pdf and docx), evidence pack and README.txt at its root. Every file in the repository is named `Odunlade_Oluwaseun_301931438_<DocumentType>` with no spaces, except `README.md` (GitHub only displays the front page for that exact name) and `.gitignore` (git only recognises that exact name). |
 | GitHub link works and is accessible to the assessor | **Student action:** make the repository private and give the assessor access before submitting |
 | Sources, datasets, libraries referenced | Yes. References and tools below; the data set is synthetic and self-generated |
 | AI use declared | Yes. Below, and in the LMS document §6 |
