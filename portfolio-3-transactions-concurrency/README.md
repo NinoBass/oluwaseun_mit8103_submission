@@ -1,6 +1,6 @@
 # Portfolio 3 – Transactions and Concurrency
 
-**Case study:** OjaHub Commerce Ltd, checkout and flash sales · **DBMS:** PostgreSQL 16.15 (MVCC, default isolation READ COMMITTED)
+**Case study:** SeunBaba Commerce Ltd, checkout and flash sales · **DBMS:** PostgreSQL 16.16 (MVCC, default isolation READ COMMITTED)
 
 ## At a glance: evidence for the marker
 
@@ -8,7 +8,7 @@
 |---|---|
 | Transaction showing **COMMIT** | T1 in [§3](#3-single-session-results-t1t6), [`sql/02_commit_rollback_demo.sql`](sql/02_commit_rollback_demo.sql) → [`evidence/02_commit_rollback_output.txt`](evidence/02_commit_rollback_output.txt) |
 | Transaction showing **ROLLBACK** | T2 (automatic, on error), T3 (explicit), T4 (`ROLLBACK TO SAVEPOINT`) |
-| **Isolation** | D2 (READ COMMITTED vs REPEATABLE READ), D3 (REPEATABLE READ vs SERIALIZABLE), D1(d), and the level choice in [§5](#5-choosing-an-isolation-level-for-ojahub) |
+| **Isolation** | D2 (READ COMMITTED vs REPEATABLE READ), D3 (REPEATABLE READ vs SERIALIZABLE), D1(d), and the level choice in [§5](#5-choosing-an-isolation-level-for-seunbaba) |
 | **Concurrency issue** | D1 lost update, D2 non-repeatable read, D3 write skew, D4 deadlock, D5 oversell under 40 concurrent buyers |
 | **Control mechanism** | `SELECT … FOR UPDATE` in fixed lock order, atomic conditional `UPDATE`, SERIALIZABLE with retry, CHECK constraints, idempotent payment callback ([`sql/01_checkout_functions.sql`](sql/01_checkout_functions.sql)) |
 | Screenshots / output evidence | `evidence/*.txt` (raw timelines) and `evidence/*.png` |
@@ -17,7 +17,7 @@
 **How it was tested.** Each demo prints the final database state and checks the invariant (for example `success == reserved == orders == 25`). Each anomaly is shown first *occurring*, then *prevented*.
 **Advanced concepts applied.** MVCC snapshots, EvalPlanQual re-check under READ COMMITTED, first-updater-wins, Serializable Snapshot Isolation (rw-antidependency, pivot), deadlock detection, lock ordering, non-transactional sequences, two-phase stock reservation.
 
-## 1. The problem in OjaHub's terms
+## 1. The problem in SeunBaba's terms
 
 During a flash sale ("25 Infinix phones at ₦99,000, 12:00 noon"), hundreds of shoppers press **Buy** within the same second. Each checkout touches **six tables**: inventory, customer_order, order_item, inventory_movement, coupon and payment. The business needs:
 
@@ -56,7 +56,7 @@ The concurrency design of `place_order()`:
 | T5 | The coupon counter shows exactly 1 redemption: T2's rolled-back work did not touch it. | Consistency |
 | T6 | `synchronous_commit = on` and `fsync = on`. COMMIT returns only after the commit record is flushed to the write-ahead log (WAL). | Durability |
 
-**Observation.** The order IDs created were 300002 and then 300005. IDs 300003 and 300004 were consumed by the rolled-back attempts in T2 and T4. Identity and sequence values are **deliberately non-transactional**, so concurrent inserts never wait on each other. Invoice numbers that must be gap-free therefore need a separate, locked counter.
+**Observation.** The order IDs created were 300006 and then 300009. IDs 300007 and 300008 were consumed by the rolled-back attempts in T2 and T4. Identity and sequence values are **deliberately non-transactional**, so concurrent inserts never wait on each other. Invoice numbers that must be gap-free therefore need a separate, locked counter.
 
 ## 4. Concurrency results (D1–D5)
 
@@ -92,11 +92,11 @@ Session A locks FLASH-001 and then wants FLASH-002, while B locks FLASH-002 and 
 | Buyers told "out of stock" | 0 | 15 |
 | `qty_reserved` afterwards | **1** | **25** |
 | Orders / units created | – | 25 / 25 |
-| Wall-clock for all 40 | 72 ms | 179 ms |
+| Wall-clock for all 40 | 41 ms | 75 ms |
 
-All 40 threads start at the same instant using a `threading.Barrier`. The naive version confirmed 40 purchases of a 25-unit item but recorded only 1 reservation: 39 updates were lost and 15 phones were promised that do not exist. With `place_order()`, exactly 25 buyers succeed and 15 receive a clean `OJ003 Insufficient stock` error, and the invariant *confirmed = reserved = ordered = 25* holds. The cost of correctness is serialisation on one hot row, about 2.5× the wall-clock time. For larger sales, OjaHub could shard the stock across several "bucket" rows or move the counter to Redis with an atomic `DECR`, which Portfolio 4 tests (Redis R5: 25 correct sales in about 40 ms).
+All 40 threads start at the same instant using a `threading.Barrier`. The naive version confirmed 40 purchases of a 25-unit item but recorded only 1 reservation: 39 updates were lost and 15 phones were promised that do not exist. With `place_order()`, exactly 25 buyers succeed and 15 receive a clean `SB003 Insufficient stock` error, and the invariant *confirmed = reserved = ordered = 25* holds. The cost of correctness is serialisation on one hot row, about 1.8× the wall-clock time. For larger sales, SeunBaba could shard the stock across several "bucket" rows or move the counter to Redis with an atomic `DECR`, which Portfolio 4 tests (Redis R5: 25 correct sales in about 15 ms).
 
-## 5. Choosing an isolation level for OjaHub
+## 5. Choosing an isolation level for SeunBaba
 
 | Workload | Level | Reason |
 |---|---|---|
@@ -107,9 +107,9 @@ All 40 threads start at the same instant using a `threading.Barrier`. The naive 
 ## 6. How to run
 
 ```bash
-psql -d ojahub -f sql/01_checkout_functions.sql
-psql -d ojahub -f sql/00_demo_setup.sql
-psql -d ojahub -e -f sql/02_commit_rollback_demo.sql
+psql -d seunbaba -f sql/01_checkout_functions.sql
+psql -d seunbaba -f sql/00_demo_setup.sql
+psql -d seunbaba -e -f sql/02_commit_rollback_demo.sql
 pip install psycopg2-binary
 python3 scripts/concurrency_demos.py          # or: D1 D3 ...
 ```
