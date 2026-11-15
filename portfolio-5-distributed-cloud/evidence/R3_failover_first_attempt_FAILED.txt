@@ -1,0 +1,27 @@
+[18:02:33.937] == 0. before: roles and last committed order
+  5432 in_recovery=f  timeline=1
+  5433 in_recovery=t
+  order 300048 committed on primary at 18:02:34.129
+[18:02:34.634] == 1. CRASH: immediate shutdown of the primary
+server stopped
+  client sees: psql: error: connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+[18:02:34.783] == 2. FAILOVER: promote the standby
+server promoted
+  first successful write on new primary after 154 ms (RTO of the database step)
+  5433 in_recovery=f  timeline=1
+  order 300048 present on new primary? t  (RPO check)
+  orders on new primary: 300026
+[18:02:35.128] == 3. REJOIN: rewind the old primary and attach it as a standby of 5433
+  pg_rewind: servers diverged at WAL location 2/46851FD0 on timeline 1
+  pg_rewind: error: could not open file "/var/lib/postgresql/work/primary/pg_wal/000000010000000200000045": No such file or directory
+  pg_rewind: error: could not find previous WAL record at 2/45FFFFB0
+server started
+  pg_stat_replication on 5433: old_primary|startup|async
+[18:02:38.666] == 4. PLANNED SWITCHOVER back to the original layout (zero data loss)
+server stopped
+server promoted
+  pg_rewind: error: could not find previous WAL record at 2/45FFFFB0
+server started
+  5432 in_recovery=f  timeline=3
+  failover probe row survived both role changes: 0
+[18:02:41.793] done
