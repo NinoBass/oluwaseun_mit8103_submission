@@ -1,0 +1,94 @@
+SET search_path = ojahub, public;
+SET
+==== Row counts after seeding ====
+SELECT 'customer' AS table_name, count(*) FROM customer UNION ALL
+SELECT 'customer_address', count(*) FROM customer_address UNION ALL
+SELECT 'vendor', count(*) FROM vendor UNION ALL
+SELECT 'product', count(*) FROM product UNION ALL
+SELECT 'inventory', count(*) FROM inventory UNION ALL
+SELECT 'customer_order', count(*) FROM customer_order UNION ALL
+SELECT 'order_item', count(*) FROM order_item UNION ALL
+SELECT 'payment', count(*) FROM payment UNION ALL
+SELECT 'shipment', count(*) FROM shipment UNION ALL
+SELECT 'shipment_event', count(*) FROM shipment_event UNION ALL
+SELECT 'product_review', count(*) FROM product_review UNION ALL
+SELECT 'inventory_movement', count(*) FROM inventory_movement;
+     table_name     |  count  
+--------------------+---------
+ vendor             |     150
+ product            |    8000
+ inventory          |   17522
+ customer           |   50000
+ product_review     |   56547
+ customer_address   |   65000
+ shipment           |  280562
+ customer_order     |  300000
+ payment            |  311320
+ shipment_event     | 1119922
+ order_item         |  642738
+ inventory_movement |  588935
+(12 rows)
+
+==== T1 Entity integrity: duplicate e-mail differing only by case (unique index on lower(email)) ====
+INSERT INTO customer (email, phone, first_name, last_name)
+SELECT upper(email), '+2348000000001', 'Dup', 'Email' FROM customer WHERE customer_id = 1;
+psql:sql/04_constraint_tests.sql:24: ERROR:  duplicate key value violates unique constraint "uq_customer_email_ci"
+DETAIL:  Key (lower(email::text))=(bukola.ekpo1@yahoo.com) already exists.
+==== T2 Domain: phone number must be in +234 format ====
+INSERT INTO customer (email, phone, first_name, last_name)
+VALUES ('test.user@gmail.com', '08031234567', 'Test', 'User');
+psql:sql/04_constraint_tests.sql:28: ERROR:  new row for relation "customer" violates check constraint "ck_customer_phone"
+DETAIL:  Failing row contains (50002, test.user@gmail.com, 08031234567, Test, User, null, ACTIVE, 2026-11-14 18:51:20.638343+01).
+==== T3 Domain: product price must be positive ====
+UPDATE product SET unit_price = -500 WHERE product_id = 10;
+psql:sql/04_constraint_tests.sql:31: ERROR:  new row for relation "product" violates check constraint "product_unit_price_check"
+DETAIL:  Failing row contains (10, 132, 9, OJH-002398, Infinix Smartphone 256GB Plus, Genuine Infinix Smartphone 256GB sold on OjaHub with nationwide ..., -500.00, 0.343, t, 2024-01-02 18:03:40.472698+01).
+==== T4 Referential integrity: order line for a product that does not exist ====
+INSERT INTO order_item (order_id, line_no, product_id, warehouse_id, quantity, unit_price)
+VALUES (1, 99, 999999, 1, 1, 1000);
+psql:sql/04_constraint_tests.sql:35: ERROR:  insert or update on table "order_item" violates foreign key constraint "order_item_product_id_fkey"
+DETAIL:  Key (product_id)=(999999) is not present in table "product".
+==== T5 Referential integrity: cannot delete a customer who has orders (ON DELETE RESTRICT) ====
+DELETE FROM customer WHERE customer_id = (SELECT customer_id FROM customer_order LIMIT 1);
+psql:sql/04_constraint_tests.sql:38: ERROR:  update or delete on table "customer" violates foreign key constraint "customer_order_customer_id_fkey" on table "customer_order"
+DETAIL:  Key (customer_id)=(899) is still referenced from table "customer_order".
+==== T6 Tuple constraint: reserved stock can never exceed stock on hand ====
+UPDATE inventory SET qty_reserved = qty_on_hand + 1 WHERE product_id = 1 AND warehouse_id = 1;
+psql:sql/04_constraint_tests.sql:41: ERROR:  new row for relation "inventory" violates check constraint "ck_inventory_reserved_le_onhand"
+DETAIL:  Failing row contains (1, 1, 394, 395, 15, 2026-11-14 18:51:20.644111+01).
+==== T7 Partial unique index: a customer can only have ONE default address ====
+INSERT INTO customer_address (customer_id, label, street_line, city, state_code, is_default)
+VALUES (1, 'OTHER', '2 Broad Street', 'Lagos Island', 'LA', true);
+psql:sql/04_constraint_tests.sql:45: ERROR:  duplicate key value violates unique constraint "uq_customer_default_address"
+DETAIL:  Key (customer_id)=(1) already exists.
+==== T8 Trigger rule: order must ship to an address owned by the same customer ====
+INSERT INTO customer_order (customer_id, shipping_address_id)
+VALUES (1, (SELECT address_id FROM customer_address WHERE customer_id = 2 AND is_default));
+psql:sql/04_constraint_tests.sql:49: ERROR:  Address 2 does not belong to customer 1
+CONTEXT:  PL/pgSQL function trg_check_order_address() line 6 at RAISE
+==== T9 Generated column cannot be written directly ====
+UPDATE customer_order SET total_amount = 0 WHERE order_id = 1;
+psql:sql/04_constraint_tests.sql:52: ERROR:  column "total_amount" can only be updated to DEFAULT
+DETAIL:  Column "total_amount" is a generated column.
+==== T10 Coupon cannot be redeemed beyond its limit ====
+UPDATE coupon SET times_redeemed = max_redemptions + 1 WHERE coupon_code = 'BLACKFRI25';
+psql:sql/04_constraint_tests.sql:55: ERROR:  new row for relation "coupon" violates check constraint "ck_coupon_redemptions"
+DETAIL:  Failing row contains (BLACKFRI25, 20.00, 100000, 100001, 2025-11-01 00:00:00+01, 2025-12-31 00:00:00+01).
+==== T11 Composite PK: duplicate (order_id, line_no) ====
+INSERT INTO order_item (order_id, line_no, product_id, warehouse_id, quantity, unit_price)
+SELECT order_id, line_no, product_id, warehouse_id, quantity, unit_price FROM order_item WHERE order_id = 1 AND line_no = 1;
+psql:sql/04_constraint_tests.sql:59: ERROR:  duplicate key value violates unique constraint "order_item_pkey"
+DETAIL:  Key (order_id, line_no)=(1, 1) already exists.
+==== T12 Valid statement for contrast: generated total recalculates automatically ====
+BEGIN;
+BEGIN
+UPDATE customer_order SET delivery_fee = delivery_fee + 500 WHERE order_id = 1
+RETURNING order_id, subtotal, discount_amount, delivery_fee, total_amount;
+ order_id | subtotal  | discount_amount | delivery_fee | total_amount 
+----------+-----------+-----------------+--------------+--------------
+        1 | 110700.00 |            0.00 |      4000.00 |    114700.00
+(1 row)
+
+UPDATE 1
+ROLLBACK;
+ROLLBACK
