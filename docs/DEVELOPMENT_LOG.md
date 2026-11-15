@@ -27,6 +27,7 @@ A chronological record of how the portfolio was built. It covers the problems me
 | 21 | P2 | The Q4 regression (item 3) did not reproduce on the second machine | With 18 cores and the default `work_mem`, the planner kept the parallel plan and used BRIN inside it (59.2 ms default vs 60.6 ms without bitmap scans) | Both runs documented in Portfolio 2 §3; the materialised view remains the fix (2.7×) | – |
 | 22 | P2 | The benchmark footer said "PostgreSQL 16.15, 4 vCPU" whatever machine produced the numbers | The text was hard-coded | The footer now reads the server version and CPU count | `448411d` |
 | 23 | Docs | Every README number had to match the second run's evidence | – | All READMEs, the verification guide and the LMS document generator updated from the new outputs | this commit series |
+| 24 | Repo | The root README described an LMS submission folder and zip that were not in the repository; the 2–3 page documentation and the server configuration files (brief §5, item VI) were missing | Repository audit against the brief's §5 requirements | Added `Odunlade_Oluwaseun_301931438/` (documentation pdf/docx, evidence pack, README.txt), `config/` folders in P4 and P5, a §5 requirements map, and corrected the structure tree | `0f87719`–`172f0a7` |
 
 ## Evidence-regeneration policy
 
