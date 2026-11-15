@@ -1,4 +1,4 @@
-SET search_path = ojahub, public;
+SET search_path = seunbaba, public;
 SET
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 CREATE EXTENSION
@@ -27,7 +27,7 @@ VACUUM
 SELECT indexrelname AS index_name, relname AS table_name,
        pg_size_pretty(pg_relation_size(indexrelid)) AS size
 FROM pg_stat_user_indexes
-WHERE schemaname = 'ojahub' AND indexrelname ~ '^(ix_|brin_|gin_)'
+WHERE schemaname = 'seunbaba' AND indexrelname ~ '^(ix_|brin_|gin_)'
 ORDER BY pg_relation_size(indexrelid) DESC;
          index_name         |   table_name   |  size   
 ----------------------------+----------------+---------
