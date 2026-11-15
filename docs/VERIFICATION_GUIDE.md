@@ -6,7 +6,7 @@
 
 ## Portfolio 1 – Design
 
-**Q1. Why OjaHub, and why model it relationally first?**
+**Q1. Why SeunBaba, and why model it relationally first?**
 E-commerce combines money (payments), shared stock that many users change at once, and history (orders) that must never change. Those need ACID transactions, foreign keys and CHECK constraints, which a relational DBMS enforces itself. Data that fits relations badly (product attributes, the order-page read model, carts) moved to NoSQL in Portfolio 4.
 
 **Q2. What normal form is the schema in, and how do you know?**
@@ -32,17 +32,17 @@ It is derived (`subtotal − discount + delivery_fee`). As a generated stored co
 **Q8. What do `cost`, `actual time`, `rows` and `Buffers` mean in EXPLAIN ANALYZE?**
 `cost` is the planner's *estimate* in abstract units (startup..total). `actual time` is measured milliseconds, per loop. `rows` shows estimated vs actual row counts, and large gaps mean bad statistics. `Buffers: shared hit/read` counts 8 kB pages read from cache or disk. I used buffers as the most stable measure of work.
 
-**Q9. Why was the tracking page (Q2) 3,500× faster after indexing?**
+**Q9. Why was the tracking page (Q2) about 5,100× faster after indexing?**
 PostgreSQL does **not** index foreign-key columns automatically. Without indexes it seq-scanned 280k shipments and 1.12 M events (13,757 buffers) to return 4 rows. With `ix_shipment_order` and `ix_shipment_event_ship(shipment_id, event_time)` it uses an index nested-loop join that touches 8 buffers, and the composite index already returns rows in time order.
 
-**Q10. Adding an index made Q4 slower. Explain.**
-The BRIN index made reading `customer_order` *look* cheap, so the planner chose a serial plan (estimated cost 34,717) over the parallel plan (37,758). But both plans must seq-scan all 642k `order_item` rows, and doing that on one core is slower: 232 ms vs 121 ms. The cost model counts estimated work, not elapsed time or parallelism. I proved this by disabling bitmap scans in a controlled experiment, and fixed it with a materialised view plus early aggregation (49.75 ms).
+**Q10. In your first run, adding an index made Q4 slower. Explain, and why didn't it happen in the final run?**
+In the first run (4-vCPU Linux container), the BRIN index made reading `customer_order` *look* cheap, so the planner chose a serial plan (estimated cost 34,717) over the parallel plan (37,758). But both plans must seq-scan all 642k `order_item` rows, and doing that on one core was slower: 232 ms vs 121 ms. In the final run on the M5 Pro, the planner kept the parallel plan and used BRIN inside it, so Q4 was neither slower nor faster (63.96 → 60.81 ms; default 59.2 ms vs 60.6 ms with bitmap scans off). The cost model counts estimated work, not elapsed time or parallelism, so the same index can produce a worse plan on one machine and a neutral one on another. The fix in both cases was a materialised view plus early aggregation (23.62 ms in the final run, 2.7× faster).
 
 **Q11. Why did no index help Q3?**
-It reads 37% of the orders table. At that selectivity a sequential scan is cheaper than random index access. BRIN also helped little because `order_date` correlation is only 0.55. The real cost is the joins over about 100k rows, so the right fix is pre-aggregation, not another index.
+It reads 37% of the orders table. At that selectivity a sequential scan is cheaper than random index access. In the final run the planner did not use BRIN at all, because `order_date` correlation is only 0.29. The real cost is the joins over about 100k rows, so the right fix is pre-aggregation, not another index.
 
-**Q12. Why was the Q7 rewrite 155× faster but indexes only 7.9×?**
-The original runs a correlated sub-query once per vendor (`loops=144`). Indexes make each repetition cheaper but still repeat it 144 times. The rewrite aggregates each fact table *once* (`GROUP BY vendor_id`) and joins the results, which reduced buffers from 3.27 M to 9,770.
+**Q12. Why was the Q7 rewrite 151× faster but indexes only 7.4×?**
+The original runs a correlated sub-query once per vendor (`loops=144`). Indexes make each repetition cheaper but still repeat it 144 times. The rewrite aggregates each fact table *once* (`GROUP BY vendor_id`) and joins the results, which reduced buffers from 3.27 M to 9,610.
 
 **Q13. What does an index cost?**
 Space (34 MB for `ix_shipment_event_ship`), slower INSERT/UPDATE on that table, and buffer-cache pressure. That is why I did not index low-selectivity columns, and why `ix_order_awaiting_dispatch` is *partial* (40 kB, covering only PAID rows).
@@ -67,7 +67,7 @@ It locks inventory rows `ORDER BY product_id, warehouse_id` before doing any wor
 **Q18. Why reserve stock first and deduct it on payment?**
 Payment is external and slow. Reserving (`qty_reserved`) holds the item without selling it. `settle_payment(true)` converts the reservation into a deduction, and `false` releases it together with the coupon. The callback locks the order row and ignores orders that are no longer PENDING, so a webhook delivered twice is harmless (idempotent).
 
-**Q19. Why were order IDs 300003 and 300004 skipped?**
+**Q19. Why were order IDs 300007 and 300008 skipped?**
 Sequences and identity columns are deliberately non-transactional, so concurrent inserts never wait on each other. Rolled-back inserts still consume their values. Gap-free invoice numbers would need a separately locked counter.
 
 ## Portfolio 4 – NoSQL
@@ -85,18 +85,18 @@ Binary floating point cannot represent values like 0.10 exactly, so sums drift. 
 MongoDB transactions are optimistic: a second writer to the same document gets `WriteConflict (112)` labelled `TransientTransactionError` and must retry (T3). `place_order()` is pessimistic: it waits on `FOR UPDATE`. MongoDB also needs a replica set before it allows multi-document transactions.
 
 **Q24. Why is Redis `DECR` correct where GET-then-SET is not?**
-Redis executes commands on a single thread, so `DECR` and Lua scripts run atomically. GET-then-SET leaves a gap between the read and the write in which other clients interleave (40 "sold" with 22 left). Redis has no durability here, so it is only the admission gate, and PostgreSQL stays the system of record.
+Redis executes commands on a single thread, so `DECR` and Lua scripts run atomically. GET-then-SET leaves a gap between the read and the write in which other clients interleave (40 "sold" with 23 left). Redis has no durability here, so it is only the admission gate, and PostgreSQL stays the system of record.
 
 **Q25. Your cache was slower on a miss. So why use it?**
-A miss costs the query plus a SET (0.81 ms vs 0.39 ms). A hit costs 0.09 ms. The real benefit is that 62% of page views never reach PostgreSQL during peaks (offloading), not saving microseconds per request.
+A miss costs the query plus a SET (0.38 ms vs 0.20 ms). A hit costs 0.10 ms. The real benefit is that 62% of page views never reach PostgreSQL during peaks (offloading), not saving microseconds per request.
 
 ## Portfolio 5 – Distributed
 
 **Q26. Asynchronous vs synchronous replication: what did you measure?**
-Asynchronous commits took 0.50 ms, but 298 of 300 immediate reads on the replica were stale. `synchronous_commit = on` (1.21 ms) waits for the standby to *flush* the WAL, which guarantees no data loss but not visibility. `remote_apply` (1.32 ms) waits for *replay*, which guarantees read-your-writes on the replica.
+Asynchronous commits took 0.127 ms, but 299 of 300 immediate reads on the replica were stale. `synchronous_commit = on` (0.200 ms) waits for the standby to *flush* the WAL, which guarantees no data loss but not visibility. `remote_apply` (0.217 ms) waits for *replay*, which guarantees read-your-writes on the replica.
 
 **Q27. Define RPO and RTO with your numbers.**
-RPO (recovery point objective) is the data you can lose: order 300081, committed just before the crash, was on the new primary, so RPO = 0 in this run. That is likely, but not guaranteed, with asynchronous replication. RTO (recovery time objective) is the time until service is back: writable 152 ms after promotion. Real failure-detection time comes on top.
+RPO (recovery point objective) is the data you can lose: order 300052, committed just before the crash, was on the new primary, so RPO = 0 in this run. That is likely, but not guaranteed, with asynchronous replication. RTO (recovery time objective) is the time until service is back: writable 145 ms after promotion. Real failure-detection time comes on top.
 
 **Q28. What went wrong in your first failover, and what is split-brain?**
 `pg_rewind` failed because the old primary had already recycled a needed WAL segment. My script still started that server and later promoted it, so two servers held diverged histories and the probe row was lost. That is split-brain: two nodes each believe they are the authoritative primary. The fixes were `wal_keep_size`, aborting if `pg_rewind` fails, and, in production, a consensus-based manager with fencing (Patroni with etcd, or RDS Multi-AZ).
@@ -133,11 +133,11 @@ Majority acknowledgement means the write is durable on 2 of 3 nodes, not that it
 | Item | Value |
 |---|---|
 | Data volume | 50,000 customers · 8,000 products · 300,000 orders · 642,738 lines · 1.12 M tracking events |
-| Q2 tracking page | 73.68 ms → 0.02 ms (13,757 → 8 buffers) |
-| Q7 vendor statement | 15.9 s → 103 ms with the rewrite (155×); indexes alone 7.9× |
-| Q4 regression | default 232 ms vs parallel 121 ms; MV + early aggregation 49.75 ms |
-| Flash sale (40 buyers, 25 units) | naive 40 "sold" with only 1 reserved · `place_order` 25/15 · Redis Lua 25 in about 40 ms |
-| Replication | lag median 0.44 ms; async 0.50 ms with 298/300 stale reads; sync 1.21 ms with 0 stale |
-| Failover | writable 152 ms after promotion, RPO 0, then `pg_rewind` and switchover |
+| Q2 tracking page | 35.73 ms → 0.007 ms (13,757 → 8 buffers) |
+| Q7 vendor statement | 7.2 s → 47 ms with the rewrite (151×); indexes alone 7.4× |
+| Q4 | first run: default 232 ms vs parallel 121 ms (regression); final run: 63.96 → 60.81 ms (no regression); MV + early aggregation 23.62 ms |
+| Flash sale (40 buyers, 25 units) | naive 40 "sold" with only 1 reserved · `place_order` 25/15 · Redis Lua 25 in about 15 ms |
+| Replication | lag median 0.16 ms; async 0.127 ms with 299/300 stale reads; sync 0.200 ms with 0 stale |
+| Failover | writable 145 ms after promotion, RPO 0, then `pg_rewind` and switchover |
 | Sharding | 55,667 / 55,319 orders; sharded = single-node (0 differing rows) |
 | MongoDB | 111,129 order documents; election about 11 s (`electionTimeoutMillis` 10,000); majority lost → writes refused |
