@@ -1,0 +1,23 @@
+-- Q2 (after)
+SELECT s.tracking_number, s.courier_name, e.event_status, e.event_location, e.event_time
+FROM shipment s
+JOIN shipment_event e ON e.shipment_id = s.shipment_id
+WHERE s.order_id = 245000
+ORDER BY e.event_time;
+
+Sort  (cost=22.33..22.34 rows=4 width=50) (actual time=0.026..0.027 rows=4 loops=1)
+  Sort Key: e.event_time
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=8
+  ->  Nested Loop  (cost=0.85..22.29 rows=4 width=50) (actual time=0.018..0.022 rows=4 loops=1)
+        Buffers: shared hit=8
+        ->  Index Scan using ix_shipment_order on shipment s  (cost=0.42..8.44 rows=1 width=33) (actual time=0.009..0.009 rows=1 loops=1)
+              Index Cond: (order_id = 245000)
+              Buffers: shared hit=4
+        ->  Index Scan using ix_shipment_event_ship on shipment_event e  (cost=0.43..13.81 rows=4 width=33) (actual time=0.006..0.008 rows=4 loops=1)
+              Index Cond: (shipment_id = s.shipment_id)
+              Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=16
+Planning Time: 0.200 ms
+Execution Time: 0.043 ms
