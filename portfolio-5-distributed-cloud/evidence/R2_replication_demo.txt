@@ -1,0 +1,37 @@
+
+######## R2  Replication lag: primary write -> visible on standby (asynchronous, 50 probes) ########
+replication state     : [('standby1', 'streaming', 'async')]
+visible on standby after: median 0.44 ms, p95 0.61 ms, max 1.52 ms
+
+######## R3  The standby rejects writes ########
+INSERT on standby -> ERROR 25006: ERROR:  cannot execute INSERT in a read-only transaction
+standby pg_is_in_recovery, last replayed LSN: (True, '2/3B015CF8')
+
+######## R4  Consistency vs latency: 300 single-row commits per mode ########
+mode                                         sync_state  mean commit  p95 commit  stale reads
+asynchronous (synchronous_commit=local)      async          0.496 ms    0.715 ms      298 /300
+synchronous, remote flush (=on)              sync           1.211 ms    1.569 ms        0 /300
+synchronous, remote_apply                    sync           1.323 ms    1.877 ms        0 /300
+
+######## R5  Lag during a bulk write burst (2,000,000-row load on the primary) ########
+bulk load took 3.45 s on the primary
+peak replay backlog: 26.3 MB of WAL at t=2.6s (replay_lag 6 ms)
+   t=  0.0s  backlog=   0.00 MB  replay_lag=    0.2 ms
+   t=  0.4s  backlog=   0.00 MB  replay_lag=    0.2 ms
+   t=  0.8s  backlog=  23.79 MB  replay_lag=    0.2 ms
+   t=  1.2s  backlog=   2.49 MB  replay_lag=  140.0 ms
+   t=  1.6s  backlog=   3.02 MB  replay_lag=  146.7 ms
+   t=  2.0s  backlog=   2.36 MB  replay_lag=  171.5 ms
+   t=  2.4s  backlog=   2.13 MB  replay_lag=  251.7 ms
+   t=  2.8s  backlog=  16.87 MB  replay_lag=  207.6 ms
+   t=  3.2s  backlog=   0.44 MB  replay_lag=  169.6 ms
+   t=  3.7s  backlog=  17.68 MB  replay_lag=  142.3 ms
+   t=  4.1s  backlog=   0.00 MB  replay_lag=   85.7 ms
+   t=  4.5s  backlog=   0.00 MB  replay_lag=   85.7 ms
+   t=  4.9s  backlog=   0.00 MB  replay_lag=   85.7 ms
+   t=  5.3s  backlog=   0.00 MB  replay_lag=   85.7 ms
+   t=  5.7s  backlog=   0.00 MB  replay_lag=   85.7 ms
+final backlog: 0 bytes  (standby caught up)
+rows visible on standby: 2000000
+
+clean-up done (probe rows and bulk table removed on primary, and therefore on standby)
