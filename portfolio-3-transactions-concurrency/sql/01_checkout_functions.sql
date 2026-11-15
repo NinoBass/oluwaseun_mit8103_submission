@@ -1,6 +1,6 @@
 -- =====================================================================
 -- Portfolio 3 - 01_checkout_functions.sql
--- The OjaHub checkout as ONE atomic unit of work.
+-- The SeunBaba checkout as ONE atomic unit of work.
 --
 -- place_order()     reserve stock + create order/lines + redeem coupon + start payment
 -- settle_payment()  gateway callback: success -> PAID and stock deducted,
@@ -18,7 +18,7 @@
 --  * Any RAISE inside the function aborts the whole transaction: no partial
 --    order, no orphan reservation (atomicity).
 -- =====================================================================
-SET search_path = ojahub, public;
+SET search_path = seunbaba, public;
 
 CREATE OR REPLACE FUNCTION place_order(
     p_customer_id     BIGINT,
