@@ -1,0 +1,199 @@
+
+######## M1  Customer order history: one collection, no join (SQL Q1 needed customer JOIN customer_order) ########
+{
+  _id: 265847,
+  status: 'DELIVERED',
+  order_date: ISODate('2026-08-03T06:57:32.876Z'),
+  totals: {
+    total: Decimal128('18000.00')
+  }
+}
+{
+  _id: 265712,
+  status: 'DELIVERED',
+  order_date: ISODate('2026-08-02T22:33:19.594Z'),
+  totals: {
+    total: Decimal128('613250.00')
+  }
+}
+{
+  _id: 261349,
+  status: 'DELIVERED',
+  order_date: ISODate('2026-07-22T11:39:19.471Z'),
+  totals: {
+    total: Decimal128('345300.00')
+  }
+}
+with index   : plan=LIMIT <- FETCH <- IXSCAN(ix_customer_date) | keysExamined=8 docsExamined=8 returned=8 time=0ms
+forced scan  : plan=SORT <- COLLSCAN | keysExamined=0 docsExamined=111129 returned=8 time=92ms
+
+######## M2  Tracking page: shipment + all events come back in ONE document read ########
+{
+  _id: 196916,
+  status: 'DELIVERED',
+  shipment: {
+    courier: 'DHL Nigeria',
+    tracking_number: 'OJX000196916',
+    events: [
+      {
+        status: 'PACKED',
+        location: 'Ikeja',
+        at: ISODate('2026-01-25T06:04:27.129Z')
+      },
+      {
+        status: 'IN_TRANSIT',
+        location: 'Ikeja',
+        at: ISODate('2026-01-25T09:04:27.129Z')
+      },
+      {
+        status: 'OUT_FOR_DELIVERY',
+        location: 'Yaba',
+        at: ISODate('2026-01-26T19:36:11.586Z')
+      },
+      {
+        status: 'DELIVERED',
+        location: 'Yaba',
+        at: ISODate('2026-01-27T00:36:11.586Z')
+      }
+    ]
+  }
+}
+plan=EXPRESS_IXSCAN(ux_tracking) | keysExamined=1 docsExamined=1 returned=1 time=0ms
+
+######## M3  Flexible attributes: 5G smartphones, >= 8 GB RAM, >= 256 GB storage, under NGN 400,000 ########
+{
+  name: 'itel Smartphone 256GB Classic',
+  price: Decimal128('65000.00'),
+  attributes: {
+    ram_gb: 8,
+    storage_gb: 256
+  },
+  rating: {
+    avg: 3.71
+  }
+}
+{
+  name: 'Infinix Smartphone 256GB Lite',
+  price: Decimal128('65000.00'),
+  attributes: {
+    ram_gb: 8,
+    storage_gb: 256
+  },
+  rating: {
+    avg: 3.67
+  }
+}
+{
+  name: 'Infinix Smartphone 256GB Original',
+  price: Decimal128('65200.00'),
+  attributes: {
+    ram_gb: 12,
+    storage_gb: 256
+  },
+  rating: {
+    avg: 4.3
+  }
+}
+{
+  name: 'itel Smartphone 256GB Max',
+  price: Decimal128('65200.00'),
+  attributes: {
+    ram_gb: 8,
+    storage_gb: 256
+  },
+  rating: {
+    avg: 3.87
+  }
+}
+{
+  name: 'Samsung Smartphone 256GB Plus',
+  price: Decimal128('68600.00'),
+  attributes: {
+    ram_gb: 12,
+    storage_gb: 256
+  },
+  rating: {
+    avg: 3.93
+  }
+}
+matching products: 18
+plan=SORT <- FETCH <- IXSCAN(ix_leaf_ram_price) | keysExamined=124 docsExamined=121 returned=18 time=1ms
+Same product collection also holds shoes with sizes_eu and rice with nafdac_no, e.g.:
+{
+  name: 'Aba Made Leather Sandals Pro',
+  attributes: {
+    sizes_eu: [
+      38,
+      42,
+      44,
+      45,
+      46
+    ],
+    material: 'Leather',
+    made_in_nigeria: true
+  }
+}
+{
+  name: 'Power Oil Semovita 5kg Plus',
+  attributes: {
+    net_weight_kg: 0.9,
+    pack_size: 6,
+    shelf_life_months: 18,
+    halal: false,
+    nafdac_no: 'A1-6977'
+  }
+}
+Wildcard index query on any attribute (halal groceries): plan=FETCH <- IXSCAN(wix_attributes) | keysExamined=242 docsExamined=242 returned=178 time=0ms
+
+######## M4  Aggregation pipeline: 2026 revenue per geo-zone for Sep-Oct (cross-check with SQL Q3) ########
+North Central  2026-09  orders= 1822  revenue=1153549598.50
+North Central  2026-10  orders= 1771  revenue=1196539718.90
+North East     2026-09  orders=  255  revenue=176150231.50
+North East     2026-10  orders=  260  revenue=179097706.10
+North West     2026-09  orders=  886  revenue=503252058.50
+North West     2026-10  orders=  924  revenue=590848193.20
+South East     2026-09  orders=  970  revenue=697744785.00
+South East     2026-10  orders= 1003  revenue=635741739.50
+South South    2026-09  orders= 1822  revenue=1194806343.50
+South South    2026-10  orders= 1815  revenue=1115939593.40
+South West     2026-09  orders= 4385  revenue=2951547533.50
+South West     2026-10  orders= 4386  revenue=2856962914.40
+
+######## M5  Top 3 products per top-level category, last 90 days ($unwind + $group + $setWindowFields) ########
+Baby Products     #1 SMA Infant Formula 800g Classic      units=14 revenue=1047200.00
+Baby Products     #2 Tommee Tippee Infant Formula 800g Classic units=11 revenue=939200.00
+Baby Products     #3 Tommee Tippee Infant Formula 800g Lite units=10 revenue=748850.00
+Computing         #1 Asus Laptop Ryzen 5 Pro              units=41 revenue=100024750.00
+Computing         #2 Asus Laptop Ryzen 5 Edition 2025     units=26 revenue=61686400.00
+Computing         #3 Lenovo Laptop Core i5 8GB Max        units=22 revenue=57247500.00
+Electronics       #1 LG LED TV 32-inch Max                units=24 revenue=29009450.00
+Electronics       #2 Firman Solar Panel 300W Lite         units=20 revenue=27265600.00
+Electronics       #3 Samsung Smart TV 55-inch Original    units=21 revenue=21702750.00
+
+######## M6  Full-text search 'air fryer' (text index, relevance score) ########
+{
+  name: 'Philips Air Fryer Lite',
+  price: Decimal128('24300.00'),
+  score: 13.625
+}
+{
+  name: 'Kenwood Air Fryer Lite',
+  price: Decimal128('9750.00'),
+  score: 13.625
+}
+{
+  name: 'Binatone Air Fryer Pro',
+  price: Decimal128('132250.00'),
+  score: 13.625
+}
+
+######## M7  Atomic single-document update: courier scan appends an event and changes status ########
+{
+  order: 297884,
+  matched: 1,
+  modified: 1,
+  events_now: 3
+}
+
+######## M8  Schema validation rejects a malformed order ########
+REJECTED: Document failed validation  ->  [["status","items","totals"]]
