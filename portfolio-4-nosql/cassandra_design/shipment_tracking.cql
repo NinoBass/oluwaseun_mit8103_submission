@@ -2,11 +2,11 @@
 -- Portfolio 4 - Wide-column (Apache Cassandra) DESIGN for courier tracking.
 -- STATUS: design artefact only. It was NOT executed in this portfolio
 -- (no Cassandra cluster was available). It shows query-first modelling
--- for the highest-volume, append-only OjaHub data: courier scan events
+-- for the highest-volume, append-only SeunBaba data: courier scan events
 -- (1.12 M rows today, growing roughly 4 rows per order).
 -- =====================================================================
 
-CREATE KEYSPACE IF NOT EXISTS ojahub_tracking
+CREATE KEYSPACE IF NOT EXISTS seunbaba_tracking
   WITH replication = {'class': 'NetworkTopologyStrategy', 'lagos_dc': 3, 'abuja_dc': 2};
 
 -- Query 1: "show every scan for tracking number X, newest first" (customer tracking page)
