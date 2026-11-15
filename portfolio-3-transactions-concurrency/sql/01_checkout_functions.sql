@@ -44,7 +44,7 @@ BEGIN
     WHERE c.customer_id = p_customer_id AND c.account_status = 'ACTIVE';
     IF NOT FOUND THEN
         RAISE EXCEPTION 'Customer % is not active or has no default address', p_customer_id
-              USING ERRCODE = 'OJ001';
+              USING ERRCODE = 'SB001';
     END IF;
 
     -- 2. lock every stock row involved, always in the same order (deadlock avoidance)
@@ -69,7 +69,7 @@ BEGIN
         SELECT p.unit_price INTO v_price FROM product p
         WHERE p.product_id = v_item.product_id AND p.is_active;
         IF NOT FOUND THEN
-            RAISE EXCEPTION 'Product % is not available', v_item.product_id USING ERRCODE = 'OJ002';
+            RAISE EXCEPTION 'Product % is not available', v_item.product_id USING ERRCODE = 'SB002';
         END IF;
 
         -- warehouse with enough free stock (rows are already locked by step 2)
@@ -81,7 +81,7 @@ BEGIN
         LIMIT 1;
         IF NOT FOUND THEN
             RAISE EXCEPTION 'Insufficient stock for product % (requested %)', v_item.product_id, v_item.qty
-                  USING ERRCODE = 'OJ003';
+                  USING ERRCODE = 'SB003';
         END IF;
 
         UPDATE inventory SET qty_reserved = qty_reserved + v_item.qty
@@ -98,7 +98,7 @@ BEGIN
     END LOOP;
 
     IF v_line = 0 THEN
-        RAISE EXCEPTION 'Basket is empty' USING ERRCODE = 'OJ004';
+        RAISE EXCEPTION 'Basket is empty' USING ERRCODE = 'SB004';
     END IF;
 
     -- 5. coupon: atomic conditional increment (no read-then-write race)
@@ -111,7 +111,7 @@ BEGIN
         RETURNING discount_pct INTO v_discount_pct;
         IF NOT FOUND THEN
             RAISE EXCEPTION 'Coupon % is invalid, expired or fully redeemed', p_coupon_code
-                  USING ERRCODE = 'OJ005';
+                  USING ERRCODE = 'SB005';
         END IF;
     END IF;
 
@@ -139,7 +139,7 @@ BEGIN
     -- lock the order header first: two callbacks for the same order are serialised
     SELECT order_status INTO v_status FROM customer_order WHERE order_id = p_order_id FOR UPDATE;
     IF v_status IS NULL THEN
-        RAISE EXCEPTION 'Order % not found', p_order_id USING ERRCODE = 'OJ006';
+        RAISE EXCEPTION 'Order % not found', p_order_id USING ERRCODE = 'SB006';
     ELSIF v_status <> 'PENDING' THEN
         RETURN 'IGNORED (order already ' || v_status || ')';      -- idempotent webhook
     END IF;

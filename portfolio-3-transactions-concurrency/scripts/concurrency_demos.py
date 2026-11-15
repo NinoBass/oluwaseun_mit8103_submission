@@ -332,7 +332,7 @@ def d5_flash_sale_stress(buyers=40):
                 c.commit(); ok.append(i)
             except psycopg2.Error as e:
                 c.rollback()
-                (refused if e.pgcode == "OJ003" else errs).append((i, e.pgcode))
+                (refused if e.pgcode == "SB003" else errs).append((i, e.pgcode))
 
         t0 = time.perf_counter()
         ths = [threading.Thread(target=naive if mode == "naive" else safe, args=(i,)) for i in range(buyers)]
