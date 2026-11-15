@@ -7,6 +7,7 @@
 | **Programme** | Master of Information Technology, MIVA Open University (School of Postgraduate Studies) |
 | **Session** | 2026/2027, First Semester Continuous Assessment (40 marks) |
 | **Repository** | https://github.com/NinoBass/oluwaseun_mit8103_submission |
+| **Portfolio documentation (2–3 pages)** | [PDF](Odunlade_Oluwaseun_301931438/Odunlade_Oluwaseun_301931438_Documentation.pdf) · [Word](Odunlade_Oluwaseun_301931438/Odunlade_Oluwaseun_301931438_Documentation.docx) · [Evidence pack](Odunlade_Oluwaseun_301931438/Odunlade_Oluwaseun_301931438_Evidence.pdf) |
 
 ## Selected organisation (case study)
 
