@@ -1,17 +1,17 @@
 ### First run (members added, automatic initial sync):
-child process started successfully, parent exiting
-child process started successfully, parent exiting
-initial sync of 2 new members finished in 4.0 s
-localhost:27017  PRIMARY    health=1
-localhost:27018  SECONDARY  health=1
-localhost:27019  SECONDARY  health=1
+initial sync of 2 new members finished in 5.0 s
+localhost:27017  PRIMARY    health=1  lastApplied=2026-11-15T21:08:35.000Z
+localhost:27018  SECONDARY  health=1  lastApplied=2026-11-15T21:08:35.000Z
+localhost:27019  SECONDARY  health=1  lastApplied=2026-11-15T21:08:33.000Z
+read directly from SECONDARY localhost:27019 -> orders=111130, products=8002
+same counts on PRIMARY                     -> orders=111130, products=8002
 
 ### Second run (script made idempotent; verification read from a secondary):
 mongod 27018 already running
 mongod 27019 already running
 initial sync of 2 new members finished in 0.0 s
-localhost:27017  PRIMARY    health=1  lastApplied=2026-11-14T18:03:44.000Z
-localhost:27018  SECONDARY  health=1  lastApplied=2026-11-14T18:03:44.000Z
-localhost:27019  SECONDARY  health=1  lastApplied=2026-11-14T18:03:44.000Z
+localhost:27017  PRIMARY    health=1  lastApplied=2026-11-15T21:08:35.000Z
+localhost:27018  SECONDARY  health=1  lastApplied=2026-11-15T21:08:35.000Z
+localhost:27019  SECONDARY  health=1  lastApplied=2026-11-15T21:08:33.000Z
 read directly from SECONDARY localhost:27019 -> orders=111130, products=8002
 same counts on PRIMARY                     -> orders=111130, products=8002
