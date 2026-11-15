@@ -22,10 +22,10 @@ SELECT place_order(
             jsonb_build_object('product_id', (SELECT product_id FROM product WHERE sku = 'OJH-FLASH-002'), 'qty', 1)),
          'FLASH3', 'CARD') AS new_order_id 
 SELECT order_id, order_status, subtotal, discount_amount, delivery_fee, total_amount
-FROM customer_order WHERE order_id = 300002;
+FROM customer_order WHERE order_id = 300006;
  order_id | order_status | subtotal  | discount_amount | delivery_fee | total_amount 
 ----------+--------------+-----------+-----------------+--------------+--------------
-   300002 | PENDING      | 217500.00 |       108750.00 |      2500.00 |    111250.00
+   300006 | PENDING      | 217500.00 |       108750.00 |      2500.00 |    111250.00
 
 COMMIT;
 COMMIT
@@ -35,7 +35,7 @@ SELECT * FROM flash_stock;
  OJH-FLASH-001 |          25 |            2 |        23
  OJH-FLASH-002 |          25 |            1 |        24
 
-SELECT settle_payment(300002, true);
+SELECT settle_payment(300006, true);
  settle_payment 
 ----------------
  PAID
@@ -47,10 +47,10 @@ SELECT * FROM flash_stock;
  OJH-FLASH-002 |          24 |            0 |        24
 
 SELECT o.order_id, o.order_status, p.payment_status, p.amount, p.gateway_ref
-FROM customer_order o JOIN payment p USING (order_id) WHERE o.order_id = 300002;
+FROM customer_order o JOIN payment p USING (order_id) WHERE o.order_id = 300006;
  order_id | order_status | payment_status |  amount   |   gateway_ref   
 ----------+--------------+----------------+-----------+-----------------
-   300002 | PAID         | SUCCESSFUL     | 111250.00 | PSK-LIVE-300002
+   300006 | PAID         | SUCCESSFUL     | 111250.00 | PSK-LIVE-300006
 
 ########## T2  AUTOMATIC ROLLBACK: basket asks for more phones than exist ##########
 SELECT count(*) AS orders_before FROM customer_order;
@@ -119,10 +119,10 @@ SELECT place_order(50,
          NULL) AS saved_order_id 
 COMMIT;
 COMMIT
-SELECT order_id, coupon_code, order_status, total_amount FROM customer_order WHERE order_id = 300005;
+SELECT order_id, coupon_code, order_status, total_amount FROM customer_order WHERE order_id = 300009;
  order_id | coupon_code | order_status | total_amount 
 ----------+-------------+--------------+--------------
-   300005 |             | PENDING      |     22000.00
+   300009 |             | PENDING      |     22000.00
 
 SELECT * FROM flash_stock;
       sku      | qty_on_hand | qty_reserved | available 
@@ -150,5 +150,5 @@ SHOW fsync;
 SELECT pg_current_wal_lsn() AS wal_position_after_commits;
  wal_position_after_commits 
 ----------------------------
- 2/3945BC48
+ 0/82E0FCF8
 
