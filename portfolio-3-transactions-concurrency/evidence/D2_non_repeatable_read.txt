@@ -1,0 +1,15 @@
+==============================================================================
+D2  NON-REPEATABLE READ: finance reconciliation reads stock value twice while a restock commits
+==============================================================================
+
+Report session isolation = READ COMMITTED
+  0.060s  [   A   ]  stock value (1st read) = NGN 2,962,500.00
+  0.065s  [   B   ]  restock +10 units of each flash product; COMMIT
+  0.066s  [   A   ]  stock value (2nd read) = NGN 4,147,500.00
+  0.066s  [   A   ]  ==> NON-REPEATABLE READ (values differ inside one transaction)
+
+Report session isolation = REPEATABLE READ
+  0.127s  [   A   ]  stock value (1st read) = NGN 2,962,500.00
+  0.131s  [   B   ]  restock +10 units of each flash product; COMMIT
+  0.132s  [   A   ]  stock value (2nd read) = NGN 2,962,500.00
+  0.132s  [   A   ]  ==> consistent snapshot: both reads see the same data
