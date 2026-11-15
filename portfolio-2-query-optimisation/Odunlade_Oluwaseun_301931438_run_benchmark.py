@@ -3,8 +3,8 @@
 Portfolio 2 benchmark harness (SeunBaba Commerce).
 
 For every query block tagged "-- @Qn" in sql/*.sql it:
-  1. saves the result rows             -> evidence/<phase>/Qn_result.txt
-  2. saves EXPLAIN (ANALYZE, BUFFERS)  -> evidence/<phase>/Qn_plan.txt
+  1. saves the result rows             -> evidence/<phase>/Odunlade_Oluwaseun_301931438_Qn_result.txt
+  2. saves EXPLAIN (ANALYZE, BUFFERS)  -> evidence/<phase>/Odunlade_Oluwaseun_301931438_Qn_plan.txt
   3. runs the query RUNS times after one warm-up and records the median
      server-side execution time reported by EXPLAIN ANALYZE.
 
@@ -20,6 +20,7 @@ import psycopg2
 HERE = os.path.dirname(os.path.abspath(__file__))
 DSN = os.environ.get("SEUNBABA_DSN", "host=localhost dbname=seunbaba user=postgres")
 RUNS = 7
+PREFIX = "Odunlade_Oluwaseun_301931438_"   # every evidence file follows Surname_Firstname_StudentID_DocumentType
 
 
 def load_queries(*files):
@@ -55,7 +56,7 @@ def main(phase):
         cur.execute(sql)
         cols = [d[0] for d in cur.description]
         rows = cur.fetchall()
-        with open(os.path.join(out_dir, f"{name}_result.txt"), "w") as fh:
+        with open(os.path.join(out_dir, f"{PREFIX}{name}_result.txt"), "w") as fh:
             fh.write(f"-- {name}: {len(rows)} row(s)\n" + " | ".join(cols) + "\n")
             for r in rows[:25]:
                 fh.write(" | ".join(str(v) for v in r) + "\n")
@@ -64,7 +65,7 @@ def main(phase):
         # text plan for humans
         cur.execute("EXPLAIN (ANALYZE, BUFFERS, COSTS, TIMING) " + sql)
         plan_txt = "\n".join(r[0] for r in cur.fetchall())
-        with open(os.path.join(out_dir, f"{name}_plan.txt"), "w") as fh:
+        with open(os.path.join(out_dir, f"{PREFIX}{name}_plan.txt"), "w") as fh:
             fh.write(f"-- {name} ({phase})\n{sql};\n\n{plan_txt}\n")
         # timings
         explain(cur, sql)                       # warm-up
@@ -85,7 +86,7 @@ def main(phase):
         }
         print(f"{phase:6} {name:4} {results[name]['median_exec_ms']:>10.3f} ms  "
               f"cost={top['Total Cost']:>12.2f}  buffers={results[name]['shared_hit_blocks']}")
-    json.dump(results, open(os.path.join(HERE, "evidence", f"timings_{phase}.json"), "w"), indent=2)
+    json.dump(results, open(os.path.join(HERE, "evidence", f"{PREFIX}timings_{phase}.json"), "w"), indent=2)
 
 
 def report():
