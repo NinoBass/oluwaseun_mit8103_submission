@@ -10,4 +10,4 @@
 | Q7 (indexes) | 7170.02 | 970.52 | 7.4× | 3,270,873 | 3,100,125 | 2,443,315 | 2,172,572 |
 | Q7 → Q7b (rewrite) | 7170.02 | 47.46 | 151.1× | 3,270,873 | 9,610 | 2,443,315 | 17,619 |
 
-Median of 7 warm runs (EXPLAIN ANALYZE execution time, PostgreSQL 16.15, 4 vCPU).
+Median of 7 warm runs (EXPLAIN ANALYZE execution time, PostgreSQL 16.16, 18 CPU cores, Darwin arm64).
