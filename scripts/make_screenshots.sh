@@ -7,14 +7,19 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 R="node $ROOT/scripts/render_evidence.js"
 TMP="$(mktemp -d)"
 cd "$ROOT"
+# versions shown in the window titles are read from the running servers, not hard-coded
+PGV="PostgreSQL $(psql -h localhost -U postgres -d seunbaba -XAtc 'SHOW server_version' | cut -d' ' -f1)"
+MGV="MongoDB $(mongosh --quiet --port 27017 --eval 'db.version()')"
+RDV="Redis $(redis-cli INFO server | sed -n 's/^redis_version:\(.*\)\r$/\1/p')"
 
 # ---- Portfolio 1
 if [ -n "${MERMAID_JS:-}" ]; then
-  $R mermaid portfolio-1-database-design/diagrams/ojahub_erd.mmd portfolio-1-database-design/diagrams/ojahub_erd.png
+  $R mermaid portfolio-1-database-design/diagrams/seunbaba_erd.mmd portfolio-1-database-design/diagrams/seunbaba_erd.png
+  $R mermaid portfolio-5-distributed-cloud/cloud/architecture.mmd portfolio-5-distributed-cloud/cloud/architecture.png
 fi
 E=portfolio-1-database-design/evidence
 grep -E "^====|ERROR|order_id \||-----\+-|^ +1 \|" $E/04_constraint_tests_output.txt | sed '1,2d; s/^psql:sql\/04_constraint_tests.sql:[0-9]*: //' > $TMP/p1.txt
-$R term $TMP/p1.txt $E/04_constraint_tests.png "psql ojahub -f 04_constraint_tests.sql (PostgreSQL 16.15)"
+$R term $TMP/p1.txt $E/04_constraint_tests.png "psql seunbaba -f 04_constraint_tests.sql ($PGV)"
 
 # ---- Portfolio 2
 E=portfolio-2-query-optimisation/evidence
@@ -40,12 +45,12 @@ $R term $TMP/bench.txt $E/benchmark_summary.png "python3 run_benchmark.py report
 
 # ---- Portfolio 3
 E=portfolio-3-transactions-concurrency/evidence
-grep -E "^(##########|psql:|ERROR| OJH|ROLLBACK$|COMMIT$| PAID|      sku| order_id| orders_| +[0-9]{6} \|| +[0-9]+$| FLASH3| coupon_code)" \
+grep -E "^(##########|psql:|ERROR| SBB|ROLLBACK$|COMMIT$| PAID|      sku| order_id| orders_| +[0-9]{6} \|| +[0-9]+$| FLASH3| coupon_code)" \
   $E/02_commit_rollback_output.txt | sed 's/^psql:sql\/02_commit_rollback_demo.sql:[0-9]*: //' > $TMP/p3.txt
 $R term $TMP/p3.txt $E/02_commit_rollback.png "psql -f 02_commit_rollback_demo.sql (condensed)"
 for f in D1_lost_update D2_non_repeatable_read D3_write_skew D4_deadlock D5_flash_sale_stress; do
   cut -c1-175 $E/$f.txt > $TMP/$f.txt
-  $R term $TMP/$f.txt $E/$f.png "python3 concurrency_demos.py ${f%%_*}  (PostgreSQL 16.15, separate connections)"
+  $R term $TMP/$f.txt $E/$f.png "python3 concurrency_demos.py ${f%%_*}  ($PGV, separate connections)"
 done
 
 # ---- Portfolio 4
@@ -53,10 +58,10 @@ E=portfolio-4-nosql/evidence
 cat $E/01_migration_output.txt > $TMP/m0.txt
 $R term $TMP/m0.txt $E/01_migration.png "python3 01_migrate_from_postgres.py"
 grep -E "########|plan=|matching|REJECTED|orders=|#[1-3] |name: '|score|forced|with index" $E/02_mongodb_queries_output.txt | cut -c1-170 > $TMP/m1.txt
-$R term $TMP/m1.txt $E/02_mongodb_queries.png "mongosh ojahub 02_queries.js (MongoDB 8.0.4, replica set rs0) - condensed"
-$R term $E/03_mongodb_transaction_output.txt $E/03_mongodb_transaction.png "mongosh ojahub 03_transaction.js"
+$R term $TMP/m1.txt $E/02_mongodb_queries.png "mongosh seunbaba 02_queries.js ($MGV, replica set rs0) - condensed"
+$R term $E/03_mongodb_transaction_output.txt $E/03_mongodb_transaction.png "mongosh seunbaba 03_transaction.js"
 cut -c1-180 $E/04_redis_output.txt > $TMP/r.txt
-$R term $TMP/r.txt $E/04_redis.png "python3 redis_demo.py (Redis 7.0.15)"
+$R term $TMP/r.txt $E/04_redis.png "python3 redis_demo.py ($RDV)"
 $R term $E/05_sql_vs_mongodb_crosscheck.txt $E/05_crosscheck.png "python3 crosscheck_sql_vs_mongo.py"
 
 # ---- Portfolio 5 (only if its evidence exists)
