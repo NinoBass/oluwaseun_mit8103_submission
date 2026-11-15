@@ -1,28 +1,28 @@
-[18:03:14.085] == 0. before: roles and last committed order
-  5432 in_recovery=f  timeline=3
+[22:07:43.212] == 0. before: roles and last committed order
+  5432 in_recovery=f  timeline=1
   5433 in_recovery=t
-  order 300081 committed on primary at 18:03:14.258
-[18:03:14.762] == 1. CRASH: immediate shutdown of the primary
+  order 300052 committed on primary at 22:07:43.311
+[22:07:43.838] == 1. CRASH: immediate shutdown of the primary
 server stopped
-  client sees: psql: error: connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
-[18:03:14.907] == 2. FAILOVER: promote the standby
+  client sees: psql: error: connection to server at "localhost" (::1), port 5432 failed: Connection refused
+[22:07:43.981] == 2. FAILOVER: promote the standby
 server promoted
-  first successful write on new primary after 152 ms (RTO of the database step)
-  5433 in_recovery=f  timeline=4
-  order 300081 present on new primary? t  (RPO check)
-  orders on new primary: 300027
-[18:03:15.224] == 3. REJOIN: rewind the old primary and attach it as a standby of 5433
+  first successful write on new primary after 145 ms (RTO of the database step)
+  5433 in_recovery=f  timeline=2
+  order 300052 present on new primary? t  (RPO check)
+  orders on new primary: 300026
+[22:07:44.287] == 3. REJOIN: rewind the old primary and attach it as a standby of 5433
   pg_rewind: creating backup label and updating control file
   pg_rewind: syncing target data directory
   pg_rewind: Done!
 server started
   pg_stat_replication on 5433: old_primary|streaming|async
-[18:03:18.099] == 4. PLANNED SWITCHOVER back to the original layout (zero data loss)
+[22:07:48.944] == 4. PLANNED SWITCHOVER back to the original layout (zero data loss)
 server stopped
 server promoted
   pg_rewind: no rewind required
 server started
-  5432 in_recovery=f  timeline=5
+  5432 in_recovery=f  timeline=3
   pg_stat_replication on 5432: standby1|streaming|async
   failover probe row survived both role changes: 1
-[18:03:20.872] done
+[22:07:51.587] done
