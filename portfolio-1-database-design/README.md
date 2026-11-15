@@ -21,7 +21,7 @@
 
 | Item | Description |
 |---|---|
-| **Organisation (simulated)** | **SeunBaba Commerce Ltd**, a multi-vendor online marketplace based in Ikeja, Lagos. Its name comes from the Yoruba word *ọjà* (market). Independent Nigerian vendors list products, and SeunBaba handles checkout, payment collection, warehousing and last-mile delivery from four fulfilment hubs: Lagos, Abuja, Port Harcourt and Kano. |
+| **Organisation (simulated)** | **SeunBaba Commerce Ltd**, a multi-vendor online marketplace based in Ikeja, Lagos. Its name is a play on *Alibaba*, the e-commerce marketplace. Independent Nigerian vendors list products, and SeunBaba handles checkout, payment collection, warehousing and last-mile delivery from four fulfilment hubs: Lagos, Abuja, Port Harcourt and Kano. |
 | **Nature of business** | B2C e-commerce in Naira. Customers pay by card, bank transfer, USSD, wallet or pay-on-delivery. Demand is concentrated in Lagos, and there are seasonal peaks around "Detty December", Black Friday and Sallah. |
 | **Database users** | Customers (web/mobile app), vendors (seller portal), warehouse staff (pick, pack and stock), customer-service agents, the finance team (payment reconciliation) and management (sales dashboards). |
 | **Major data stored** | Customers and delivery addresses, vendors, a two-level product category tree, products, stock per warehouse, coupons, orders and order lines, payment attempts, shipments, courier tracking events, product reviews and a stock-movement audit trail. |

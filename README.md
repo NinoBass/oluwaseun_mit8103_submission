@@ -10,7 +10,7 @@
 
 ## Selected organisation (case study)
 
-**SeunBaba Commerce Ltd** is a *simulated* multi-vendor e-commerce marketplace headquartered in Ikeja, Lagos ("ọjà" is Yoruba for *market*). Independent Nigerian vendors list products, and SeunBaba handles checkout in Naira (card, bank transfer, USSD, wallet, pay-on-delivery), stock in four fulfilment hubs (Lagos, Abuja, Port Harcourt, Kano), and last-mile delivery through courier partners.
+**SeunBaba Commerce Ltd** is a *simulated* multi-vendor e-commerce marketplace headquartered in Ikeja, Lagos (the name is a play on *Alibaba*, the e-commerce marketplace). Independent Nigerian vendors list products, and SeunBaba handles checkout in Naira (card, bank transfer, USSD, wallet, pay-on-delivery), stock in four fulfilment hubs (Lagos, Abuja, Port Harcourt, Kano), and last-mile delivery through courier partners.
 
 * **Users of the database:** customers (web and mobile app), vendors (seller portal), warehouse staff, customer-service agents, finance (payment reconciliation) and management (dashboards).
 * **Major data:** customers and addresses, vendors, the category tree, products, stock per warehouse, coupons, orders and order lines, payment attempts, shipments, courier scan events, reviews and the stock audit trail.
