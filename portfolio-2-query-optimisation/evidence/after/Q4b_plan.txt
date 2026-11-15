@@ -18,58 +18,58 @@ FROM (SELECT s.*, dense_rank() OVER (PARTITION BY top_category ORDER BY revenue 
 WHERE rnk <= 5
 ORDER BY top_category, rnk;
 
-Incremental Sort  (cost=7938.47..8520.06 rows=7755 width=113) (actual time=74.328..74.552 rows=40 loops=1)
+Incremental Sort  (cost=7895.59..8479.80 rows=7790 width=113) (actual time=24.177..24.252 rows=40 loops=1)
   Sort Key: r.top_category, r.rnk
   Presorted Key: r.top_category
   Full-sort Groups: 2  Sort Method: quicksort  Average Memory: 28kB  Peak Memory: 28kB
-  Buffers: shared hit=3877
-  ->  Subquery Scan on r  (cost=7938.43..8171.08 rows=7755 width=113) (actual time=73.052..74.519 rows=40 loops=1)
-        Buffers: shared hit=3877
-        ->  WindowAgg  (cost=7938.43..8093.53 rows=7755 width=121) (actual time=73.050..74.510 rows=40 loops=1)
+  Buffers: shared hit=4299
+  ->  Subquery Scan on r  (cost=7895.55..8129.25 rows=7790 width=113) (actual time=23.729..24.240 rows=40 loops=1)
+        Buffers: shared hit=4299
+        ->  WindowAgg  (cost=7895.55..8051.35 rows=7790 width=121) (actual time=23.728..24.237 rows=40 loops=1)
               Run Condition: (dense_rank() OVER (?) <= 5)
-              Buffers: shared hit=3877
-              ->  Sort  (cost=7938.43..7957.82 rows=7755 width=105) (actual time=73.040..73.686 rows=7954 loops=1)
+              Buffers: shared hit=4299
+              ->  Sort  (cost=7895.55..7915.02 rows=7790 width=105) (actual time=23.724..23.952 rows=7954 loops=1)
                     Sort Key: parent.category_name, a.revenue DESC
                     Sort Method: quicksort  Memory: 824kB
-                    Buffers: shared hit=3877
-                    ->  Hash Join  (cost=7111.71..7437.42 rows=7755 width=105) (actual time=55.734..63.118 rows=7954 loops=1)
+                    Buffers: shared hit=4299
+                    ->  Hash Join  (cost=7066.11..7392.03 rows=7790 width=105) (actual time=15.753..18.146 rows=7954 loops=1)
                           Hash Cond: (leaf.parent_category_id = parent.category_id)
-                          Buffers: shared hit=3877
-                          ->  Hash Join  (cost=7110.04..7413.28 rows=7755 width=97) (actual time=55.714..61.544 rows=7954 loops=1)
+                          Buffers: shared hit=4299
+                          ->  Hash Join  (cost=7064.44..7367.79 rows=7790 width=97) (actual time=15.745..17.504 rows=7954 loops=1)
                                 Hash Cond: (p.category_id = leaf.category_id)
-                                Buffers: shared hit=3876
-                                ->  Hash Join  (cost=7108.36..7388.37 rows=7755 width=97) (actual time=55.702..59.762 rows=7954 loops=1)
+                                Buffers: shared hit=4298
+                                ->  Hash Join  (cost=7062.76..7342.77 rows=7790 width=97) (actual time=15.739..16.841 rows=7954 loops=1)
                                       Hash Cond: (p.product_id = a.product_id)
-                                      Buffers: shared hit=3875
-                                      ->  Seq Scan on product p  (cost=0.00..259.00 rows=8000 width=41) (actual time=0.003..0.854 rows=8000 loops=1)
+                                      Buffers: shared hit=4297
+                                      ->  Seq Scan on product p  (cost=0.00..259.00 rows=8000 width=41) (actual time=0.001..0.285 rows=8000 loops=1)
                                             Buffers: shared hit=179
-                                      ->  Hash  (cost=7011.43..7011.43 rows=7755 width=72) (actual time=55.686..55.688 rows=7954 loops=1)
+                                      ->  Hash  (cost=6965.39..6965.39 rows=7790 width=72) (actual time=15.736..15.736 rows=7954 loops=1)
                                             Buckets: 8192  Batches: 1  Memory Usage: 499kB
-                                            Buffers: shared hit=3696
-                                            ->  Subquery Scan on a  (cost=6817.55..7011.43 rows=7755 width=72) (actual time=48.631..53.697 rows=7954 loops=1)
-                                                  Buffers: shared hit=3696
-                                                  ->  HashAggregate  (cost=6817.55..6933.88 rows=7755 width=72) (actual time=48.629..52.617 rows=7954 loops=1)
+                                            Buffers: shared hit=4118
+                                            ->  Subquery Scan on a  (cost=6770.64..6965.39 rows=7790 width=72) (actual time=13.804..15.292 rows=7954 loops=1)
+                                                  Buffers: shared hit=4118
+                                                  ->  HashAggregate  (cost=6770.64..6887.49 rows=7790 width=72) (actual time=13.804..14.881 rows=7954 loops=1)
                                                         Group Key: mv_daily_product_sales.product_id
-                                                        Batches: 1  Memory Usage: 4497kB
-                                                        Buffers: shared hit=3696
-                                                        ->  Bitmap Heap Scan on mv_daily_product_sales  (cost=1496.09..6334.00 rows=64473 width=22) (actual time=4.527..21.620 rows=62015 loops=1)
+                                                        Batches: 1  Memory Usage: 4241kB
+                                                        Buffers: shared hit=4118
+                                                        ->  Bitmap Heap Scan on mv_daily_product_sales  (cost=1471.46..6295.44 rows=63359 width=22) (actual time=2.104..6.664 rows=62015 loops=1)
                                                               Recheck Cond: (sale_date >= '2026-08-02'::date)
-                                                              Heap Blocks: exact=3455
-                                                              Buffers: shared hit=3696
-                                                              ->  Bitmap Index Scan on ux_mv_dps  (cost=0.00..1479.97 rows=64473 width=0) (actual time=4.026..4.026 rows=62015 loops=1)
+                                                              Heap Blocks: exact=3877
+                                                              Buffers: shared hit=4118
+                                                              ->  Bitmap Index Scan on ux_mv_dps  (cost=0.00..1455.62 rows=63359 width=0) (actual time=1.770..1.770 rows=62015 loops=1)
                                                                     Index Cond: (sale_date >= '2026-08-02'::date)
                                                                     Buffers: shared hit=241
-                                ->  Hash  (cost=1.30..1.30 rows=30 width=8) (actual time=0.007..0.008 rows=30 loops=1)
+                                ->  Hash  (cost=1.30..1.30 rows=30 width=8) (actual time=0.004..0.004 rows=30 loops=1)
                                       Buckets: 1024  Batches: 1  Memory Usage: 10kB
                                       Buffers: shared hit=1
-                                      ->  Seq Scan on category leaf  (cost=0.00..1.30 rows=30 width=8) (actual time=0.001..0.004 rows=30 loops=1)
+                                      ->  Seq Scan on category leaf  (cost=0.00..1.30 rows=30 width=8) (actual time=0.001..0.002 rows=30 loops=1)
                                             Buffers: shared hit=1
-                          ->  Hash  (cost=1.30..1.30 rows=30 width=16) (actual time=0.014..0.015 rows=30 loops=1)
+                          ->  Hash  (cost=1.30..1.30 rows=30 width=16) (actual time=0.006..0.006 rows=30 loops=1)
                                 Buckets: 1024  Batches: 1  Memory Usage: 10kB
                                 Buffers: shared hit=1
-                                ->  Seq Scan on category parent  (cost=0.00..1.30 rows=30 width=16) (actual time=0.005..0.007 rows=30 loops=1)
+                                ->  Seq Scan on category parent  (cost=0.00..1.30 rows=30 width=16) (actual time=0.002..0.003 rows=30 loops=1)
                                       Buffers: shared hit=1
 Planning:
   Buffers: shared hit=4
-Planning Time: 0.435 ms
-Execution Time: 74.661 ms
+Planning Time: 0.192 ms
+Execution Time: 24.286 ms
