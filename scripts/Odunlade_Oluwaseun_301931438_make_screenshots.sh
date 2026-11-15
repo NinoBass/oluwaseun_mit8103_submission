@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Regenerates every PNG screenshot from the text evidence produced by run_all.sh
+# Regenerates every PNG screenshot from the text evidence produced by Odunlade_Oluwaseun_301931438_run_all.sh
 # (and, for Portfolio 5, by its own scripts). Needs node + playwright, and
 # MERMAID_JS=/path/to/node_modules/mermaid/dist/mermaid.min.js for the ERD.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-R="node $ROOT/scripts/render_evidence.js"
+R="node $ROOT/scripts/Odunlade_Oluwaseun_301931438_render_evidence.js"
 TMP="$(mktemp -d)"
 cd "$ROOT"
 # versions shown in the window titles are read from the running servers, not hard-coded

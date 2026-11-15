@@ -46,11 +46,11 @@ The same case study and the same data set are used in all five portfolio activit
 │   ├── Odunlade_Oluwaseun_301931438_DEVELOPMENT_LOG.md                 23 problems met, diagnosis and fix, with commit references
 │   └── Odunlade_Oluwaseun_301931438_VERIFICATION_GUIDE.md              32 likely verification questions with answers + code walkthroughs
 ├── scripts/
-│   ├── run_all.sh                         rebuilds the database and regenerates all evidence of P1-P4
-│   ├── make_screenshots.sh                re-renders every PNG from the text evidence
-│   ├── render_evidence.js                 Mermaid / terminal-output -> PNG (headless Chromium)
-│   ├── build_documentation.js             builds the 3-page LMS Word document
-│   └── build_evidence_pack.py             builds the evidence-pack PDF
+│   ├── Odunlade_Oluwaseun_301931438_run_all.sh                         rebuilds the database and regenerates all evidence of P1-P4
+│   ├── Odunlade_Oluwaseun_301931438_make_screenshots.sh                re-renders every PNG from the text evidence
+│   ├── Odunlade_Oluwaseun_301931438_render_evidence.js                 Mermaid / terminal-output -> PNG (headless Chromium)
+│   ├── Odunlade_Oluwaseun_301931438_build_documentation.js             builds the 3-page LMS Word document
+│   └── Odunlade_Oluwaseun_301931438_build_evidence_pack.py             builds the evidence-pack PDF
 ├── Odunlade_Oluwaseun_301931438_Documentation.pdf   the 2-3 page portfolio documentation
 ├── Odunlade_Oluwaseun_301931438_Documentation.docx  the same, in Word
 ├── Odunlade_Oluwaseun_301931438_Evidence.pdf        25 captioned screenshots
@@ -79,7 +79,7 @@ Each portfolio folder has its own `README.md` explaining **what was implemented,
 |---|---|
 | **Technical correctness (8)** | Every script was executed, and its raw output is in each `evidence/` folder. Correctness is cross-validated: rewrites `diff`-ed against the originals (P2), invariants asserted in the concurrency demos (P3), SQL vs MongoDB 12/12 identical (P4 `Odunlade_Oluwaseun_301931438_05_sql_vs_mongodb_crosscheck.txt`), sharded vs single-node `EXCEPT` = 0 rows (P5 S5). |
 | **Database design quality (6)** | [P1 README](portfolio-1-database-design/Odunlade_Oluwaseun_301931438_P1_README.md): ERD, relational schema, 6 kinds of key, 11 DBMS-enforced rules, UNF→BCNF derivation from functional dependencies, justified denormalisation |
-| **Practical implementation (8)** | 16-table schema + deterministic 300k-order generator; `place_order()`/`settle_payment()`; MongoDB migration and transaction; Redis structures; 7 live database servers (primary, standby, 2 shards, 3-node replica set); full rebuild via [`scripts/run_all.sh`](scripts/run_all.sh) |
+| **Practical implementation (8)** | 16-table schema + deterministic 300k-order generator; `place_order()`/`settle_payment()`; MongoDB migration and transaction; Redis structures; 7 live database servers (primary, standby, 2 shards, 3-node replica set); full rebuild via [`scripts/Odunlade_Oluwaseun_301931438_run_all.sh`](scripts/Odunlade_Oluwaseun_301931438_run_all.sh) |
 | **Query and performance analysis (5)** | [P2 README](portfolio-2-query-optimisation/Odunlade_Oluwaseun_301931438_P2_README.md) §2–§4: before/after plans for 7 queries, buffers, the Q4 regression experiment, index cost trade-off. Also P4 `explain()` and P5 replication latency. |
 | **Advanced database concepts (5)** | MVCC, isolation anomalies and SSI (P3); BRIN, GIN-trigram, partial/covering indexes, materialised views (P2); aggregate modelling, `$jsonSchema`, optimistic transactions (P4); WAL streaming, `pg_rewind`, sharding, CAP/PACELC, causal consistency (P5). Each README has an "Advanced concepts applied" line. |
 | **Documentation and GitHub organisation (5)** | The brief's suggested folder structure; each portfolio README starts with an **"At a glance"** map from the brief's expected evidence to files; reproducible scripts; [`docs/Odunlade_Oluwaseun_301931438_DEVELOPMENT_LOG.md`](docs/Odunlade_Oluwaseun_301931438_DEVELOPMENT_LOG.md) |
@@ -125,9 +125,9 @@ The final evidence was captured on 15 November 2026 on the machine above. An ear
 
 ```bash
 createdb seunbaba
-bash scripts/run_all.sh          # schema, deterministic seed (about 35 s), Portfolios 1-4 evidence
+bash scripts/Odunlade_Oluwaseun_301931438_run_all.sh          # schema, deterministic seed (about 35 s), Portfolios 1-4 evidence
 # Portfolio 5: see portfolio-5-distributed-cloud/Odunlade_Oluwaseun_301931438_P5_README.md section 6
-MERMAID_JS=/path/to/mermaid.min.js bash scripts/make_screenshots.sh   # needs node + playwright
+MERMAID_JS=/path/to/mermaid.min.js bash scripts/Odunlade_Oluwaseun_301931438_make_screenshots.sh   # needs node + playwright
 ```
 
 All data is **synthetic** and generated deterministically (`setseed(0.8103)`). No real customer data is used.

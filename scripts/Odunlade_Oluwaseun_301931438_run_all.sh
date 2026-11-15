@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Rebuilds the SeunBaba database from scratch and regenerates every text evidence
-# file of Portfolios 1-4. Screenshots are produced afterwards by make_screenshots.sh.
+# file of Portfolios 1-4. Screenshots are produced afterwards by Odunlade_Oluwaseun_301931438_make_screenshots.sh.
 # Prerequisites: PostgreSQL 16 on localhost:5432, MongoDB replica set rs0 on
 # localhost:27017, Redis on localhost:6379, python3 with psycopg2-binary, pymongo, redis.
 set -euo pipefail

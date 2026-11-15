@@ -34,8 +34,8 @@ portfolio-5-distributed-cloud/        streaming replication, failover, pg_rewind
                                       AWS deployment design (Terraform)
 docs/                                 Odunlade_Oluwaseun_301931438_REFLECTION.md, Odunlade_Oluwaseun_301931438_DEVELOPMENT_LOG.md,
                                       Odunlade_Oluwaseun_301931438_VERIFICATION_GUIDE.md
-scripts/                              run_all.sh (rebuild + regenerate evidence),
-                                      make_screenshots.sh, document builders
+scripts/                              Odunlade_Oluwaseun_301931438_run_all.sh (rebuild + regenerate evidence),
+                                      Odunlade_Oluwaseun_301931438_make_screenshots.sh, document builders
 
 Every portfolio folder has a README.md that opens with an "At a glance" table
 mapping each deliverable in the brief to the exact file, and explains how the
@@ -47,7 +47,7 @@ ENVIRONMENT OF THE FINAL EVIDENCE RUN
 PostgreSQL 16.16, MongoDB 9.0.8, Redis 8.10.3, Python 3.12, on an Apple M5 Pro
 (macOS). The scripts also run on Linux.
   createdb seunbaba
-  bash scripts/run_all.sh                 (Portfolios 1-4)
+  bash scripts/Odunlade_Oluwaseun_301931438_run_all.sh                 (Portfolios 1-4)
   see portfolio-5-distributed-cloud/Odunlade_Oluwaseun_301931438_P5_README.md section 6 for Portfolio 5
 
 NOTES

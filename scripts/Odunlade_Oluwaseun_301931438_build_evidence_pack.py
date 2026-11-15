@@ -5,7 +5,7 @@ from reportlab.lib.units import cm
 from reportlab.pdfgen import canvas
 
 import os
-REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # usage: python3 scripts/build_evidence_pack.py <out.pdf>
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # usage: python3 scripts/Odunlade_Oluwaseun_301931438_build_evidence_pack.py <out.pdf>
 OUT = sys.argv[1]
 W, H = A4
 M = 1.5 * cm

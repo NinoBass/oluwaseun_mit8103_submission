@@ -5,7 +5,7 @@ const {
   ShadingType, AlignmentType, ImageRun, LevelFormat, BorderStyle, ExternalHyperlink, Footer, PageNumber,
 } = require("docx");
 
-const REPO = path.resolve(__dirname, "..");   // usage: node scripts/build_documentation.js <out.docx>
+const REPO = path.resolve(__dirname, "..");   // usage: node scripts/Odunlade_Oluwaseun_301931438_build_documentation.js <out.docx>
 const OUT = process.argv[2];
 const FONT = "Calibri";
 const W = 10026;                     // A4 width 11906 - 2 x 940 margins
@@ -84,7 +84,7 @@ const rcols = [2900, 7126];
 const rubric = [
   ["Technical correctness (8)", "All scripts executed; raw outputs in evidence/. Cross-validated: rewrites diff-ed, concurrency invariants asserted, SQL vs MongoDB 12/12 identical, sharded vs single-node EXCEPT = 0 rows."],
   ["Database design quality (6)", "Portfolio 1: ERD, BCNF derivation from functional dependencies, 6 key types, 11 DBMS-enforced business rules, justified denormalisation."],
-  ["Practical implementation (8)", "16-table schema + 300k-order generator; transactional checkout functions; MongoDB/Redis implementations; 7 live database servers; one-command rebuild (scripts/run_all.sh)."],
+  ["Practical implementation (8)", "16-table schema + 300k-order generator; transactional checkout functions; MongoDB/Redis implementations; 7 live database servers; one-command rebuild (scripts/Odunlade_Oluwaseun_301931438_run_all.sh)."],
   ["Query & performance analysis (5)", "Portfolio 2: plans, buffers and median timings for 7 queries; regression diagnosed by controlled experiment; index cost trade-offs."],
   ["Advanced concepts (5)", "MVCC and SSI, BRIN/GIN/partial indexes, materialised views, aggregate modelling, optimistic transactions, WAL replication, pg_rewind, sharding, CAP/PACELC."],
   ["Documentation & GitHub (5)", "Brief's folder structure; each README opens with an evidence map (deliverable to file); docs/Odunlade_Oluwaseun_301931438_DEVELOPMENT_LOG.md records 23 problems and fixes."],
@@ -129,7 +129,7 @@ const doc = new Document({
       bullet([b("Database users: "), "customers (web and mobile app), vendors, warehouse staff, customer-service agents, finance (reconciliation) and management (dashboards)."]),
       bullet([b("Major data: "), "customers and addresses, vendors, category tree, products, stock per warehouse, coupons, orders and lines, payment attempts, shipments, courier scan events, reviews, stock audit trail."]),
       bullet([b("Key operations: "), "register, list and search products, place an order (reserve stock, coupon, payment), cancel or refund, dispatch and track a parcel, review, low-stock and sales reporting."]),
-      p("All data is synthetic and generated deterministically, so every result can be reproduced with scripts/run_all.sh. The same case study and data set are used consistently in all five activities.", { spacing: { after: 80 } }),
+      p("All data is synthetic and generated deterministically, so every result can be reproduced with scripts/Odunlade_Oluwaseun_301931438_run_all.sh. The same case study and data set are used consistently in all five activities.", { spacing: { after: 80 } }),
 
       h1("2. Summary of the five portfolio activities"),
       portfolioTable,

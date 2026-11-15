@@ -1,7 +1,7 @@
 // Renders portfolio evidence to PNG using headless Chromium (Playwright).
 //
-//   node render_evidence.js mermaid <input.mmd> <output.png>
-//   node render_evidence.js term    <input.txt> <output.png> ["Window title"]
+//   node Odunlade_Oluwaseun_301931438_render_evidence.js mermaid <input.mmd> <output.png>
+//   node Odunlade_Oluwaseun_301931438_render_evidence.js term    <input.txt> <output.png> ["Window title"]
 //
 // "term" turns a captured psql / mongosh / redis-cli / python output file into
 // a terminal-style screenshot so it can be embedded in the LMS documentation.

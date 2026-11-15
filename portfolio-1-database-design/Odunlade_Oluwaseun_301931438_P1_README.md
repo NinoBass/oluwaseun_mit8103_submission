@@ -31,7 +31,7 @@
 
 ![SeunBaba ER diagram](diagrams/Odunlade_Oluwaseun_301931438_seunbaba_erd.png)
 
-The diagram source is in [`diagrams/Odunlade_Oluwaseun_301931438_seunbaba_erd.mmd`](diagrams/Odunlade_Oluwaseun_301931438_seunbaba_erd.mmd) (Mermaid, crow's-foot notation). It is rendered to PNG by [`../scripts/render_evidence.js`](../scripts/render_evidence.js).
+The diagram source is in [`diagrams/Odunlade_Oluwaseun_301931438_seunbaba_erd.mmd`](diagrams/Odunlade_Oluwaseun_301931438_seunbaba_erd.mmd) (Mermaid, crow's-foot notation). It is rendered to PNG by [`../scripts/Odunlade_Oluwaseun_301931438_render_evidence.js`](../scripts/Odunlade_Oluwaseun_301931438_render_evidence.js).
 
 Key modelling decisions:
 
@@ -156,6 +156,6 @@ The seed is deterministic (`setseed(0.8103)`) and fully synthetic, with no real 
 
 **Problem met during the build.** The first seed run stocked every product in all four warehouses (32,000 inventory rows instead of about 17,500). The `EXPLAIN` output showed why: the planner had pushed `random() < 0.40` down into the scan of the small `warehouse` table and materialised it, so `random()` ran 4 times instead of once per (product, warehouse) pair. Correlating the expression with the outer row (`random() + p.product_id*0`) forced per-row evaluation. This was a practical reminder that a volatile function inside a join behaves differently from what the SQL text suggests.
 
-**The same problem, found later.** While building the MongoDB catalogue (Portfolio 4), a text search for "air fryer" returned nothing, although air fryers are in the specification. Every category turned out to contain only **one** brand and item, for example all 364 audio products were "JBL Soundbar …". The `LATERAL (SELECT … random() …)` sub-selects that pick the brand referenced only the category row, so they were evaluated once per category instead of once per product. Adding `+ g * 0` correlates them with the generated row. I then regenerated the database and **all evidence in Portfolios 1–4** with [`../scripts/run_all.sh`](../scripts/run_all.sh). The catalogue now has 2,386 distinct product names.
+**The same problem, found later.** While building the MongoDB catalogue (Portfolio 4), a text search for "air fryer" returned nothing, although air fryers are in the specification. Every category turned out to contain only **one** brand and item, for example all 364 audio products were "JBL Soundbar …". The `LATERAL (SELECT … random() …)` sub-selects that pick the brand referenced only the category row, so they were evaluated once per category instead of once per product. Adding `+ g * 0` correlates them with the generated row. I then regenerated the database and **all evidence in Portfolios 1–4** with [`../scripts/Odunlade_Oluwaseun_301931438_run_all.sh`](../scripts/Odunlade_Oluwaseun_301931438_run_all.sh). The catalogue now has 2,386 distinct product names.
 
 **Time zone.** The database default time zone is set to `Africa/Lagos` in `Odunlade_Oluwaseun_301931438_01_schema.sql`. Without it, `date_trunc('month', order_date)` runs in UTC, and an order placed at 00:30 WAT on the 1st of a month is reported in the previous month. This was found by the SQL-vs-MongoDB cross-check in Portfolio 4.
