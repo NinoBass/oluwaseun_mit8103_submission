@@ -1,0 +1,20 @@
+==============================================================================
+D5  FLASH-SALE STRESS TEST: 40 customers press 'Buy' at the same instant, 25 phones in stock
+==============================================================================
+
+Naive: SELECT stock, check in app, UPDATE qty_reserved = <value read> (READ COMMITTED)
+   buyers told 'success'      : 40
+   buyers told 'out of stock' : 0
+   other errors               : 0 []
+   inventory after            : qty_on_hand=25, qty_reserved=1, available=24
+   ==> 40 confirmations but only 1 unit(s) recorded as reserved: 39 lost updates, 15 phones promised that do not exist
+   wall-clock                 : 72 ms
+
+place_order(): SELECT ... FOR UPDATE + CHECK constraints, one transaction per buyer
+   buyers told 'success'      : 25
+   buyers told 'out of stock' : 15
+   other errors               : 0 []
+   inventory after            : qty_on_hand=25, qty_reserved=25, available=0
+   orders created             : 25 orders, 25 units
+   ==> invariant holds: success == reserved == orders == 25 -> True
+   wall-clock                 : 179 ms
