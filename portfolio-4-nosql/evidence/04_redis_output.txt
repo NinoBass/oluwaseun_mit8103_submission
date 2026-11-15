@@ -1,0 +1,35 @@
+
+######## R1  Shopping cart as a HASH with expiry ########
+HGETALL cart:1207 -> {'OJH-000100': '2', 'OJH-000245': '2'}
+TTL      cart:1207 -> 604800 seconds (abandoned carts disappear on their own)
+
+######## R2  Recently viewed products: capped LIST ########
+LRANGE viewed:1207 0 -1 -> ['7', '150', '99', '64', '8', '13', '91', '5', '77', '300'] (length 10, never grows past 10)
+
+######## R3  Best-sellers leaderboard (Sorted Set) for October 2026 ########
+loaded 24,061 sale lines; ZCARD = 6,914 products
+ZREVRANGE bestsellers:2026-10 0 4 WITHSCORES ->
+   OJH-007986  units=575
+   OJH-005016  units=220
+   OJH-003300  units=145
+   OJH-001892  units=145
+   OJH-000704  units=114
+ZREVRANK of OJH-000100 -> None
+top-5 latency: PostgreSQL aggregate 45.09 ms  vs  Redis ZREVRANGE 0.454 ms (median of 20)
+
+######## R4  Cache-aside for the product detail page (TTL 300 s) ########
+example cached value: {"id": 88, "sku": "OJH-000022", "name": "itel Smartphone 64GB Pro", "price": "1085050.00", "vendor": "Naija Mart 34", "category": "Smartphones", "avg_rating": "3.80", "reviews": 35, "available": 609}
+requests=10,000  hits=6,181  misses=3,819  hit-ratio=61.8%  -> 62% of page views never reach PostgreSQL
+median latency: PostgreSQL query 0.389 ms | cache hit 0.089 ms | cache miss (query + SET) 0.810 ms
+Invalidation rule: when price/stock changes, the writer runs DEL product:{id} after its SQL COMMIT.
+
+######## R5  Flash sale in Redis: 40 buyers, 25 units (compare Portfolio 3, test D5) ########
+GET -> check in app -> SET                           success=40  stock left=22  -> WRONG (40 sold + 22 left != 25)  (52 ms)
+DECR (+ INCR compensation)                           success=25  stock left= 0  -> CORRECT  (40 ms)
+Lua script: check + DECRBY + SADD buyer, atomically  success=25  stock left= 0  -> CORRECT  (40 ms)
+Redis executes each command / script on one thread, so DECR and Lua are atomic without locks.
+Design: Redis gates the stampede in milliseconds; only the 25 winners call place_order() in PostgreSQL,
+which stays the system of record (Redis here runs without persistence: --save '' --appendonly no).
+
+######## Memory footprint ########
+DBSIZE=3824 keys  used_memory=3.43M
