@@ -10,7 +10,7 @@
 
 ## Selected organisation (case study)
 
-**OjaHub Commerce Ltd** is a *simulated* multi-vendor e-commerce marketplace headquartered in Ikeja, Lagos ("ọjà" is Yoruba for *market*). Independent Nigerian vendors list products, and OjaHub handles checkout in Naira (card, bank transfer, USSD, wallet, pay-on-delivery), stock in four fulfilment hubs (Lagos, Abuja, Port Harcourt, Kano), and last-mile delivery through courier partners.
+**SeunBaba Commerce Ltd** is a *simulated* multi-vendor e-commerce marketplace headquartered in Ikeja, Lagos ("ọjà" is Yoruba for *market*). Independent Nigerian vendors list products, and SeunBaba handles checkout in Naira (card, bank transfer, USSD, wallet, pay-on-delivery), stock in four fulfilment hubs (Lagos, Abuja, Port Harcourt, Kano), and last-mile delivery through courier partners.
 
 * **Users of the database:** customers (web and mobile app), vendors (seller portal), warehouse staff, customer-service agents, finance (payment reconciliation) and management (dashboards).
 * **Major data:** customers and addresses, vendors, the category tree, products, stock per warehouse, coupons, orders and order lines, payment attempts, shipments, courier scan events, reviews and the stock audit trail.
@@ -24,7 +24,7 @@ The same case study and the same data set are used in all five portfolio activit
 ├── README.md                              <- this file
 ├── portfolio-1-database-design/           ERD, relational schema, keys, constraints, normalisation
 │   ├── sql/01_schema.sql … 04_constraint_tests.sql
-│   ├── diagrams/ojahub_erd.mmd / .png
+│   ├── diagrams/seunbaba_erd.mmd / .png
 │   └── evidence/
 ├── portfolio-2-query-optimisation/        7 workloads, EXPLAIN ANALYZE before/after, indexes, rewrites, MV
 │   ├── sql/  run_benchmark.py  q4_regression_diagnosis.py
@@ -71,7 +71,7 @@ Each portfolio folder has its own `README.md` explaining **what was implemented,
 | Item | Status |
 |---|---|
 | Selected case study / organisation clearly stated | Yes. Above, in P1 §1, and in the LMS document §1 |
-| All five portfolios use the same case study | Yes. One OjaHub database feeds P1–P5 (MongoDB and the shards are loaded from it) |
+| All five portfolios use the same case study | Yes. One SeunBaba database feeds P1–P5 (MongoDB and the shards are loaded from it) |
 | All five portfolio activities completed | Yes. See the table below |
 | GitHub repository properly organised | Yes. Suggested structure, per-portfolio README + `sql/`/`scripts/` + `evidence/` |
 | Practical work and supporting evidence included | Yes. 25 screenshots plus raw `.txt` outputs, plans and logs |
@@ -87,26 +87,28 @@ Each portfolio folder has its own `README.md` explaining **what was implemented,
 | Portfolio | Result |
 |---|---|
 | 1 Design | 16-table BCNF schema with 11 business rules enforced by the DBMS, all proven by failing test statements |
-| 2 Optimisation | Q2 tracking page 73.7 ms → 0.02 ms (FK indexes). Vendor statement 15.9 s → 0.10 s (query rewrite). An index that made Q4 1.65× **slower** was diagnosed with a controlled experiment and fixed with a materialised view (2.8× faster than the original). |
+| 2 Optimisation | Q2 tracking page 35.7 ms → 0.007 ms (FK indexes). Vendor statement 7.2 s → 0.05 s (query rewrite, 151×). In the first run an index made Q4 1.65× **slower**; a controlled experiment explained why, and in the final run the planner kept the parallel plan. A materialised view made Q4 2.7× faster. |
 | 3 Transactions | Naive flash sale: 40 confirmations for 25 phones (39 lost updates). `place_order()`: exactly 25 succeed and 15 are refused. Write skew prevented only by SERIALIZABLE. Deadlock reproduced and prevented by lock ordering. |
-| 4 NoSQL | 111,129 orders migrated into MongoDB documents. The SQL-vs-MongoDB revenue cross-check matches to the kobo (12/12 rows). Redis Lua flash-sale gate is correct in about 40 ms. |
-| 5 Distributed | Standby promoted and writable in 152 ms with RPO 0. Old primary rejoined with `pg_rewind`. Hash sharding gives a 50.2/49.8 split with results identical to the single node. MongoDB election in about 11 s. Majority loss shows CAP's consistency-over-availability choice. |
+| 4 NoSQL | 111,129 orders migrated into MongoDB documents. The SQL-vs-MongoDB revenue cross-check matches to the kobo (12/12 rows). Redis Lua flash-sale gate is correct in about 15 ms. |
+| 5 Distributed | Standby promoted and writable in 145 ms with RPO 0. Old primary rejoined with `pg_rewind`. Hash sharding gives a 50.2/49.8 split with results identical to the single node. MongoDB election in about 11 s. Majority loss shows CAP's consistency-over-availability choice. |
 
 ## Environment and reproduction
 
 | Component | Version |
 |---|---|
-| PostgreSQL | 16.15 (Ubuntu 24.04), extensions `pg_trgm`, `pg_stat_statements`, `postgres_fdw` |
-| MongoDB / mongosh | 8.0.4 / 2.3.8 (replica set `rs0`, 3 members) |
-| Redis | 7.0.15 |
-| Python | 3 with `psycopg2-binary`, `pymongo`, `redis` |
-| Hardware | 4 vCPU, 15 GB RAM cloud Linux container |
+| PostgreSQL | 16.16 (Homebrew), `shared_buffers = 512MB`, default `work_mem`, extensions `pg_trgm`, `postgres_fdw` |
+| MongoDB / mongosh | 9.0.8 / 2.14.2 (replica set `rs0`, 3 members) |
+| Redis | 8.10.3 |
+| Python | 3.9+ with `psycopg2-binary`, `pymongo`, `redis` (evidence captured with 3.12) |
+| Hardware | Apple M5 Pro, 18 cores, 24 GB RAM, macOS 26 |
+
+The final evidence was captured on 15 November 2026 on the machine above. An earlier run on a 4-vCPU Linux container is in the git history; where its results differ in a way that matters (the Q4 plan choice in Portfolio 2), the README says so. The scripts run on both Linux and macOS.
 
 ```bash
-createdb ojahub
-bash scripts/run_all.sh          # schema, deterministic seed (about 70 s), Portfolios 1-4 evidence
+createdb seunbaba
+bash scripts/run_all.sh          # schema, deterministic seed (about 35 s), Portfolios 1-4 evidence
 # Portfolio 5: see portfolio-5-distributed-cloud/README.md section 6
-MERMAID_JS=/path/to/mermaid.min.js bash scripts/make_screenshots.sh
+MERMAID_JS=/path/to/mermaid.min.js bash scripts/make_screenshots.sh   # needs node + playwright
 ```
 
 All data is **synthetic** and generated deterministically (`setseed(0.8103)`). No real customer data is used.
@@ -117,7 +119,7 @@ All data is **synthetic** and generated deterministically (`setseed(0.8103)`). N
 
 * **AI tool used:** Claude (Anthropic), through the Claude Code agent.
 * **What it was used for:** generating and running the SQL, Python, JavaScript and shell scripts; producing the synthetic data generator; capturing outputs and screenshots; and drafting the README files and the LMS summary document.
-* **How the output was checked:** every script was executed against real PostgreSQL, MongoDB and Redis servers, and the outputs in `evidence/` are unedited captures. Results were cross-validated: rewritten queries were `diff`-ed against the originals, the MongoDB migration was reconciled with SQL to the kobo, and sharded results were compared with the single-node results with `EXCEPT`. Checking the outputs exposed three defects (a data-generation bug, a time-zone bug and an unsafe failover script). All three were fixed, and all evidence was regenerated afterwards. Each one is documented in the relevant README.
+* **How the output was checked:** every script was executed against real PostgreSQL, MongoDB and Redis servers, and the outputs in `evidence/` are captures of those runs. The only edit after capture: the case study was renamed from OjaHub to SeunBaba, and the evidence text was updated by a plain string substitution (names, schema and database names, and the `OJH`/`OJX` code prefixes only; no values were changed). Results were cross-validated: rewritten queries were `diff`-ed against the originals, the MongoDB migration was reconciled with SQL to the kobo, and sharded results were compared with the single-node results with `EXCEPT`. Checking the outputs exposed three defects (a data-generation bug, a time-zone bug and an unsafe failover script). All three were fixed, and all evidence was regenerated afterwards. Each one is documented in the relevant README.
 * The student remains responsible for the accuracy of this work and is able to explain every part of it.
 
 ## References
