@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Portfolio 4 - Redis (key-value / data-structure store) for OjaHub.
+Portfolio 4 - Redis (key-value / data-structure store) for SeunBaba.
 
   R1  Shopping cart          HASH  cart:{customer_id}         field=sku value=qty, 7-day TTL
   R2  Recently viewed        LIST  viewed:{customer_id}        LPUSH + LTRIM (capped at 10)
@@ -12,10 +12,10 @@ import json, statistics, threading, time
 import psycopg2, redis
 
 r = redis.Redis(host="localhost", port=6379, decode_responses=True)
-pg = psycopg2.connect("host=localhost dbname=ojahub user=postgres")
+pg = psycopg2.connect("host=localhost dbname=seunbaba user=postgres")
 pg.autocommit = True
 cur = pg.cursor()
-cur.execute("SET search_path = ojahub, public")
+cur.execute("SET search_path = seunbaba, public")
 r.flushdb()
 
 
@@ -26,8 +26,8 @@ def hr(t):
 # ---------------------------------------------------------------- R1
 hr("R1  Shopping cart as a HASH with expiry")
 key = "cart:1207"
-r.hset(key, mapping={"OJH-000100": 1, "OJH-000245": 2})
-r.hincrby(key, "OJH-000100", 1)                       # customer taps "+" on the first item
+r.hset(key, mapping={"SBB-000100": 1, "SBB-000245": 2})
+r.hincrby(key, "SBB-000100", 1)                       # customer taps "+" on the first item
 r.expire(key, 7 * 24 * 3600)
 print("HGETALL", key, "->", r.hgetall(key))
 print("TTL     ", key, "->", r.ttl(key), "seconds (abandoned carts disappear on their own)")
@@ -54,7 +54,7 @@ print(f"loaded {len(rows):,} sale lines; ZCARD = {r.zcard('bestsellers:2026-10')
 print("ZREVRANGE bestsellers:2026-10 0 4 WITHSCORES ->")
 for sku, score in r.zrevrange("bestsellers:2026-10", 0, 4, withscores=True):
     print(f"   {sku}  units={int(score)}")
-print("ZREVRANK of OJH-000100 ->", r.zrevrank("bestsellers:2026-10", "OJH-000100"))
+print("ZREVRANK of SBB-000100 ->", r.zrevrank("bestsellers:2026-10", "SBB-000100"))
 
 sql_top = """SELECT p.sku, sum(oi.quantity) u FROM order_item oi JOIN customer_order o USING (order_id)
              JOIN product p USING (product_id)
@@ -123,29 +123,29 @@ return 0""")
 
 
 def run(mode, buyers=40):
-    r.set("flash:stock:OJH-FLASH-001", 25)
-    r.delete("flash:buyers:OJH-FLASH-001")
+    r.set("flash:stock:SBB-FLASH-001", 25)
+    r.delete("flash:buyers:SBB-FLASH-001")
     clients = [redis.Redis(host="localhost", port=6379, decode_responses=True) for _ in range(buyers)]
     barrier = threading.Barrier(buyers)
     ok = []
 
     def naive(i):
         c = clients[i]; barrier.wait()
-        left = int(c.get("flash:stock:OJH-FLASH-001"))
+        left = int(c.get("flash:stock:SBB-FLASH-001"))
         time.sleep(0.005)                                     # app think-time between read and write
         if left >= 1:
-            c.set("flash:stock:OJH-FLASH-001", left - 1); ok.append(i)
+            c.set("flash:stock:SBB-FLASH-001", left - 1); ok.append(i)
 
     def decr(i):
         c = clients[i]; barrier.wait()
-        if c.decr("flash:stock:OJH-FLASH-001") >= 0:          # atomic, single-threaded server
+        if c.decr("flash:stock:SBB-FLASH-001") >= 0:          # atomic, single-threaded server
             ok.append(i)
         else:
-            c.incr("flash:stock:OJH-FLASH-001")              # compensate the overshoot
+            c.incr("flash:stock:SBB-FLASH-001")              # compensate the overshoot
 
     def lua(i):
         c = clients[i]; barrier.wait()
-        if LUA_BUY(keys=["flash:stock:OJH-FLASH-001", "flash:buyers:OJH-FLASH-001"], args=[1, 1000 + i], client=c) == 1:
+        if LUA_BUY(keys=["flash:stock:SBB-FLASH-001", "flash:buyers:SBB-FLASH-001"], args=[1, 1000 + i], client=c) == 1:
             ok.append(i)
 
     fn = {"naive": naive, "decr": decr, "lua": lua}[mode]
@@ -153,7 +153,7 @@ def run(mode, buyers=40):
     ths = [threading.Thread(target=fn, args=(i,)) for i in range(buyers)]
     [t.start() for t in ths]; [t.join() for t in ths]
     el = (time.perf_counter() - t0) * 1000
-    left = int(r.get("flash:stock:OJH-FLASH-001"))
+    left = int(r.get("flash:stock:SBB-FLASH-001"))
     return len(ok), left, el
 
 

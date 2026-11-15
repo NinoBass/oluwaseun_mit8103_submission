@@ -7,18 +7,18 @@ import psycopg2
 from pymongo import MongoClient
 from datetime import datetime, timezone
 
-pg = psycopg2.connect("host=localhost dbname=ojahub user=postgres").cursor()
+pg = psycopg2.connect("host=localhost dbname=seunbaba user=postgres").cursor()
 pg.execute("""
     SELECT sr.geo_zone, to_char(date_trunc('month', o.order_date), 'YYYY-MM'), count(*), sum(o.total_amount)
-    FROM ojahub.customer_order o
-    JOIN ojahub.customer_address a ON a.address_id = o.shipping_address_id
-    JOIN ojahub.state_region sr ON sr.state_code = a.state_code
+    FROM seunbaba.customer_order o
+    JOIN seunbaba.customer_address a ON a.address_id = o.shipping_address_id
+    JOIN seunbaba.state_region sr ON sr.state_code = a.state_code
     WHERE o.order_date >= '2026-09-01 00:00+01' AND o.order_date < '2026-11-01 00:00+01'
       AND o.order_status IN ('PAID','SHIPPED','DELIVERED')
     GROUP BY 1, 2""")
 sql = {(z, m): (n, Decimal(r)) for z, m, n, r in pg.fetchall()}
 
-db = MongoClient("mongodb://localhost:27017/?replicaSet=rs0").ojahub
+db = MongoClient("mongodb://localhost:27017/?replicaSet=rs0").seunbaba
 mongo = {}
 for r in db.orders.aggregate([
         {"$match": {"order_date": {"$gte": datetime(2026, 8, 31, 23, tzinfo=timezone.utc),
