@@ -1,0 +1,27 @@
+### stopping shard2 (port 5435) ###
+server stopped
+
+### customer 50 lives on shard1 -> still served ###
+ customer_id | orders |         served_by          
+-------------+--------+----------------------------
+          50 |     17 | dist.customer_order_shard1
+(1 row)
+
+### customer 1207 lives on shard2 -> unavailable ###
+ERROR:  could not connect to server "shard2"
+DETAIL:  connection to server at "localhost" (127.0.0.1), port 5435 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+### company-wide report needs every shard -> fails ###
+ERROR:  could not connect to server "shard2"
+DETAIL:  connection to server at "localhost" (127.0.0.1), port 5435 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+### restarting shard2 ###
+server started
+ orders_all_shards 
+-------------------
+            110986
+(1 row)
+
+Conclusion: sharding isolates failures (only ~50% of customers affected) but does not by itself
+provide availability - each shard needs its own replica (next section: streaming replication).
