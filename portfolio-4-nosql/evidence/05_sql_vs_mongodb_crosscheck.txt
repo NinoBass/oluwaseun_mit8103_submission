@@ -1,0 +1,16 @@
+Cross-check: PostgreSQL (SQL GROUP BY) vs MongoDB (aggregation pipeline), Sep-Oct 2026, Lagos time
+geo_zone       month    SQL orders Mongo orders    SQL revenue NGN  Mongo revenue NGN  match
+North Central  2026-09        1822         1822   1,153,549,598.50   1,153,549,598.50  YES
+North Central  2026-10        1771         1771   1,196,539,718.90   1,196,539,718.90  YES
+North East     2026-09         255          255     176,150,231.50     176,150,231.50  YES
+North East     2026-10         260          260     179,097,706.10     179,097,706.10  YES
+North West     2026-09         886          886     503,252,058.50     503,252,058.50  YES
+North West     2026-10         924          924     590,848,193.20     590,848,193.20  YES
+South East     2026-09         970          970     697,744,785.00     697,744,785.00  YES
+South East     2026-10        1003         1003     635,741,739.50     635,741,739.50  YES
+South South    2026-09        1822         1822   1,194,806,343.50   1,194,806,343.50  YES
+South South    2026-10        1815         1815   1,115,939,593.40   1,115,939,593.40  YES
+South West     2026-09        4385         4385   2,951,547,533.50   2,951,547,533.50  YES
+South West     2026-10        4386         4386   2,856,962,914.40   2,856,962,914.40  YES
+
+12 rows compared, keys only in MongoDB: 0, all identical: True
