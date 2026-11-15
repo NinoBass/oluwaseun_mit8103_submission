@@ -1,0 +1,27 @@
+-- Q6 (after)
+SELECT product_id, sku, product_name, unit_price
+FROM product
+WHERE product_name ILIKE '%air fryer%'
+  AND is_active
+ORDER BY unit_price
+LIMIT 20;
+
+Limit  (cost=205.19..205.24 rows=20 width=54) (actual time=0.113..0.116 rows=20 loops=1)
+  Buffers: shared hit=25
+  ->  Sort  (cost=205.19..205.37 rows=70 width=54) (actual time=0.113..0.114 rows=20 loops=1)
+        Sort Key: unit_price
+        Sort Method: top-N heapsort  Memory: 28kB
+        Buffers: shared hit=25
+        ->  Bitmap Heap Scan on product  (cost=65.25..203.33 rows=70 width=54) (actual time=0.034..0.084 rows=68 loops=1)
+              Recheck Cond: ((product_name)::text ~~* '%air fryer%'::text)
+              Filter: is_active
+              Rows Removed by Filter: 2
+              Heap Blocks: exact=10
+              Buffers: shared hit=25
+              ->  Bitmap Index Scan on gin_product_name_trgm  (cost=0.00..65.23 rows=73 width=0) (actual time=0.029..0.029 rows=70 loops=1)
+                    Index Cond: ((product_name)::text ~~* '%air fryer%'::text)
+                    Buffers: shared hit=15
+Planning:
+  Buffers: shared hit=1
+Planning Time: 0.186 ms
+Execution Time: 0.127 ms
