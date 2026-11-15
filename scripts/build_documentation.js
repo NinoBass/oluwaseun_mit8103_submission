@@ -87,8 +87,8 @@ const rubric = [
   ["Practical implementation (8)", "16-table schema + 300k-order generator; transactional checkout functions; MongoDB/Redis implementations; 7 live database servers; one-command rebuild (scripts/run_all.sh)."],
   ["Query & performance analysis (5)", "Portfolio 2: plans, buffers and median timings for 7 queries; regression diagnosed by controlled experiment; index cost trade-offs."],
   ["Advanced concepts (5)", "MVCC and SSI, BRIN/GIN/partial indexes, materialised views, aggregate modelling, optimistic transactions, WAL replication, pg_rewind, sharding, CAP/PACELC."],
-  ["Documentation & GitHub (5)", "Brief's folder structure; each README opens with an evidence map (deliverable to file); docs/DEVELOPMENT_LOG.md records 23 problems and fixes."],
-  ["Reflection & understanding (3)", "Section 4 above; docs/REFLECTION.md; docs/VERIFICATION_GUIDE.md (32 questions answered, code walkthroughs)."],
+  ["Documentation & GitHub (5)", "Brief's folder structure; each README opens with an evidence map (deliverable to file); docs/Odunlade_Oluwaseun_301931438_DEVELOPMENT_LOG.md records 23 problems and fixes."],
+  ["Reflection & understanding (3)", "Section 4 above; docs/Odunlade_Oluwaseun_301931438_REFLECTION.md; docs/Odunlade_Oluwaseun_301931438_VERIFICATION_GUIDE.md (32 questions answered, code walkthroughs)."],
 ];
 const rubricTable = new Table({ width: { size: W, type: WidthType.DXA }, columnWidths: rcols, rows: [
   new TableRow({ tableHeader: true, children: ["Marking criterion", "Where it is evidenced"].map((t, i) => cell([[sm(t, { bold: true, color: "FFFFFF" })]], rcols[i], { fill: navy })) }),
@@ -146,7 +146,7 @@ const doc = new Document({
       p([b("Challenges. "), "Three defects were found only because I cross-checked results instead of trusting them. (1) The seed generator gave every product in a category the same brand: PostgreSQL evaluated a volatile random() inside a LATERAL sub-select once per category, not once per row. A text search for \"air fryer\" returning nothing exposed it. (2) Reconciling SQL revenue with MongoDB found a two-order mismatch caused by date_trunc running in the UTC session time zone instead of West Africa Time. (3) My first failover script ignored a failed pg_rewind and produced a small split-brain. I fixed each one (correlated sub-select, database time zone Africa/Lagos, wal_keep_size and abort-on-failure), regenerated all evidence, and documented the original failure."]),
       p([b("Lessons learned. "), "Measure rather than assume: in the first run one index made a report 1.65× slower even though the optimiser estimated it cheaper, and rewriting a query gave a 151× gain where indexes gave only 7.4×. Correctness under concurrency has to be designed in: READ COMMITTED with a naive read-then-write lost 39 of 40 updates, and only SERIALIZABLE stopped write skew. In distributed systems every guarantee has a measurable price: synchronous replication more than doubled commit latency but eliminated stale reads, and a MongoDB majority write is durable but not instantly visible on every secondary."]),
 
-      p([new TextRun({ text: "A fuller reflection (docs/REFLECTION.md), a log of every problem met and fixed (docs/DEVELOPMENT_LOG.md) and a verification guide (docs/VERIFICATION_GUIDE.md) are in the repository.", italics: true })]),
+      p([new TextRun({ text: "A fuller reflection (docs/Odunlade_Oluwaseun_301931438_REFLECTION.md), a log of every problem met and fixed (docs/Odunlade_Oluwaseun_301931438_DEVELOPMENT_LOG.md) and a verification guide (docs/Odunlade_Oluwaseun_301931438_VERIFICATION_GUIDE.md) are in the repository.", italics: true })]),
 
       h1("5. References"),
       ...[

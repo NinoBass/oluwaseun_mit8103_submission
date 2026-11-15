@@ -42,9 +42,9 @@ The same case study and the same data set are used in all five portfolio activit
 │   ├── cloud/    architecture diagram + terraform/ (design only)
 │   └── evidence/
 ├── docs/
-│   ├── REFLECTION.md                      individual technical reflection (design choices, challenges, lessons)
-│   ├── DEVELOPMENT_LOG.md                 23 problems met, diagnosis and fix, with commit references
-│   └── VERIFICATION_GUIDE.md              32 likely verification questions with answers + code walkthroughs
+│   ├── Odunlade_Oluwaseun_301931438_REFLECTION.md                      individual technical reflection (design choices, challenges, lessons)
+│   ├── Odunlade_Oluwaseun_301931438_DEVELOPMENT_LOG.md                 23 problems met, diagnosis and fix, with commit references
+│   └── Odunlade_Oluwaseun_301931438_VERIFICATION_GUIDE.md              32 likely verification questions with answers + code walkthroughs
 ├── scripts/
 │   ├── run_all.sh                         rebuilds the database and regenerates all evidence of P1-P4
 │   ├── make_screenshots.sh                re-renders every PNG from the text evidence
@@ -82,8 +82,8 @@ Each portfolio folder has its own `README.md` explaining **what was implemented,
 | **Practical implementation (8)** | 16-table schema + deterministic 300k-order generator; `place_order()`/`settle_payment()`; MongoDB migration and transaction; Redis structures; 7 live database servers (primary, standby, 2 shards, 3-node replica set); full rebuild via [`scripts/run_all.sh`](scripts/run_all.sh) |
 | **Query and performance analysis (5)** | [P2 README](portfolio-2-query-optimisation/Odunlade_Oluwaseun_301931438_P2_README.md) §2–§4: before/after plans for 7 queries, buffers, the Q4 regression experiment, index cost trade-off. Also P4 `explain()` and P5 replication latency. |
 | **Advanced database concepts (5)** | MVCC, isolation anomalies and SSI (P3); BRIN, GIN-trigram, partial/covering indexes, materialised views (P2); aggregate modelling, `$jsonSchema`, optimistic transactions (P4); WAL streaming, `pg_rewind`, sharding, CAP/PACELC, causal consistency (P5). Each README has an "Advanced concepts applied" line. |
-| **Documentation and GitHub organisation (5)** | The brief's suggested folder structure; each portfolio README starts with an **"At a glance"** map from the brief's expected evidence to files; reproducible scripts; [`docs/DEVELOPMENT_LOG.md`](docs/DEVELOPMENT_LOG.md) |
-| **Technical reflection / individual understanding (3)** | [`docs/REFLECTION.md`](docs/REFLECTION.md); the reflection section of the LMS document; [`docs/VERIFICATION_GUIDE.md`](docs/VERIFICATION_GUIDE.md) |
+| **Documentation and GitHub organisation (5)** | The brief's suggested folder structure; each portfolio README starts with an **"At a glance"** map from the brief's expected evidence to files; reproducible scripts; [`docs/Odunlade_Oluwaseun_301931438_DEVELOPMENT_LOG.md`](docs/Odunlade_Oluwaseun_301931438_DEVELOPMENT_LOG.md) |
+| **Technical reflection / individual understanding (3)** | [`docs/Odunlade_Oluwaseun_301931438_REFLECTION.md`](docs/Odunlade_Oluwaseun_301931438_REFLECTION.md); the reflection section of the LMS document; [`docs/Odunlade_Oluwaseun_301931438_VERIFICATION_GUIDE.md`](docs/Odunlade_Oluwaseun_301931438_VERIFICATION_GUIDE.md) |
 
 ## Submission checklist (§12 of the brief)
 
@@ -99,7 +99,7 @@ Each portfolio folder has its own `README.md` explaining **what was implemented,
 | GitHub link works and is accessible to the assessor | **Student action:** make the repository private and give the assessor access before submitting |
 | Sources, datasets, libraries referenced | Yes. References and tools below; the data set is synthetic and self-generated |
 | AI use declared | Yes. Below, and in the LMS document §6 |
-| Individual technical reflection; can explain the work | Yes. [`docs/REFLECTION.md`](docs/REFLECTION.md) and [`docs/VERIFICATION_GUIDE.md`](docs/VERIFICATION_GUIDE.md) |
+| Individual technical reflection; can explain the work | Yes. [`docs/Odunlade_Oluwaseun_301931438_REFLECTION.md`](docs/Odunlade_Oluwaseun_301931438_REFLECTION.md) and [`docs/Odunlade_Oluwaseun_301931438_VERIFICATION_GUIDE.md`](docs/Odunlade_Oluwaseun_301931438_VERIFICATION_GUIDE.md) |
 
 ## Headline results
 

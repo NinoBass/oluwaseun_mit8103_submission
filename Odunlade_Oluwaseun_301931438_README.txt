@@ -32,8 +32,8 @@ portfolio-5-distributed-cloud/        streaming replication, failover, pg_rewind
                                       sharding (postgres_fdw), MongoDB replica set
                                       elections, server configuration files,
                                       AWS deployment design (Terraform)
-docs/                                 REFLECTION.md, DEVELOPMENT_LOG.md,
-                                      VERIFICATION_GUIDE.md
+docs/                                 Odunlade_Oluwaseun_301931438_REFLECTION.md, Odunlade_Oluwaseun_301931438_DEVELOPMENT_LOG.md,
+                                      Odunlade_Oluwaseun_301931438_VERIFICATION_GUIDE.md
 scripts/                              run_all.sh (rebuild + regenerate evidence),
                                       make_screenshots.sh, document builders
 
