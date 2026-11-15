@@ -18,47 +18,41 @@ FROM monthly
 WINDOW w AS (PARTITION BY geo_zone ORDER BY month)
 ORDER BY geo_zone, month;
 
-Incremental Sort  (cost=19020.37..30307.20 rows=98774 width=123) (actual time=170.193..183.651 rows=60 loops=1)
+Incremental Sort  (cost=23139.03..34379.49 rows=98392 width=123) (actual time=81.142..88.361 rows=60 loops=1)
   Sort Key: sr.geo_zone, (to_char((date_trunc('month'::text, o.order_date)), 'YYYY-MM'::text))
   Presorted Key: sr.geo_zone
   Full-sort Groups: 2  Sort Method: quicksort  Average Memory: 28kB  Peak Memory: 28kB
-  Buffers: shared hit=3671
-  ->  WindowAgg  (cost=18969.88..24649.39 rows=98774 width=123) (actual time=161.961..183.607 rows=60 loops=1)
-        Buffers: shared hit=3671
-        ->  GroupAggregate  (cost=18969.88..21686.17 rows=98774 width=59) (actual time=161.610..183.419 rows=60 loops=1)
+  Buffers: shared hit=4693, temp read=492 written=493
+  ->  WindowAgg  (cost=23088.75..28746.29 rows=98392 width=123) (actual time=76.259..88.345 rows=60 loops=1)
+        Buffers: shared hit=4693, temp read=492 written=493
+        ->  GroupAggregate  (cost=23088.75..25794.53 rows=98392 width=59) (actual time=76.046..88.278 rows=60 loops=1)
               Group Key: sr.geo_zone, (date_trunc('month'::text, o.order_date))
-              Buffers: shared hit=3671
-              ->  Sort  (cost=18969.88..19216.82 rows=98774 width=25) (actual time=161.225..169.137 rows=98304 loops=1)
+              Buffers: shared hit=4693, temp read=492 written=493
+              ->  Sort  (cost=23088.75..23334.73 rows=98392 width=25) (actual time=75.820..81.214 rows=98304 loops=1)
                     Sort Key: sr.geo_zone, (date_trunc('month'::text, o.order_date))
-                    Sort Method: quicksort  Memory: 8456kB
-                    Buffers: shared hit=3671
-                    ->  Hash Join  (cost=2193.70..10775.67 rows=98774 width=25) (actual time=14.080..120.538 rows=98304 loops=1)
+                    Sort Method: external merge  Disk: 3936kB
+                    Buffers: shared hit=4693, temp read=492 written=493
+                    ->  Hash Join  (cost=2156.33..12573.47 rows=98392 width=25) (actual time=7.814..54.423 rows=98304 loops=1)
                           Hash Cond: (a.state_code = sr.state_code)
-                          Buffers: shared hit=3671
-                          ->  Hash Join  (cost=2191.87..10237.91 rows=98774 width=17) (actual time=14.033..89.384 rows=98304 loops=1)
+                          Buffers: shared hit=4693
+                          ->  Hash Join  (cost=2154.50..12037.80 rows=98392 width=17) (actual time=7.803..38.203 rows=98304 loops=1)
                                 Hash Cond: (o.shipping_address_id = a.address_id)
-                                Buffers: shared hit=3670
-                                ->  Bitmap Heap Scan on customer_order o  (cost=37.37..7824.11 rows=98774 width=22) (actual time=0.197..39.526 rows=98304 loops=1)
-                                      Recheck Cond: ((order_date >= '2026-01-01 00:00:00+01'::timestamp with time zone) AND (order_date < '2026-11-01 00:00:00+01'::timestamp with time zone))
-                                      Rows Removed by Index Recheck: 112211
-                                      Filter: ((order_status)::text = ANY ('{PAID,SHIPPED,DELIVERED}'::text[]))
-                                      Rows Removed by Filter: 12682
-                                      Heap Blocks: lossy=2976
-                                      Buffers: shared hit=2978
-                                      ->  Bitmap Index Scan on brin_order_date  (cost=0.00..12.68 rows=201906 width=0) (actual time=0.050..0.051 rows=29760 loops=1)
-                                            Index Cond: ((order_date >= '2026-01-01 00:00:00+01'::timestamp with time zone) AND (order_date < '2026-11-01 00:00:00+01'::timestamp with time zone))
-                                            Buffers: shared hit=2
-                                ->  Hash  (cost=1342.00..1342.00 rows=65000 width=11) (actual time=13.794..13.795 rows=65000 loops=1)
+                                Buffers: shared hit=4692
+                                ->  Seq Scan on customer_order o  (cost=0.00..9625.00 rows=98392 width=22) (actual time=1.590..18.325 rows=98304 loops=1)
+                                      Filter: ((order_date >= '2026-01-01 00:00:00+01'::timestamp with time zone) AND (order_date < '2026-11-01 00:00:00+01'::timestamp with time zone) AND ((order_status)::text = ANY ('{PAID,SHIPPED,DELIVERED}'::text[])))
+                                      Rows Removed by Filter: 201696
+                                      Buffers: shared hit=4000
+                                ->  Hash  (cost=1342.00..1342.00 rows=65000 width=11) (actual time=6.199..6.199 rows=65000 loops=1)
                                       Buckets: 65536  Batches: 1  Memory Usage: 3242kB
                                       Buffers: shared hit=692
-                                      ->  Seq Scan on customer_address a  (cost=0.00..1342.00 rows=65000 width=11) (actual time=0.003..6.643 rows=65000 loops=1)
+                                      ->  Seq Scan on customer_address a  (cost=0.00..1342.00 rows=65000 width=11) (actual time=0.002..3.149 rows=65000 loops=1)
                                             Buffers: shared hit=692
-                          ->  Hash  (cost=1.37..1.37 rows=37 width=14) (actual time=0.038..0.039 rows=37 loops=1)
+                          ->  Hash  (cost=1.37..1.37 rows=37 width=14) (actual time=0.008..0.008 rows=37 loops=1)
                                 Buckets: 1024  Batches: 1  Memory Usage: 10kB
                                 Buffers: shared hit=1
-                                ->  Seq Scan on state_region sr  (cost=0.00..1.37 rows=37 width=14) (actual time=0.004..0.030 rows=37 loops=1)
+                                ->  Seq Scan on state_region sr  (cost=0.00..1.37 rows=37 width=14) (actual time=0.002..0.004 rows=37 loops=1)
                                       Buffers: shared hit=1
 Planning:
   Buffers: shared hit=6
-Planning Time: 0.368 ms
-Execution Time: 184.435 ms
+Planning Time: 0.172 ms
+Execution Time: 88.724 ms
