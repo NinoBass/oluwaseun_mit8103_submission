@@ -8,7 +8,7 @@ Naive: SELECT stock, check in app, UPDATE qty_reserved = <value read> (READ COMM
    other errors               : 0 []
    inventory after            : qty_on_hand=25, qty_reserved=1, available=24
    ==> 40 confirmations but only 1 unit(s) recorded as reserved: 39 lost updates, 15 phones promised that do not exist
-   wall-clock                 : 72 ms
+   wall-clock                 : 41 ms
 
 place_order(): SELECT ... FOR UPDATE + CHECK constraints, one transaction per buyer
    buyers told 'success'      : 25
@@ -17,4 +17,4 @@ place_order(): SELECT ... FOR UPDATE + CHECK constraints, one transaction per bu
    inventory after            : qty_on_hand=25, qty_reserved=25, available=0
    orders created             : 25 orders, 25 units
    ==> invariant holds: success == reserved == orders == 25 -> True
-   wall-clock                 : 179 ms
+   wall-clock                 : 75 ms
