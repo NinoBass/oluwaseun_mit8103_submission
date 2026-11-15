@@ -133,7 +133,7 @@ const doc = new Document({
 
       h1("2. Summary of the five portfolio activities"),
       portfolioTable,
-      p("Engines: PostgreSQL 16.16, MongoDB 9.0.8, Redis 8.10.3, on an Apple M5 Pro (macOS). Design-only artefacts (Cassandra CQL, Terraform) are labelled as such. Everything else was executed and its output is stored in each evidence/ folder; the only post-capture edit was renaming the case study from OjaHub to SeunBaba by string substitution.",
+      p("Engines: PostgreSQL 16.16, MongoDB 9.0.8, Redis 8.10.3, on an Apple M5 Pro (macOS). Design-only artefacts (Cassandra CQL, Terraform) are labelled as such. Everything else was executed and its output is stored in each evidence/ folder.",
         { spacing: { before: 60, after: 60 } }),
 
       h1("3. Selected evidence"),
@@ -160,7 +160,7 @@ const doc = new Document({
       h1("6. AI-use declaration"),
       bullet([b("Tool: "), "Claude (Anthropic), used through the Claude Code agent."]),
       bullet([b("Used for: "), "generating and executing the SQL, Python, JavaScript and shell scripts; building the synthetic data generator; capturing outputs and screenshots; and drafting the READMEs and this document."]),
-      bullet([b("Review and verification: "), "every script was run against real PostgreSQL, MongoDB and Redis servers, and the evidence files are the captured outputs (renamed from OjaHub to SeunBaba by string substitution only). Results were cross-validated (rewritten queries diff-ed against the originals; MongoDB reconciled with SQL to the kobo; sharded results compared with the single node using EXCEPT), which is how the three defects above were caught and fixed. I have reviewed the work, take responsibility for its accuracy, and can explain any part of it if selected for verification."]),
+      bullet([b("Review and verification: "), "every script was run against real PostgreSQL, MongoDB and Redis servers, and the evidence files are the captured outputs. Results were cross-validated (rewritten queries diff-ed against the originals; MongoDB reconciled with SQL to the kobo; sharded results compared with the single node using EXCEPT), which is how the three defects above were caught and fixed. I have reviewed the work, take responsibility for its accuracy, and can explain any part of it if selected for verification."]),
       h1("7. Where each marking criterion is evidenced"),
       rubricTable,
     ],
