@@ -52,6 +52,9 @@ PostgreSQL 16.16, MongoDB 9.0.8, Redis 8.10.3, Python 3.12, on an Apple M5 Pro
 
 NOTES
 -----
+* File naming: every file is named Odunlade_Oluwaseun_301931438_<DocumentType>
+  with no spaces. Two files keep their standard names because the tools need
+  them: README.md (GitHub front page) and .gitignore (git).
 * All data is synthetic (deterministic generator, setseed 0.8103); no real
   personal data is used.
 * Two artefacts are designs only and were NOT executed: the Cassandra CQL file
