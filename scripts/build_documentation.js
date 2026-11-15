@@ -40,16 +40,16 @@ const rows = [
    "11 business rules enforced by the DBMS (CHECK, partial unique index, case-insensitive unique email, trigger, generated column), each proven by a failing statement. Deterministic seed: 300,000 orders, 642,738 lines, 1.12 M tracking events."],
   ["2. Query processing & optimisation (7)",
    "Seven real workloads benchmarked with EXPLAIN (ANALYZE, BUFFERS) before and after: composite covering, partial, BRIN and trigram-GIN indexes; a correlated sub-query rewritten set-based; a materialised view with early aggregation.",
-   "Tracking page 73.7 → 0.02 ms; vendor statement 15.9 s → 0.10 s (155×). An index made Q4 1.65× slower: a controlled experiment showed the cheaper-estimated serial plan was slower. Fixed with an MV (2.8× faster)."],
+   "Tracking page 35.7 → 0.007 ms; vendor statement 7.2 s → 0.05 s (151×). In the first run an index made Q4 1.65× slower (a controlled experiment showed the cheaper-estimated serial plan was slower); in the final run the planner kept the parallel plan. An MV made Q4 2.7× faster."],
   ["3. Transactions & concurrency (7)",
    "place_order() / settle_payment() as atomic PL/pgSQL units (ordered SELECT … FOR UPDATE, conditional coupon UPDATE, idempotent webhook); COMMIT, automatic ROLLBACK, explicit ROLLBACK, SAVEPOINT; multi-session demos with a lock monitor.",
    "Lost update reproduced and fixed three ways; non-repeatable read (RC vs RR); write skew allowed by RR, prevented by SERIALIZABLE (40001 and retry); deadlock 40P01 vs lock ordering; 40 buyers / 25 phones: naive 40 \"sold\", safe exactly 25."],
   ["4. NoSQL & advanced data models (7)",
    "PostgreSQL → MongoDB migration (orders as aggregates with embedded lines, payments and tracking; flexible product attributes; $jsonSchema validation; multi-document transaction). Redis cart, leaderboard, cache-aside and Lua flash-sale gate. Cassandra query-first design.",
-   "111,129 order documents; tracking page = 1 document via EXPRESS_IXSCAN. SQL vs MongoDB revenue identical to the kobo (12/12 rows). Redis top-5 in 0.45 ms vs 45 ms SQL; Lua gate correct for 40 buyers in about 40 ms."],
+   "111,129 order documents; tracking page = 1 document via EXPRESS_IXSCAN. SQL vs MongoDB revenue identical to the kobo (12/12 rows). Redis top-5 in 0.23 ms vs 22.8 ms SQL; Lua gate correct for 40 buyers in about 15 ms."],
   ["5. Distributed & cloud database (6)",
    "PostgreSQL streaming replication (slot, pg_basebackup), sync vs async, crash failover, pg_rewind rejoin and switchover; hash sharding across two servers with postgres_fdw; 3-node MongoDB replica set; AWS af-south-1 design (RDS Multi-AZ, replica, ElastiCache, Atlas) as Terraform (design only).",
-   "Async 0.50 ms commits with 298/300 stale replica reads; sync 1.21 ms with 0. Promotion writable in 152 ms, RPO 0. Shards 50.2/49.8, results identical to the single node. MongoDB election 11 s; loss of majority means writes refused (CAP)."],
+   "Async 0.127 ms commits with 299/300 stale replica reads; sync 0.200 ms with 0. Promotion writable in 145 ms, RPO 0. Shards 50.2/49.8, results identical to the single node. MongoDB election 11 s; loss of majority means writes refused (CAP)."],
 ];
 const portfolioTable = new Table({ width: { size: W, type: WidthType.DXA }, columnWidths: cols,
   rows: [head, ...rows.map((r, idx) => new TableRow({ cantSplit: true, children: r.map((t, i) =>
@@ -133,7 +133,7 @@ const doc = new Document({
 
       h1("2. Summary of the five portfolio activities"),
       portfolioTable,
-      p("Engines: PostgreSQL 16.15, MongoDB 8.0.4, Redis 7.0.15, on a 4 vCPU Linux host. Design-only artefacts (Cassandra CQL, Terraform) are labelled as such. Everything else was executed and its unedited output is stored in each evidence/ folder.",
+      p("Engines: PostgreSQL 16.16, MongoDB 9.0.8, Redis 8.10.3, on an Apple M5 Pro (macOS). Design-only artefacts (Cassandra CQL, Terraform) are labelled as such. Everything else was executed and its output is stored in each evidence/ folder; the only post-capture edit was renaming the case study from OjaHub to SeunBaba by string substitution.",
         { spacing: { before: 60, after: 60 } }),
 
       h1("3. Selected evidence"),
@@ -144,7 +144,7 @@ const doc = new Document({
       h1("4. Individual technical reflection"),
       p([b("Design choices. "), "I modelled SeunBaba relationally first because money and stock need ACID guarantees and declarative constraints. I then moved only the workloads that fit badly into other models: the product catalogue (very different attributes per category) and the order and tracking pages (4–5 joins per view) became MongoDB aggregates, and short-lived hot data (carts, leaderboards, flash-sale counters) went to Redis. I sharded by customer_id rather than date or order id, because nearly every operation is per customer and the same customer's orders and lines then live on one shard."]),
       p([b("Challenges. "), "Three defects were found only because I cross-checked results instead of trusting them. (1) The seed generator gave every product in a category the same brand: PostgreSQL evaluated a volatile random() inside a LATERAL sub-select once per category, not once per row. A text search for \"air fryer\" returning nothing exposed it. (2) Reconciling SQL revenue with MongoDB found a two-order mismatch caused by date_trunc running in the UTC session time zone instead of West Africa Time. (3) My first failover script ignored a failed pg_rewind and produced a small split-brain. I fixed each one (correlated sub-select, database time zone Africa/Lagos, wal_keep_size and abort-on-failure), regenerated all evidence, and documented the original failure."]),
-      p([b("Lessons learned. "), "Measure rather than assume: one index made a report 1.65× slower even though the optimiser estimated it cheaper, and rewriting a query gave a 155× gain where indexes gave only 7.9×. Correctness under concurrency has to be designed in: READ COMMITTED with a naive read-then-write lost 39 of 40 updates, and only SERIALIZABLE stopped write skew. In distributed systems every guarantee has a measurable price: synchronous replication more than doubled commit latency but eliminated stale reads, and a MongoDB majority write is durable but not instantly visible on every secondary."]),
+      p([b("Lessons learned. "), "Measure rather than assume: in the first run one index made a report 1.65× slower even though the optimiser estimated it cheaper, and rewriting a query gave a 151× gain where indexes gave only 7.4×. Correctness under concurrency has to be designed in: READ COMMITTED with a naive read-then-write lost 39 of 40 updates, and only SERIALIZABLE stopped write skew. In distributed systems every guarantee has a measurable price: synchronous replication more than doubled commit latency but eliminated stale reads, and a MongoDB majority write is durable but not instantly visible on every secondary."]),
 
       p([new TextRun({ text: "A fuller reflection (docs/REFLECTION.md), a log of every problem met and fixed (docs/DEVELOPMENT_LOG.md) and a verification guide (docs/VERIFICATION_GUIDE.md) are in the repository.", italics: true })]),
 
@@ -154,13 +154,13 @@ const doc = new Document({
         "Kleppmann, M. (2017) Designing Data-Intensive Applications. O'Reilly Media.",
         "Ports, D. R. K. and Grittner, K. (2012) 'Serializable Snapshot Isolation in PostgreSQL', Proceedings of the VLDB Endowment, 5(12), pp. 1850–1861.",
         "Brewer, E. (2012) 'CAP twelve years later: How the \"rules\" have changed', Computer, 45(2), pp. 23–29.  Abadi, D. (2012) 'Consistency tradeoffs in modern distributed database system design', Computer, 45(2), pp. 37–42.",
-        "PostgreSQL Global Development Group (2026) PostgreSQL 16 Documentation. MongoDB Inc. (2026) MongoDB 8.0 Manual. Redis Ltd. (2026) Redis documentation. Federal Republic of Nigeria (2023) Nigeria Data Protection Act.",
+        "PostgreSQL Global Development Group (2026) PostgreSQL 16 Documentation. MongoDB Inc. (2026) MongoDB 9.0 Manual. Redis Ltd. (2026) Redis documentation. Federal Republic of Nigeria (2023) Nigeria Data Protection Act.",
       ].map(t => bullet([new TextRun({ text: t, size: 18 })])),
 
       h1("6. AI-use declaration"),
       bullet([b("Tool: "), "Claude (Anthropic), used through the Claude Code agent."]),
       bullet([b("Used for: "), "generating and executing the SQL, Python, JavaScript and shell scripts; building the synthetic data generator; capturing outputs and screenshots; and drafting the READMEs and this document."]),
-      bullet([b("Review and verification: "), "every script was run against real PostgreSQL, MongoDB and Redis servers, and the evidence files are unedited outputs. Results were cross-validated (rewritten queries diff-ed against the originals; MongoDB reconciled with SQL to the kobo; sharded results compared with the single node using EXCEPT), which is how the three defects above were caught and fixed. I have reviewed the work, take responsibility for its accuracy, and can explain any part of it if selected for verification."]),
+      bullet([b("Review and verification: "), "every script was run against real PostgreSQL, MongoDB and Redis servers, and the evidence files are the captured outputs (renamed from OjaHub to SeunBaba by string substitution only). Results were cross-validated (rewritten queries diff-ed against the originals; MongoDB reconciled with SQL to the kobo; sharded results compared with the single node using EXCEPT), which is how the three defects above were caught and fixed. I have reviewed the work, take responsibility for its accuracy, and can explain any part of it if selected for verification."]),
       h1("7. Where each marking criterion is evidenced"),
       rubricTable,
     ],

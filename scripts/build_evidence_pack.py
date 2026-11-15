@@ -17,7 +17,7 @@ SECTIONS = [
     ("Portfolio 2 - Query Processing and Optimisation", [
         ("portfolio-2-query-optimisation/evidence/benchmark_summary.png", "Before/after benchmark, median of 7 runs"),
         ("portfolio-2-query-optimisation/evidence/Q2_plan_before_after.png", "Q2 execution plans: parallel hash join vs index nested loop"),
-        ("portfolio-2-query-optimisation/evidence/Q4_regression_diagnosis.png", "Q4 regression: controlled planner experiment"),
+        ("portfolio-2-query-optimisation/evidence/Q4_regression_diagnosis.png", "Q4 plan choice: controlled planner experiment"),
     ]),
     ("Portfolio 3 - Transactions and Concurrency", [
         ("portfolio-3-transactions-concurrency/evidence/02_commit_rollback.png", "COMMIT, automatic ROLLBACK, explicit ROLLBACK, SAVEPOINT"),
@@ -57,8 +57,9 @@ for i, line in enumerate(["Student: Odunlade Oluwaseun", "Student ID: 301931438"
                           "Case study: SeunBaba Commerce Ltd (simulated e-commerce marketplace, Lagos)",
                           "Repository: https://github.com/NinoBass/oluwaseun_mit8103_submission",
                           "",
-                          "Screenshots rendered from unedited command output captured while running",
-                          "the scripts in the repository (the source .txt files are in each evidence/ folder)."]):
+                          "Screenshots rendered from command output captured while running the",
+                          "scripts in the repository (the source .txt files are in each evidence/ folder).",
+                          "Only post-capture edit: case study renamed OjaHub -> SeunBaba by string substitution."]):
     c.drawString(M, H - 6.5 * cm - i * 0.6 * cm, line)
 y0 = H - 11.5 * cm
 c.setFont("Helvetica-Bold", 11); c.drawString(M, y0, "Contents"); c.setFont("Helvetica", 10)
