@@ -1,27 +1,27 @@
 ######## E1  majority write, read from a secondary ########
-  1.019s  topology: 27017:SECONDARY  27018:SECONDARY  27019:PRIMARY
-  1.033s  w:majority insert acknowledged; immediate plain read from a secondary -> 0 document(s)
-  1.033s     (majority ack = durable on 2 of 3 nodes, NOT 'already applied on the node I happen to read from')
+  1.015s  topology: 27017:PRIMARY  27018:SECONDARY  27019:SECONDARY
+  1.054s  w:majority insert acknowledged; immediate plain read from a secondary -> 0 document(s)
+  1.054s     (majority ack = durable on 2 of 3 nodes, NOT 'already applied on the node I happen to read from')
 
 ######## E1b  read-your-writes on a secondary with a causally consistent session ########
-  1.038s  same session, read from a secondary with afterClusterTime -> 2 document(s) (the secondary waits until it has applied the session's write)
+  1.087s  same session, read from a secondary with afterClusterTime -> 2 document(s) (the secondary waits until it has applied the session's write)
 
 ######## E2  crash the primary (SIGKILL) and measure the election ########
-  1.047s  killed PRIMARY localhost:27019 (pid 7228)
- 12.028s  write succeeded on new primary localhost:27017 after 10.98 s (election + driver rediscovery; retryable writes hid the failover from the application)
- 13.553s  topology: 27017:PRIMARY  27018:SECONDARY  27019:DOWN
- 13.558s  settings: electionTimeoutMillis=10000, heartbeatIntervalMillis=2000
+  1.093s  killed PRIMARY localhost:27017 (pid 80477)
+ 12.116s  write succeeded on new primary localhost:27018 after 11.02 s (election + driver rediscovery; retryable writes hid the failover from the application)
+ 13.632s  topology: 27017:DOWN  27018:PRIMARY  27019:SECONDARY
+ 13.634s  settings: electionTimeoutMillis=10000, heartbeatIntervalMillis=2000
 
 ######## E3  restart the crashed node: it rejoins as SECONDARY and catches up ########
- 14.606s  topology: 27017:PRIMARY  27018:SECONDARY  27019:SECONDARY
- 15.612s  documents on the rejoined node (written while it was dead included): 3
+ 16.660s  topology: 27017:SECONDARY  27018:PRIMARY  27019:SECONDARY
+ 17.668s  documents on the rejoined node (written while it was dead included): 3
 
 ######## E4  lose the majority: 2 of 3 members down ########
- 15.619s  killed localhost:27018
- 15.635s  killed localhost:27019
- 30.646s  topology: 27017:SECONDARY  27018:DOWN  27019:DOWN
- 33.655s  write refused: ServerSelectionTimeoutError - no PRIMARY can be elected without a majority (consistency over availability)
- 33.658s  read with secondaryPreferred still works -> 3 document(s) (possibly stale)
+ 17.673s  killed localhost:27017
+ 17.679s  killed localhost:27019
+ 32.718s  topology: 27017:DOWN  27018:SECONDARY  27019:DOWN
+ 35.751s  write refused: ServerSelectionTimeoutError - no PRIMARY can be elected without a majority (consistency over availability)
+ 35.754s  read with secondaryPreferred still works -> 3 document(s) (possibly stale)
 
 ######## restore ########
- 37.035s  topology: 27017:PRIMARY  27018:SECONDARY  27019:SECONDARY
+ 41.787s  topology: 27017:SECONDARY  27018:PRIMARY  27019:SECONDARY
