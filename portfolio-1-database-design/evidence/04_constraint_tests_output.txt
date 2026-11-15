@@ -19,7 +19,7 @@ SELECT 'inventory_movement', count(*) FROM inventory_movement;
  product            |    8000
  inventory          |   17522
  customer           |   50000
- product_review     |   56547
+ product_review     |   56541
  customer_address   |   65000
  shipment           |  280562
  customer_order     |  300000
@@ -38,7 +38,7 @@ DETAIL:  Key (lower(email::text))=(bukola.ekpo1@yahoo.com) already exists.
 INSERT INTO customer (email, phone, first_name, last_name)
 VALUES ('test.user@gmail.com', '08031234567', 'Test', 'User');
 psql:sql/04_constraint_tests.sql:28: ERROR:  new row for relation "customer" violates check constraint "ck_customer_phone"
-DETAIL:  Failing row contains (50002, test.user@gmail.com, 08031234567, Test, User, null, ACTIVE, 2026-11-14 18:51:20.638343+01).
+DETAIL:  Failing row contains (50002, test.user@gmail.com, 08031234567, Test, User, null, ACTIVE, 2026-11-15 22:02:52.426982+01).
 ==== T3 Domain: product price must be positive ====
 UPDATE product SET unit_price = -500 WHERE product_id = 10;
 psql:sql/04_constraint_tests.sql:31: ERROR:  new row for relation "product" violates check constraint "product_unit_price_check"
@@ -51,11 +51,11 @@ DETAIL:  Key (product_id)=(999999) is not present in table "product".
 ==== T5 Referential integrity: cannot delete a customer who has orders (ON DELETE RESTRICT) ====
 DELETE FROM customer WHERE customer_id = (SELECT customer_id FROM customer_order LIMIT 1);
 psql:sql/04_constraint_tests.sql:38: ERROR:  update or delete on table "customer" violates foreign key constraint "customer_order_customer_id_fkey" on table "customer_order"
-DETAIL:  Key (customer_id)=(899) is still referenced from table "customer_order".
+DETAIL:  Key (customer_id)=(43419) is still referenced from table "customer_order".
 ==== T6 Tuple constraint: reserved stock can never exceed stock on hand ====
 UPDATE inventory SET qty_reserved = qty_on_hand + 1 WHERE product_id = 1 AND warehouse_id = 1;
 psql:sql/04_constraint_tests.sql:41: ERROR:  new row for relation "inventory" violates check constraint "ck_inventory_reserved_le_onhand"
-DETAIL:  Failing row contains (1, 1, 394, 395, 15, 2026-11-14 18:51:20.644111+01).
+DETAIL:  Failing row contains (1, 1, 394, 395, 15, 2026-11-15 22:02:52.430743+01).
 ==== T7 Partial unique index: a customer can only have ONE default address ====
 INSERT INTO customer_address (customer_id, label, street_line, city, state_code, is_default)
 VALUES (1, 'OTHER', '2 Broad Street', 'Lagos Island', 'LA', true);
