@@ -1,0 +1,161 @@
+erDiagram
+    STATE_REGION ||--o{ CUSTOMER_ADDRESS : "locates"
+    STATE_REGION ||--o{ VENDOR : "registered in"
+    STATE_REGION ||--o{ WAREHOUSE : "hosts"
+    CUSTOMER ||--|{ CUSTOMER_ADDRESS : "has"
+    CUSTOMER ||--o{ CUSTOMER_ORDER : "places"
+    CUSTOMER ||--o{ PRODUCT_REVIEW : "writes"
+    CUSTOMER_ADDRESS ||--o{ CUSTOMER_ORDER : "ships to"
+    COUPON |o--o{ CUSTOMER_ORDER : "discounts"
+    VENDOR ||--o{ PRODUCT : "sells"
+    CATEGORY ||--o{ PRODUCT : "classifies"
+    CATEGORY |o--o{ CATEGORY : "parent of"
+    PRODUCT ||--o{ INVENTORY : "stocked as"
+    WAREHOUSE ||--o{ INVENTORY : "holds"
+    INVENTORY ||--o{ INVENTORY_MOVEMENT : "audited by"
+    CUSTOMER_ORDER ||--|{ ORDER_ITEM : "contains"
+    PRODUCT ||--o{ ORDER_ITEM : "ordered as"
+    WAREHOUSE ||--o{ ORDER_ITEM : "fulfils"
+    CUSTOMER_ORDER ||--o{ PAYMENT : "paid by"
+    CUSTOMER_ORDER ||--o{ SHIPMENT : "fulfilled by"
+    WAREHOUSE ||--o{ SHIPMENT : "dispatches"
+    SHIPMENT ||--|{ SHIPMENT_EVENT : "tracked by"
+    PRODUCT ||--o{ PRODUCT_REVIEW : "receives"
+
+    STATE_REGION {
+        char2 state_code PK
+        varchar state_name UK
+        varchar geo_zone
+    }
+    CUSTOMER {
+        bigint customer_id PK
+        varchar email UK "case-insensitive"
+        varchar phone UK
+        varchar first_name
+        varchar last_name
+        date date_of_birth
+        varchar account_status
+        timestamptz created_at
+    }
+    CUSTOMER_ADDRESS {
+        bigint address_id PK
+        bigint customer_id FK
+        varchar label
+        varchar street_line
+        varchar city
+        char2 state_code FK
+        boolean is_default "max one per customer"
+    }
+    VENDOR {
+        int vendor_id PK
+        varchar business_name UK
+        varchar cac_rc_number UK
+        varchar contact_email
+        char2 state_code FK
+        numeric commission_pct
+        date onboarded_on
+        boolean is_active
+    }
+    CATEGORY {
+        int category_id PK
+        varchar category_name
+        int parent_category_id FK
+    }
+    PRODUCT {
+        bigint product_id PK
+        int vendor_id FK
+        int category_id FK
+        varchar sku UK
+        varchar product_name
+        text description
+        numeric unit_price
+        numeric weight_kg
+        boolean is_active
+        timestamptz created_at
+    }
+    WAREHOUSE {
+        smallint warehouse_id PK
+        varchar warehouse_name UK
+        varchar city
+        char2 state_code FK
+    }
+    INVENTORY {
+        bigint product_id PK,FK
+        smallint warehouse_id PK,FK
+        int qty_on_hand
+        int qty_reserved
+        int reorder_level
+        timestamptz updated_at
+    }
+    INVENTORY_MOVEMENT {
+        bigint movement_id PK
+        bigint product_id FK
+        smallint warehouse_id FK
+        int qty_change
+        varchar reason
+        bigint order_id FK
+        timestamptz created_at
+    }
+    COUPON {
+        varchar coupon_code PK
+        numeric discount_pct
+        int max_redemptions
+        int times_redeemed
+        timestamptz valid_from
+        timestamptz valid_to
+    }
+    CUSTOMER_ORDER {
+        bigint order_id PK
+        bigint customer_id FK
+        bigint shipping_address_id FK
+        varchar coupon_code FK
+        varchar order_status
+        timestamptz order_date
+        numeric subtotal
+        numeric discount_amount
+        numeric delivery_fee
+        numeric total_amount "generated"
+    }
+    ORDER_ITEM {
+        bigint order_id PK,FK
+        smallint line_no PK
+        bigint product_id FK
+        smallint warehouse_id FK
+        int quantity
+        numeric unit_price "price at checkout"
+    }
+    PAYMENT {
+        bigint payment_id PK
+        bigint order_id FK
+        varchar payment_method
+        numeric amount
+        varchar payment_status
+        varchar gateway_ref UK
+        timestamptz initiated_at
+        timestamptz settled_at
+    }
+    SHIPMENT {
+        bigint shipment_id PK
+        bigint order_id FK
+        smallint warehouse_id FK
+        varchar courier_name
+        varchar tracking_number UK
+        varchar shipment_status
+        timestamptz shipped_at
+        timestamptz delivered_at
+    }
+    SHIPMENT_EVENT {
+        bigint event_id PK
+        bigint shipment_id FK
+        varchar event_status
+        varchar event_location
+        timestamptz event_time
+    }
+    PRODUCT_REVIEW {
+        bigint review_id PK
+        bigint product_id FK
+        bigint customer_id FK
+        smallint rating
+        varchar review_text
+        timestamptz created_at
+    }
