@@ -1,6 +1,6 @@
 -- =====================================================================
 -- MIT 8103 Advanced Database Systems - Portfolio 1
--- Case study : OjaHub Commerce Ltd (simulated multi-vendor e-commerce
+-- Case study : SeunBaba Commerce Ltd (simulated multi-vendor e-commerce
 --              marketplace headquartered in Lagos, Nigeria)
 -- File       : 01_schema.sql
 -- Purpose    : Physical relational schema (PostgreSQL 16) with keys,
@@ -8,11 +8,11 @@
 -- Author     : Odunlade Oluwaseun (301931438)
 -- =====================================================================
 
-DROP SCHEMA IF EXISTS ojahub CASCADE;
-CREATE SCHEMA ojahub;
-SET search_path = ojahub, public;
+DROP SCHEMA IF EXISTS seunbaba CASCADE;
+CREATE SCHEMA seunbaba;
+SET search_path = seunbaba, public;
 
--- OjaHub trades in West Africa Time (UTC+1). Functions such as date_trunc('month', ...)
+-- SeunBaba trades in West Africa Time (UTC+1). Functions such as date_trunc('month', ...)
 -- use the SESSION time zone, so the database default must be Lagos time; otherwise an
 -- order placed at 00:30 WAT on 1 October is reported as a September sale.
 DO $$ BEGIN
