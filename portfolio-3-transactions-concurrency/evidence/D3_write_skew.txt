@@ -1,0 +1,26 @@
+==============================================================================
+D3  WRITE SKEW: 'max 2 flash-sale tickets per customer' checked by application code
+==============================================================================
+Customer 1207 already holds 1 ticket and taps 'Join flash sale' on phone (A) and laptop (B) at the same time.
+
+Isolation = REPEATABLE READ
+  0.062s  [   A   ]  SELECT count(*) -> 1  (limit is 2)
+  0.063s  [   A   ]  INSERT ticket
+  0.064s  [   B   ]  SELECT count(*) -> 1  (limit is 2)
+  0.064s  [   B   ]  INSERT ticket
+  0.065s  [   A   ]  COMMIT ok
+  0.066s  [   B   ]  COMMIT ok
+  0.066s  [monitor]  tickets held by customer 1207 = 3  ==> rule VIOLATED
+
+Isolation = SERIALIZABLE
+  0.132s  [   A   ]  SELECT count(*) -> 1  (limit is 2)
+  0.135s  [   A   ]  INSERT ticket
+  0.136s  [   B   ]  SELECT count(*) -> 1  (limit is 2)
+  0.137s  [   B   ]  INSERT ticket
+  0.138s  [   A   ]  COMMIT ok
+  0.138s  [   B   ]  COMMIT failed 40001: could not serialize access due to read/write dependencies among transactions
+  0.138s  [   B   ]     DETAIL: Reason code: Canceled on identification as a pivot, during commit attempt.
+  0.138s  [   B   ]  retrying whole transaction ...
+  0.143s  [   B   ]  SELECT count(*) -> 2  (limit is 2)
+  0.143s  [   B   ]  limit reached -> request refused
+  0.144s  [monitor]  tickets held by customer 1207 = 2  ==> rule respected
