@@ -1,24 +1,24 @@
 ==============================================================================
 D4  DEADLOCK: two staff adjust two stock rows in opposite order
 ==============================================================================
-  0.066s  [   A   ]  locks FLASH-001
-  0.068s  [   B   ]  locks FLASH-002
-  0.068s  [   A   ]  wants FLASH-002 ...
-  0.369s  [   B   ]  wants FLASH-001 ...
-  1.069s  [   A   ]  ERROR 40P01: deadlock detected
-  1.069s  [   A   ]     DETAIL:  Process 4637 waits for ShareLock on transaction 2378; blocked by process 4638.
-  1.070s  [   B   ]  got FLASH-001; COMMIT
-  1.070s  [monitor]  outcome: {'A': '40P01', 'B': 'COMMIT'}  (deadlock_timeout = 1s, one victim chosen)
+  0.046s  [   A   ]  locks FLASH-001
+  0.047s  [   B   ]  locks FLASH-002
+  0.047s  [   A   ]  wants FLASH-002 ...
+  0.352s  [   B   ]  wants FLASH-001 ...
+  1.049s  [   A   ]  ERROR 40P01: deadlock detected
+  1.049s  [   A   ]     DETAIL:  Process 81280 waits for ShareLock on transaction 1052; blocked by process 81281.
+  1.050s  [   B   ]  got FLASH-001; COMMIT
+  1.050s  [monitor]  outcome: {'A': '40P01', 'B': 'COMMIT'}  (deadlock_timeout = 1s, one victim chosen)
 
 Fix: place_order() locks inventory rows ORDER BY product_id, whatever order the basket lists them in
-  1.139s  [   A   ]  place_order(basket FLASH-001, FLASH-002) -> order 300006, transaction still open
-  1.140s  [   B   ]  place_order(basket FLASH-002, FLASH-001) ...
-  2.640s  [monitor]  1.5 s later (longer than deadlock_timeout): B is simply queued behind A
-  2.643s  [monitor]  pg_stat_activity snapshot:
-  2.643s  [monitor]     A pid=4642 state=idle in transaction wait=Client:ClientRead blocked_by=[] | SELECT place_order(1207, '[{"product_id": 8001, "qty": 
-  2.643s  [monitor]     B pid=4643 state=active wait=Lock:transactionid blocked_by=[4642] | SELECT place_order(50, '[{"product_id": 8002, "qty": 1}
-  2.644s  [monitor]     pg_locks: A transactionid ExclusiveLock    granted=True
-  2.644s  [monitor]     pg_locks: B transactionid ShareLock        granted=False
-  2.644s  [monitor]     pg_locks: B tuple         AccessExclusiveLock granted=True
-  2.645s  [   A   ]  COMMIT
-  2.652s  [   B   ]  -> order 300007; COMMIT (waited, no deadlock)
+  1.109s  [   A   ]  place_order(basket FLASH-001, FLASH-002) -> order 300010, transaction still open
+  1.109s  [   B   ]  place_order(basket FLASH-002, FLASH-001) ...
+  2.613s  [monitor]  1.5 s later (longer than deadlock_timeout): B is simply queued behind A
+  2.617s  [monitor]  pg_stat_activity snapshot:
+  2.617s  [monitor]     A pid=81284 state=idle in transaction wait=Client:ClientRead blocked_by=[] | SELECT place_order(1207, '[{"product_id": 8001, "qty": 
+  2.617s  [monitor]     B pid=81285 state=active wait=Lock:transactionid blocked_by=[81284] | SELECT place_order(50, '[{"product_id": 8002, "qty": 1}
+  2.618s  [monitor]     pg_locks: A transactionid ExclusiveLock    granted=True
+  2.618s  [monitor]     pg_locks: B transactionid ShareLock        granted=False
+  2.618s  [monitor]     pg_locks: B tuple         AccessExclusiveLock granted=True
+  2.619s  [   A   ]  COMMIT
+  2.625s  [   B   ]  -> order 300011; COMMIT (waited, no deadlock)
