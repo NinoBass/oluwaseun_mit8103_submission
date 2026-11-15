@@ -25,7 +25,6 @@ FROM dist.customer_order WHERE customer_id = 1207 ORDER BY order_date DESC LIMIT
          ->  Foreign Scan on dist.customer_order_shard2 customer_order
                Output: customer_order.order_id, customer_order.order_date, customer_order.order_status, customer_order.total_amount
                Remote SQL: SELECT order_id, order_date, order_status, total_amount FROM public.customer_order_s WHERE ((customer_id = 1207))
- Query Identifier: 3726309094169895381
 
 SELECT order_id, order_date, order_status, total_amount, tableoid::regclass AS served_by
 FROM dist.customer_order WHERE customer_id = 1207 ORDER BY order_date DESC LIMIT 5;
@@ -66,7 +65,6 @@ WHERE o.customer_id = 1207 GROUP BY o.order_id, o.order_date;
                      ->  Foreign Scan on dist.order_item_shard2 i
                            Output: i.quantity, i.unit_price, i.customer_id, i.order_id
                            Remote SQL: SELECT order_id, customer_id, quantity, unit_price FROM public.order_item_s WHERE ((customer_id = 1207))
- Query Identifier: -2723204122100476713
 
 ==== S4 Global report by geo_zone (not the shard key): shards filter, coordinator aggregates ====
 EXPLAIN (VERBOSE, COSTS OFF)
@@ -93,7 +91,6 @@ FROM dist.customer_order WHERE order_status IN ('PAID','SHIPPED','DELIVERED') GR
                      ->  Foreign Scan on dist.customer_order_shard2 customer_order_1
                            Output: customer_order_1.geo_zone, customer_order_1.total_amount
                            Remote SQL: SELECT geo_zone, total_amount FROM public.customer_order_s WHERE ((order_status = ANY ('{PAID,SHIPPED,DELIVERED}'::text[])))
- Query Identifier: -3503373060146508009
 
 SELECT geo_zone, count(*) AS orders, sum(total_amount) AS revenue
 FROM dist.customer_order WHERE order_status IN ('PAID','SHIPPED','DELIVERED') GROUP BY geo_zone ORDER BY 1;
@@ -126,7 +123,6 @@ FROM dist.customer_order GROUP BY customer_id ORDER BY spend DESC LIMIT 5;
                      Output: customer_order_1.customer_id, (count(*)), (sum(customer_order_1.total_amount))
                      Relations: Aggregate on (dist.customer_order_shard2 customer_order_1)
                      Remote SQL: SELECT customer_id, count(*), sum(total_amount) FROM public.customer_order_s GROUP BY 1
- Query Identifier: -8123280779648375703
 
 SELECT customer_id, count(*) AS orders, sum(total_amount) AS spend
 FROM dist.customer_order GROUP BY customer_id ORDER BY spend DESC LIMIT 5;
@@ -164,8 +160,8 @@ INSERT 0 2
 SELECT order_id, customer_id, tableoid::regclass AS stored_on FROM dist.customer_order WHERE order_id IN (900001, 900002);
  order_id | customer_id |         stored_on          
 ----------+-------------+----------------------------
-   900001 |        1207 | dist.customer_order_shard2
    900002 |          50 | dist.customer_order_shard1
+   900001 |        1207 | dist.customer_order_shard2
 
 ROLLBACK;
 ROLLBACK
