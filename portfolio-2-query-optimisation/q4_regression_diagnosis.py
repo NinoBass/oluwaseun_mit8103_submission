@@ -7,7 +7,7 @@ import psycopg2
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 q = re.search(r"-- @Q4\n(.*?;)", open(os.path.join(HERE, "sql", "01_business_queries.sql")).read(), re.S).group(1).rstrip(";")
-c = psycopg2.connect(os.environ.get("OJAHUB_DSN", "host=localhost dbname=ojahub user=postgres"))
+c = psycopg2.connect(os.environ.get("SEUNBABA_DSN", "host=localhost dbname=seunbaba user=postgres"))
 c.autocommit = True
 cur = c.cursor()
 
@@ -22,7 +22,7 @@ def nodes(p, acc):
 
 def trial(label, settings):
     cur.execute("RESET ALL")
-    cur.execute("SET search_path = ojahub, public")
+    cur.execute("SET search_path = seunbaba, public")
     for s in settings:
         cur.execute(s)
     times = []
