@@ -25,35 +25,35 @@
   }
 }
 with index   : plan=LIMIT <- FETCH <- IXSCAN(ix_customer_date) | keysExamined=8 docsExamined=8 returned=8 time=0ms
-forced scan  : plan=SORT <- COLLSCAN | keysExamined=0 docsExamined=111129 returned=8 time=92ms
+forced scan  : plan=SORT <- COLLSCAN | keysExamined=0 docsExamined=111129 returned=8 time=43ms
 
 ######## M2  Tracking page: shipment + all events come back in ONE document read ########
 {
-  _id: 196916,
+  _id: 222841,
   status: 'DELIVERED',
   shipment: {
     courier: 'DHL Nigeria',
-    tracking_number: 'OJX000196916',
+    tracking_number: 'OJX000222841',
     events: [
       {
         status: 'PACKED',
         location: 'Ikeja',
-        at: ISODate('2026-01-25T06:04:27.129Z')
+        at: ISODate('2026-04-09T21:11:49.590Z')
       },
       {
         status: 'IN_TRANSIT',
         location: 'Ikeja',
-        at: ISODate('2026-01-25T09:04:27.129Z')
+        at: ISODate('2026-04-10T00:11:49.590Z')
       },
       {
         status: 'OUT_FOR_DELIVERY',
-        location: 'Yaba',
-        at: ISODate('2026-01-26T19:36:11.586Z')
+        location: 'Warri',
+        at: ISODate('2026-04-13T05:57:07.716Z')
       },
       {
         status: 'DELIVERED',
-        location: 'Yaba',
-        at: ISODate('2026-01-27T00:36:11.586Z')
+        location: 'Warri',
+        at: ISODate('2026-04-13T10:57:07.716Z')
       }
     ]
   }
@@ -62,17 +62,6 @@ plan=EXPRESS_IXSCAN(ux_tracking) | keysExamined=1 docsExamined=1 returned=1 time
 
 ######## M3  Flexible attributes: 5G smartphones, >= 8 GB RAM, >= 256 GB storage, under NGN 400,000 ########
 {
-  name: 'itel Smartphone 256GB Classic',
-  price: Decimal128('65000.00'),
-  attributes: {
-    ram_gb: 8,
-    storage_gb: 256
-  },
-  rating: {
-    avg: 3.71
-  }
-}
-{
   name: 'Infinix Smartphone 256GB Lite',
   price: Decimal128('65000.00'),
   attributes: {
@@ -80,18 +69,18 @@ plan=EXPRESS_IXSCAN(ux_tracking) | keysExamined=1 docsExamined=1 returned=1 time
     storage_gb: 256
   },
   rating: {
-    avg: 3.67
+    avg: 3.52
   }
 }
 {
-  name: 'Infinix Smartphone 256GB Original',
-  price: Decimal128('65200.00'),
+  name: 'itel Smartphone 256GB Classic',
+  price: Decimal128('65000.00'),
   attributes: {
-    ram_gb: 12,
+    ram_gb: 8,
     storage_gb: 256
   },
   rating: {
-    avg: 4.3
+    avg: 3.73
   }
 }
 {
@@ -102,7 +91,18 @@ plan=EXPRESS_IXSCAN(ux_tracking) | keysExamined=1 docsExamined=1 returned=1 time
     storage_gb: 256
   },
   rating: {
-    avg: 3.87
+    avg: 3.77
+  }
+}
+{
+  name: 'Infinix Smartphone 256GB Original',
+  price: Decimal128('65200.00'),
+  attributes: {
+    ram_gb: 12,
+    storage_gb: 256
+  },
+  rating: {
+    avg: 4.19
   }
 }
 {
@@ -113,11 +113,11 @@ plan=EXPRESS_IXSCAN(ux_tracking) | keysExamined=1 docsExamined=1 returned=1 time
     storage_gb: 256
   },
   rating: {
-    avg: 3.93
+    avg: 3.96
   }
 }
 matching products: 18
-plan=SORT <- FETCH <- IXSCAN(ix_leaf_ram_price) | keysExamined=124 docsExamined=121 returned=18 time=1ms
+plan=SORT <- FETCH <- IXSCAN(ix_leaf_ram_price) | keysExamined=124 docsExamined=121 returned=18 time=0ms
 Same product collection also holds shoes with sizes_eu and rice with nafdac_no, e.g.:
 {
   name: 'Aba Made Leather Sandals Pro',
@@ -172,24 +172,24 @@ Electronics       #3 Samsung Smart TV 55-inch Original    units=21 revenue=21702
 
 ######## M6  Full-text search 'air fryer' (text index, relevance score) ########
 {
-  name: 'Philips Air Fryer Lite',
-  price: Decimal128('24300.00'),
-  score: 13.625
-}
-{
   name: 'Kenwood Air Fryer Lite',
   price: Decimal128('9750.00'),
   score: 13.625
 }
 {
   name: 'Binatone Air Fryer Pro',
-  price: Decimal128('132250.00'),
+  price: Decimal128('146850.00'),
+  score: 13.625
+}
+{
+  name: 'Binatone Air Fryer Plus',
+  price: Decimal128('94000.00'),
   score: 13.625
 }
 
 ######## M7  Atomic single-document update: courier scan appends an event and changes status ########
 {
-  order: 297884,
+  order: 297891,
   matched: 1,
   modified: 1,
   events_now: 3
