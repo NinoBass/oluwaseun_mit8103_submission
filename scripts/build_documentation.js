@@ -32,7 +32,7 @@ const sm = (t, o = {}) => new TextRun({ text: t, size: 17, ...o });
 
 // ---------------------------------------------------------------- portfolio table
 const cols = [1550, 4626, 3850];
-const head = new TableRow({ tableHeader: true, children: ["Portfolio", "What was implemented (OjaHub)", "Key evidence (measured)"]
+const head = new TableRow({ tableHeader: true, children: ["Portfolio", "What was implemented (SeunBaba)", "Key evidence (measured)"]
   .map((t, i) => cell([[sm(t, { bold: true, color: "FFFFFF" })]], cols[i], { fill: navy })) });
 const rows = [
   ["1. Database design & modelling (7)",
@@ -69,7 +69,7 @@ const figCell = (file, caption) => cell([
   new Paragraph({ alignment: AlignmentType.CENTER, children: [sm(caption, { italics: true })] })], half);
 const figTable = new Table({ width: { size: W, type: WidthType.DXA }, columnWidths: [half, half], rows: [
   new TableRow({ children: [
-    figCell("portfolio-1-database-design/diagrams/ojahub_erd.png", "Fig. 1  OjaHub ER diagram (Portfolio 1)"),
+    figCell("portfolio-1-database-design/diagrams/seunbaba_erd.png", "Fig. 1  SeunBaba ER diagram (Portfolio 1)"),
     figCell("portfolio-5-distributed-cloud/evidence/R3_failover.png", "Fig. 2  Crash, failover, pg_rewind and switchover (Portfolio 5)"),
   ] }) ] });
 const wide = (file, caption) => [
@@ -124,8 +124,8 @@ const doc = new Document({
       p([b("GitHub repository: "), link, new TextRun("  (each portfolio folder has a README explaining implementation, testing and analysis)")],
         { border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: navy, space: 4 } }, spacing: { after: 100 } }),
 
-      h1("1. Selected organisation: OjaHub Commerce Ltd (simulated)"),
-      p("OjaHub is a simulated multi-vendor e-commerce marketplace in Ikeja, Lagos (ọjà is Yoruba for market). Independent Nigerian vendors list products, and OjaHub runs checkout in Naira (card, transfer, USSD, wallet, pay-on-delivery), stock in four hubs (Lagos, Abuja, Port Harcourt, Kano) and last-mile delivery through couriers."),
+      h1("1. Selected organisation: SeunBaba Commerce Ltd (simulated)"),
+      p("SeunBaba is a simulated multi-vendor e-commerce marketplace in Ikeja, Lagos (ọjà is Yoruba for market). Independent Nigerian vendors list products, and SeunBaba runs checkout in Naira (card, transfer, USSD, wallet, pay-on-delivery), stock in four hubs (Lagos, Abuja, Port Harcourt, Kano) and last-mile delivery through couriers."),
       bullet([b("Database users: "), "customers (web and mobile app), vendors, warehouse staff, customer-service agents, finance (reconciliation) and management (dashboards)."]),
       bullet([b("Major data: "), "customers and addresses, vendors, category tree, products, stock per warehouse, coupons, orders and lines, payment attempts, shipments, courier scan events, reviews, stock audit trail."]),
       bullet([b("Key operations: "), "register, list and search products, place an order (reserve stock, coupon, payment), cancel or refund, dispatch and track a parcel, review, low-stock and sales reporting."]),
@@ -142,7 +142,7 @@ const doc = new Document({
       ...wideFigs,
 
       h1("4. Individual technical reflection"),
-      p([b("Design choices. "), "I modelled OjaHub relationally first because money and stock need ACID guarantees and declarative constraints. I then moved only the workloads that fit badly into other models: the product catalogue (very different attributes per category) and the order and tracking pages (4–5 joins per view) became MongoDB aggregates, and short-lived hot data (carts, leaderboards, flash-sale counters) went to Redis. I sharded by customer_id rather than date or order id, because nearly every operation is per customer and the same customer's orders and lines then live on one shard."]),
+      p([b("Design choices. "), "I modelled SeunBaba relationally first because money and stock need ACID guarantees and declarative constraints. I then moved only the workloads that fit badly into other models: the product catalogue (very different attributes per category) and the order and tracking pages (4–5 joins per view) became MongoDB aggregates, and short-lived hot data (carts, leaderboards, flash-sale counters) went to Redis. I sharded by customer_id rather than date or order id, because nearly every operation is per customer and the same customer's orders and lines then live on one shard."]),
       p([b("Challenges. "), "Three defects were found only because I cross-checked results instead of trusting them. (1) The seed generator gave every product in a category the same brand: PostgreSQL evaluated a volatile random() inside a LATERAL sub-select once per category, not once per row. A text search for \"air fryer\" returning nothing exposed it. (2) Reconciling SQL revenue with MongoDB found a two-order mismatch caused by date_trunc running in the UTC session time zone instead of West Africa Time. (3) My first failover script ignored a failed pg_rewind and produced a small split-brain. I fixed each one (correlated sub-select, database time zone Africa/Lagos, wal_keep_size and abort-on-failure), regenerated all evidence, and documented the original failure."]),
       p([b("Lessons learned. "), "Measure rather than assume: one index made a report 1.65× slower even though the optimiser estimated it cheaper, and rewriting a query gave a 155× gain where indexes gave only 7.9×. Correctness under concurrency has to be designed in: READ COMMITTED with a naive read-then-write lost 39 of 40 updates, and only SERIALIZABLE stopped write skew. In distributed systems every guarantee has a measurable price: synchronous replication more than doubled commit latency but eliminated stale reads, and a MongoDB majority write is durable but not instantly visible on every secondary."]),
 

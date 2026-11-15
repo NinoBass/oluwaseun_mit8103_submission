@@ -11,7 +11,7 @@ W, H = A4
 M = 1.5 * cm
 SECTIONS = [
     ("Portfolio 1 - Database Design and Modelling", [
-        ("portfolio-1-database-design/diagrams/ojahub_erd.png", "ER diagram (crow's-foot) of the OjaHub schema"),
+        ("portfolio-1-database-design/diagrams/seunbaba_erd.png", "ER diagram (crow's-foot) of the SeunBaba schema"),
         ("portfolio-1-database-design/evidence/04_constraint_tests.png", "11 invalid operations rejected by DBMS-enforced constraints"),
     ]),
     ("Portfolio 2 - Query Processing and Optimisation", [
@@ -54,7 +54,7 @@ c.setFont("Helvetica-Bold", 20); c.drawString(M, H - 4 * cm, "MIT 8103 Advanced 
 c.setFont("Helvetica-Bold", 15); c.drawString(M, H - 5 * cm, "Practical Portfolio - Evidence Pack")
 c.setFont("Helvetica", 11)
 for i, line in enumerate(["Student: Odunlade Oluwaseun", "Student ID: 301931438",
-                          "Case study: OjaHub Commerce Ltd (simulated e-commerce marketplace, Lagos)",
+                          "Case study: SeunBaba Commerce Ltd (simulated e-commerce marketplace, Lagos)",
                           "Repository: https://github.com/NinoBass/oluwaseun_mit8103_submission",
                           "",
                           "Screenshots rendered from unedited command output captured while running",
