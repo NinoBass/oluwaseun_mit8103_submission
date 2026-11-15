@@ -1,0 +1,79 @@
+-- Q7 (after)
+SELECT v.vendor_id, v.business_name,
+       (SELECT coalesce(sum(oi.quantity * oi.unit_price), 0)
+          FROM order_item oi
+          JOIN product p ON p.product_id = oi.product_id
+          JOIN customer_order o ON o.order_id = oi.order_id
+         WHERE p.vendor_id = v.vendor_id
+           AND o.order_status = 'DELIVERED'
+           AND o.order_date >= TIMESTAMPTZ '2026-07-01 00:00+01'
+           AND o.order_date <  TIMESTAMPTZ '2026-10-01 00:00+01') AS gross_sales,
+       (SELECT round(avg(r.rating), 2)
+          FROM product_review r JOIN product p ON p.product_id = r.product_id
+         WHERE p.vendor_id = v.vendor_id) AS avg_rating
+FROM vendor v
+WHERE v.is_active
+ORDER BY gross_sales DESC
+LIMIT 10;
+
+Limit  (cost=2021898.43..2172584.83 rows=10 width=85) (actual time=2108.406..2111.223 rows=10 loops=1)
+  Buffers: shared hit=3100147
+  ->  Result  (cost=2021898.43..4191782.66 rows=144 width=85) (actual time=1933.660..1936.474 rows=10 loops=1)
+        Buffers: shared hit=3100147
+        ->  Sort  (cost=2021898.43..2021898.79 rows=144 width=53) (actual time=1932.915..1932.922 rows=10 loops=1)
+              Sort Key: ((SubPlan 1)) DESC
+              Sort Method: top-N heapsort  Memory: 26kB
+              Buffers: shared hit=3097092
+              ->  Seq Scan on vendor v  (cost=0.00..2021895.32 rows=144 width=53) (actual time=17.369..1932.488 rows=144 loops=1)
+                    Filter: is_active
+                    Rows Removed by Filter: 6
+                    Buffers: shared hit=3097092
+                    SubPlan 1
+                      ->  Aggregate  (cost=14040.91..14040.92 rows=1 width=32) (actual time=13.415..13.415 rows=1 loops=144)
+                            Buffers: shared hit=3097090
+                            ->  Nested Loop  (cost=10.03..14037.54 rows=448 width=10) (actual time=0.711..13.278 rows=441 loops=144)
+                                  Buffers: shared hit=3097090
+                                  ->  Nested Loop  (cost=9.61..12004.20 rows=4258 width=18) (actual time=0.069..4.557 rows=4287 loops=144)
+                                        Buffers: shared hit=627714
+                                        ->  Bitmap Heap Scan on product p  (cost=4.69..121.11 rows=53 width=8) (actual time=0.011..0.063 rows=53 loops=144)
+                                              Recheck Cond: (vendor_id = v.vendor_id)
+                                              Heap Blocks: exact=6629
+                                              Buffers: shared hit=6917
+                                              ->  Bitmap Index Scan on ix_product_vendor  (cost=0.00..4.68 rows=53 width=0) (actual time=0.005..0.005 rows=53 loops=144)
+                                                    Index Cond: (vendor_id = v.vendor_id)
+                                                    Buffers: shared hit=288
+                                        ->  Bitmap Heap Scan on order_item oi  (cost=4.92..223.38 rows=83 width=26) (actual time=0.014..0.074 rows=80 loops=7672)
+                                              Recheck Cond: (product_id = p.product_id)
+                                              Heap Blocks: exact=597649
+                                              Buffers: shared hit=620797
+                                              ->  Bitmap Index Scan on ix_order_item_product  (cost=0.00..4.90 rows=83 width=0) (actual time=0.005..0.005 rows=80 loops=7672)
+                                                    Index Cond: (product_id = p.product_id)
+                                                    Buffers: shared hit=23148
+                                  ->  Index Scan using customer_order_pkey on customer_order o  (cost=0.42..0.48 rows=1 width=8) (actual time=0.002..0.002 rows=0 loops=617344)
+                                        Index Cond: (order_id = oi.order_id)
+                                        Filter: ((order_date >= '2026-07-01 00:00:00+01'::timestamp with time zone) AND (order_date < '2026-10-01 00:00:00+01'::timestamp with time zone) AND ((order_status)::text = 'DELIVERED'::text))
+                                        Rows Removed by Filter: 1
+                                        Buffers: shared hit=2469376
+        SubPlan 2
+          ->  Aggregate  (cost=1027.70..1027.71 rows=1 width=32) (actual time=0.350..0.350 rows=1 loops=10)
+                Buffers: shared hit=3055
+                ->  Nested Loop  (cost=5.11..1026.76 rows=375 width=2) (actual time=0.015..0.314 rows=585 loops=10)
+                      Buffers: shared hit=3055
+                      ->  Bitmap Heap Scan on product p_1  (cost=4.69..121.11 rows=53 width=8) (actual time=0.009..0.041 rows=62 loops=10)
+                            Recheck Cond: (vendor_id = v.vendor_id)
+                            Heap Blocks: exact=513
+                            Buffers: shared hit=533
+                            ->  Bitmap Index Scan on ix_product_vendor  (cost=0.00..4.68 rows=53 width=0) (actual time=0.004..0.004 rows=62 loops=10)
+                                  Index Cond: (vendor_id = v.vendor_id)
+                                  Buffers: shared hit=20
+                      ->  Index Scan using uq_one_review_per_customer on product_review r  (cost=0.41..17.01 rows=8 width=10) (actual time=0.002..0.003 rows=10 loops=615)
+                            Index Cond: (product_id = p_1.product_id)
+                            Buffers: shared hit=2522
+Planning:
+  Buffers: shared hit=46
+Planning Time: 0.601 ms
+JIT:
+  Functions: 37
+  Options: Inlining true, Optimization true, Expressions true, Deforming true
+  Timing: Generation 1.358 ms, Inlining 17.201 ms, Optimization 91.249 ms, Emission 66.375 ms, Total 176.182 ms
+Execution Time: 2112.751 ms
