@@ -8,19 +8,18 @@ Case study   : SeunBaba Commerce Ltd - a simulated multi-vendor e-commerce
                marketplace based in Lagos, Nigeria (used in all 5 portfolios)
 GitHub repo  : https://github.com/NinoBass/oluwaseun_mit8103_submission
 
-CONTENTS OF THIS FOLDER
------------------------
-Odunlade_Oluwaseun_301931438_Documentation.docx  3-page portfolio documentation (Word)
-Odunlade_Oluwaseun_301931438_Documentation.pdf   the same document as PDF
+CONTENTS OF THE SUBMISSION FOLDER
+---------------------------------
+Odunlade_Oluwaseun_301931438_Documentation.pdf   3-page portfolio documentation (PDF)
+Odunlade_Oluwaseun_301931438_Documentation.docx  the same document in Word
 Odunlade_Oluwaseun_301931438_Evidence.pdf        evidence pack: 25 captioned screenshots
                                                  of outputs, execution plans and logs
 Odunlade_Oluwaseun_301931438_README.txt          this file
+README.md, portfolio-1 ... portfolio-5, docs/,   the complete project, identical to the
+scripts/                                         GitHub repository (code, SQL, evidence)
 
-The same folder is kept in the GitHub repository, so the documentation can also
-be read there.
-
-PORTFOLIO MAP (folders in the GitHub repository)
-------------------------------------------------
+PORTFOLIO MAP (folders in this submission and in the GitHub repository)
+-----------------------------------------------------------------------
 portfolio-1-database-design/          case study, ER diagram, BCNF schema, keys,
                                       constraints, normalisation, constraint tests
 portfolio-2-query-optimisation/       7 queries, EXPLAIN (ANALYZE, BUFFERS) before/after,
