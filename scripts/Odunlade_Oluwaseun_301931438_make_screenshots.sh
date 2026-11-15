@@ -50,7 +50,7 @@ grep -E "^(##########|psql:|ERROR| SBB|ROLLBACK$|COMMIT$| PAID|      sku| order_
 $R term $TMP/p3.txt $E/Odunlade_Oluwaseun_301931438_02_commit_rollback.png "psql -f Odunlade_Oluwaseun_301931438_02_commit_rollback_demo.sql (condensed)"
 for f in Odunlade_Oluwaseun_301931438_D1_lost_update Odunlade_Oluwaseun_301931438_D2_non_repeatable_read Odunlade_Oluwaseun_301931438_D3_write_skew Odunlade_Oluwaseun_301931438_D4_deadlock Odunlade_Oluwaseun_301931438_D5_flash_sale_stress; do
   cut -c1-175 $E/$f.txt > $TMP/$f.txt
-  $R term $TMP/$f.txt $E/$f.png "python3 Odunlade_Oluwaseun_301931438_concurrency_demos.py ${f%%_*}  ($PGV, separate connections)"
+  $R term $TMP/$f.txt $E/$f.png "python3 Odunlade_Oluwaseun_301931438_concurrency_demos.py $(t=${f#Odunlade_Oluwaseun_301931438_}; echo ${t%%_*})  ($PGV, separate connections)"
 done
 
 # ---- Portfolio 4
