@@ -56,8 +56,6 @@ NOTES
   personal data is used.
 * Two artefacts are designs only and were NOT executed: the Cassandra CQL file
   (portfolio-4) and the Terraform file (portfolio-5). Everything else was run.
-* After capture, the only edit to the evidence was renaming the case study from
-  OjaHub to SeunBaba by plain string substitution (no values changed).
 * AI-use declaration: Claude (Anthropic), through the Claude Code agent, was used
   to generate and run the scripts and to draft the documentation. Outputs were
   verified by execution and cross-checks. The full declaration is in the
