@@ -1,0 +1,27 @@
+
+######## T1 commit: 2 x product A + 1 x product B ########
+  before: OJH-000100 stock.wh1 = 174, requested 2
+  before: OJH-000101 stock.wh1 = 243, requested 1
+  [txn] decrement OJH-000100 by 2: modified=1
+  [txn] decrement OJH-000101 by 1: modified=1
+  [txn] inserted order 300033
+  COMMITTED
+  after : OJH-000100 stock.wh1 = 172
+  after : OJH-000101 stock.wh1 = 242
+  order 300033 exists? true
+
+######## T2 abort: line 1 succeeds, line 2 fails -> line 1 is undone ########
+  before: OJH-000100 stock.wh1 = 172, requested 1
+  before: OJH-000101 stock.wh1 = 242, requested 100000
+  [txn] decrement OJH-000100 by 1: modified=1
+  [txn] decrement OJH-000101 by 100000: modified=0
+  ABORTED: insufficient stock for OJH-000101
+  after : OJH-000100 stock.wh1 = 172
+  after : OJH-000101 stock.wh1 = 242
+  order 300034 exists? false
+
+######## T3 write conflict: two concurrent transactions update the same product ########
+  session 1 updated the product (uncommitted)
+  session 2: WriteConflict (code 112), labels=["TransientTransactionError"]
+  -> driver/application should retry the whole transaction (TransientTransactionError)
+  final OJH-000100 stock.wh1 = 171 (exactly one decrement applied)
