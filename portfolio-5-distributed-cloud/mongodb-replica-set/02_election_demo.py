@@ -9,12 +9,14 @@ Portfolio 5 - MongoDB replica set behaviour under failure (3 members, rs0).
   E4  lose the MAJORITY (2 of 3 down): no primary can exist -> writes refused,
       reads with readPreference=secondaryPreferred still served (CP behaviour)
 """
-import os, signal, subprocess, time
+import os, shutil, signal, subprocess, time
 from datetime import datetime, timezone
 from pymongo import MongoClient, ReadPreference, WriteConcern
 from pymongo.errors import PyMongoError
 
-MONGOD = os.environ.get("MONGO_BIN", "/opt/mongo/mongodb-linux-x86_64-ubuntu2404-8.0.4/bin") + "/mongod"
+MONGOD = os.path.join(os.environ["MONGO_BIN"], "mongod") if "MONGO_BIN" in os.environ else shutil.which("mongod")
+MONGO_WORK = os.environ.get("MONGO_WORK", "/var/lib/mongo-work")
+MONGO_LOGDIR = os.environ.get("MONGO_LOGDIR", "/var/log/mongo-work")
 URI = "mongodb://localhost:27017,localhost:27018,localhost:27019/?replicaSet=rs0&retryWrites=true"
 T0 = time.perf_counter()
 
@@ -45,30 +47,32 @@ def kill(port):
 
 
 def start(port):
-    dbpath = "/var/lib/mongo-work/rs0-1" if port == 27017 else f"/var/lib/mongo-work/rs0-{port}"
-    logpath = "/var/log/mongo-work/rs0-1.log" if port == 27017 else f"/var/log/mongo-work/rs0-{port}.log"
-    subprocess.run([MONGOD, "--replSet", "rs0", "--port", str(port), "--bind_ip", "localhost", "--dbpath", dbpath,
-                    "--logpath", logpath, "--fork", "--wiredTigerCacheSizeGB", "0.5"], check=True, capture_output=True)
+    name = "rs0-1" if port == 27017 else f"rs0-{port}"
+    dbpath, logpath = f"{MONGO_WORK}/{name}", f"{MONGO_LOGDIR}/{name}.log"
+    # background process instead of --fork (not supported on macOS)
+    subprocess.Popen([MONGOD, "--replSet", "rs0", "--port", str(port), "--bind_ip", "localhost", "--dbpath", dbpath,
+                    "--logpath", logpath, "--wiredTigerCacheSizeGB", "0.5"],
+                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
 
 
 client = MongoClient(URI, serverSelectionTimeoutMS=30000)
-events = client.ojahub.get_collection("courier_scans", write_concern=WriteConcern(w="majority", wtimeout=5000))
+events = client.seunbaba.get_collection("courier_scans", write_concern=WriteConcern(w="majority", wtimeout=5000))
 events.drop()
 time.sleep(1)
 
 print("######## E1  majority write, read from a secondary ########")
 log(f"topology: {topology()}")
 events.insert_one({"tracking_number": "OJX000245000", "status": "OUT_FOR_DELIVERY", "at": datetime.now(timezone.utc)})
-sec = client.ojahub.get_collection("courier_scans", read_preference=ReadPreference.SECONDARY)
+sec = client.seunbaba.get_collection("courier_scans", read_preference=ReadPreference.SECONDARY)
 log(f"w:majority insert acknowledged; immediate plain read from a secondary -> {sec.count_documents({})} document(s)")
 log("   (majority ack = durable on 2 of 3 nodes, NOT 'already applied on the node I happen to read from')")
 
 print("\n######## E1b  read-your-writes on a secondary with a causally consistent session ########")
 from pymongo.read_concern import ReadConcern
 with client.start_session(causal_consistency=True) as sess:
-    coll = client.ojahub.get_collection("courier_scans", write_concern=WriteConcern(w="majority"))
+    coll = client.seunbaba.get_collection("courier_scans", write_concern=WriteConcern(w="majority"))
     coll.insert_one({"tracking_number": "OJX000245000", "status": "DELIVERED", "at": datetime.now(timezone.utc)}, session=sess)
-    csec = client.ojahub.get_collection("courier_scans", read_preference=ReadPreference.SECONDARY,
+    csec = client.seunbaba.get_collection("courier_scans", read_preference=ReadPreference.SECONDARY,
                                         read_concern=ReadConcern("majority"))
     log(f"same session, read from a secondary with afterClusterTime -> {csec.count_documents({}, session=sess)} document(s)"
         f" (the secondary waits until it has applied the session's write)")
@@ -102,7 +106,7 @@ for _ in range(60):
     time.sleep(0.5)
 log(f"topology: {topology()}")
 time.sleep(1)
-n = direct(primary_port).ojahub.courier_scans.count_documents({})
+n = direct(primary_port).seunbaba.courier_scans.count_documents({})
 log(f"documents on the rejoined node (written while it was dead included): {n}")
 
 print("\n######## E4  lose the majority: 2 of 3 members down ########")
@@ -114,12 +118,12 @@ time.sleep(12)        # > electionTimeout: the lone primary notices it cannot se
 log(f"topology: {topology()}")
 fast = MongoClient(URI, serverSelectionTimeoutMS=3000)
 try:
-    fast.ojahub.get_collection("courier_scans", write_concern=WriteConcern(w="majority", wtimeout=2000)) \
+    fast.seunbaba.get_collection("courier_scans", write_concern=WriteConcern(w="majority", wtimeout=2000)) \
         .insert_one({"tracking_number": "OJX000245002", "status": "DELIVERED"})
     log("write accepted (unexpected)")
 except PyMongoError as e:
     log(f"write refused: {type(e).__name__} - no PRIMARY can be elected without a majority (consistency over availability)")
-reader = fast.ojahub.get_collection("courier_scans", read_preference=ReadPreference.SECONDARY_PREFERRED)
+reader = fast.seunbaba.get_collection("courier_scans", read_preference=ReadPreference.SECONDARY_PREFERRED)
 log(f"read with secondaryPreferred still works -> {reader.count_documents({})} document(s) (possibly stale)")
 
 print("\n######## restore ########")
@@ -131,4 +135,4 @@ for _ in range(60):
         break
     time.sleep(0.5)
 log(f"topology: {topology()}")
-client.ojahub.courier_scans.drop()
+client.seunbaba.courier_scans.drop()
