@@ -5,27 +5,27 @@ JOIN shipment_event e ON e.shipment_id = s.shipment_id
 WHERE s.order_id = 245000
 ORDER BY e.event_time;
 
-Sort  (cost=21955.99..21956.00 rows=4 width=50) (actual time=77.188..81.592 rows=4 loops=1)
+Sort  (cost=21955.99..21956.00 rows=4 width=50) (actual time=34.704..36.136 rows=4 loops=1)
   Sort Key: e.event_time
   Sort Method: quicksort  Memory: 25kB
   Buffers: shared hit=13757
-  ->  Gather  (cost=5924.27..21955.95 rows=4 width=50) (actual time=77.035..81.572 rows=4 loops=1)
+  ->  Gather  (cost=5924.27..21955.95 rows=4 width=50) (actual time=10.064..36.133 rows=4 loops=1)
         Workers Planned: 2
         Workers Launched: 2
         Buffers: shared hit=13757
-        ->  Parallel Hash Join  (cost=4924.27..20955.55 rows=2 width=50) (actual time=70.006..74.480 rows=1 loops=3)
+        ->  Parallel Hash Join  (cost=4924.27..20955.55 rows=2 width=50) (actual time=25.051..33.246 rows=1 loops=3)
               Hash Cond: (e.shipment_id = s.shipment_id)
               Buffers: shared hit=13757
-              ->  Parallel Seq Scan on shipment_event e  (cost=0.00..14806.34 rows=466634 width=33) (actual time=0.013..34.267 rows=373307 loops=3)
+              ->  Parallel Seq Scan on shipment_event e  (cost=0.00..14806.34 rows=466634 width=33) (actual time=0.006..16.273 rows=373307 loops=3)
                     Buffers: shared hit=10140
-              ->  Parallel Hash  (cost=4924.26..4924.26 rows=1 width=33) (actual time=7.762..7.763 rows=0 loops=3)
+              ->  Parallel Hash  (cost=4924.26..4924.26 rows=1 width=33) (actual time=3.854..3.854 rows=0 loops=3)
                     Buckets: 1024  Batches: 1  Memory Usage: 40kB
                     Buffers: shared hit=3463
-                    ->  Parallel Seq Scan on shipment s  (cost=0.00..4924.26 rows=1 width=33) (actual time=7.197..7.694 rows=0 loops=3)
+                    ->  Parallel Seq Scan on shipment s  (cost=0.00..4924.26 rows=1 width=33) (actual time=3.355..3.846 rows=0 loops=3)
                           Filter: (order_id = 245000)
                           Rows Removed by Filter: 93520
                           Buffers: shared hit=3463
 Planning:
   Buffers: shared hit=8
-Planning Time: 0.193 ms
-Execution Time: 81.622 ms
+Planning Time: 0.076 ms
+Execution Time: 36.145 ms

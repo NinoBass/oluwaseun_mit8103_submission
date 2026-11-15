@@ -6,30 +6,30 @@ WHERE lower(c.email) = lower('Chinedu.Ibrahim1207@Outlook.com')
 ORDER BY o.order_date DESC
 LIMIT 10;
 
-Limit  (cost=6587.63..6588.09 rows=4 width=31) (actual time=21.661..24.366 rows=10 loops=1)
-  Buffers: shared hit=4127
-  ->  Gather Merge  (cost=6587.63..6588.09 rows=4 width=31) (actual time=21.659..24.363 rows=10 loops=1)
+Limit  (cost=6586.63..6587.09 rows=4 width=31) (actual time=10.093..11.019 rows=10 loops=1)
+  Buffers: shared hit=4126
+  ->  Gather Merge  (cost=6586.63..6587.09 rows=4 width=31) (actual time=10.092..11.018 rows=10 loops=1)
         Workers Planned: 2
         Workers Launched: 2
-        Buffers: shared hit=4127
-        ->  Sort  (cost=5587.60..5587.61 rows=2 width=31) (actual time=19.129..19.132 rows=4 loops=3)
+        Buffers: shared hit=4126
+        ->  Sort  (cost=5586.60..5586.61 rows=2 width=31) (actual time=8.364..8.365 rows=4 loops=3)
               Sort Key: o.order_date DESC
               Sort Method: quicksort  Memory: 25kB
-              Buffers: shared hit=4127
+              Buffers: shared hit=4126
               Worker 0:  Sort Method: quicksort  Memory: 25kB
               Worker 1:  Sort Method: quicksort  Memory: 25kB
-              ->  Hash Join  (cost=8.44..5587.59 rows=2 width=31) (actual time=8.395..19.100 rows=4 loops=3)
+              ->  Hash Join  (cost=8.44..5586.59 rows=2 width=31) (actual time=0.718..8.350 rows=4 loops=3)
                     Hash Cond: (o.customer_id = c.customer_id)
-                    Buffers: shared hit=4111
-                    ->  Parallel Seq Scan on customer_order o  (cost=0.00..5251.00 rows=125000 width=39) (actual time=0.006..10.133 rows=100000 loops=3)
-                          Buffers: shared hit=4001
-                    ->  Hash  (cost=8.43..8.43 rows=1 width=8) (actual time=0.029..0.030 rows=1 loops=3)
+                    Buffers: shared hit=4110
+                    ->  Parallel Seq Scan on customer_order o  (cost=0.00..5250.00 rows=125000 width=39) (actual time=0.003..4.785 rows=100000 loops=3)
+                          Buffers: shared hit=4000
+                    ->  Hash  (cost=8.43..8.43 rows=1 width=8) (actual time=0.009..0.009 rows=1 loops=3)
                           Buckets: 1024  Batches: 1  Memory Usage: 9kB
                           Buffers: shared hit=14
-                          ->  Index Scan using uq_customer_email_ci on customer c  (cost=0.41..8.43 rows=1 width=8) (actual time=0.023..0.024 rows=1 loops=3)
+                          ->  Index Scan using uq_customer_email_ci on customer c  (cost=0.41..8.43 rows=1 width=8) (actual time=0.007..0.007 rows=1 loops=3)
                                 Index Cond: (lower((email)::text) = 'chinedu.ibrahim1207@outlook.com'::text)
                                 Buffers: shared hit=14
 Planning:
   Buffers: shared hit=6
-Planning Time: 0.274 ms
-Execution Time: 24.397 ms
+Planning Time: 0.101 ms
+Execution Time: 11.031 ms
