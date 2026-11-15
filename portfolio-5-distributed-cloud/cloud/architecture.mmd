@@ -1,5 +1,5 @@
 flowchart LR
-    U["Shoppers<br/>web + mobile app"] --> API["OjaHub API<br/>(stateless, autoscaling)"]
+    U["Shoppers<br/>web + mobile app"] --> API["SeunBaba API<br/>(stateless, autoscaling)"]
     subgraph AWS["AWS af-south-1 · 3 AZs"]
       direction LR
       API -->|"cart, sessions,<br/>flash-sale DECR"| R[("ElastiCache Redis<br/>primary + replica")]

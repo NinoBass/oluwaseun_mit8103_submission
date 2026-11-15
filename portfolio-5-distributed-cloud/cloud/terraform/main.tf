@@ -1,5 +1,5 @@
 # =====================================================================
-# Portfolio 5 - OjaHub production data tier on AWS (af-south-1, Cape Town)
+# Portfolio 5 - SeunBaba production data tier on AWS (af-south-1, Cape Town)
 # STATUS: DESIGN ONLY. This file was written as infrastructure-as-code to
 # document the target deployment. It has NOT been applied and has NOT been
 # run through `terraform validate` (the Terraform CLI could not be installed
@@ -27,13 +27,13 @@ variable "db_password"        {
 }
 
 # ---------------------------------------------------------------- network access
-resource "aws_db_subnet_group" "ojahub" {
-  name       = "ojahub-db"
+resource "aws_db_subnet_group" "seunbaba" {
+  name       = "seunbaba-db"
   subnet_ids = var.private_subnet_ids
 }
 
 resource "aws_security_group" "db" {
-  name   = "ojahub-db"
+  name   = "seunbaba-db"
   vpc_id = var.vpc_id
   ingress {                                              # PostgreSQL only from the application tier
     from_port       = 5432
@@ -51,7 +51,7 @@ resource "aws_security_group" "db" {
 
 # ---------------------------------------------------------------- PostgreSQL (system of record)
 resource "aws_db_parameter_group" "pg16" {
-  name   = "ojahub-pg16"
+  name   = "seunbaba-pg16"
   family = "postgres16"
   parameter {
     name  = "timezone"
@@ -70,7 +70,7 @@ resource "aws_db_parameter_group" "pg16" {
 
 # Multi-AZ: synchronous standby in a second AZ, automatic failover (~1-2 min DNS switch).
 resource "aws_db_instance" "primary" {
-  identifier                   = "ojahub-pg-primary"
+  identifier                   = "seunbaba-pg-primary"
   engine                       = "postgres"
   engine_version               = "16"
   instance_class               = "db.r6g.large"
@@ -78,11 +78,11 @@ resource "aws_db_instance" "primary" {
   max_allocated_storage        = 1000
   storage_type                 = "gp3"
   storage_encrypted            = true
-  db_name                      = "ojahub"
-  username                     = "ojahub_admin"
+  db_name                      = "seunbaba"
+  username                     = "seunbaba_admin"
   password                     = var.db_password
   multi_az                     = true
-  db_subnet_group_name         = aws_db_subnet_group.ojahub.name
+  db_subnet_group_name         = aws_db_subnet_group.seunbaba.name
   vpc_security_group_ids       = [aws_security_group.db.id]
   parameter_group_name         = aws_db_parameter_group.pg16.name
   backup_retention_period      = 14                      # point-in-time recovery window
@@ -96,7 +96,7 @@ resource "aws_db_instance" "primary" {
 # Asynchronous read replica for reporting (Portfolio 2 Q3/Q4-type queries) so that
 # heavy analytics never compete with checkout on the primary.
 resource "aws_db_instance" "reporting_replica" {
-  identifier             = "ojahub-pg-reporting"
+  identifier             = "seunbaba-pg-reporting"
   replicate_source_db    = aws_db_instance.primary.identifier
   instance_class         = "db.r6g.large"
   storage_encrypted      = true
@@ -106,14 +106,14 @@ resource "aws_db_instance" "reporting_replica" {
 }
 
 # ---------------------------------------------------------------- Redis (cache, carts, flash-sale gate)
-resource "aws_elasticache_subnet_group" "ojahub" {
-  name       = "ojahub-cache"
+resource "aws_elasticache_subnet_group" "seunbaba" {
+  name       = "seunbaba-cache"
   subnet_ids = var.private_subnet_ids
 }
 
 resource "aws_elasticache_replication_group" "redis" {
-  replication_group_id       = "ojahub-redis"
-  description                = "OjaHub carts, sessions, leaderboards, flash-sale counters"
+  replication_group_id       = "seunbaba-redis"
+  description                = "SeunBaba carts, sessions, leaderboards, flash-sale counters"
   engine                     = "redis"
   engine_version             = "7.1"
   node_type                  = "cache.r6g.large"
@@ -122,7 +122,7 @@ resource "aws_elasticache_replication_group" "redis" {
   multi_az_enabled           = true
   at_rest_encryption_enabled = true
   transit_encryption_enabled = true
-  subnet_group_name          = aws_elasticache_subnet_group.ojahub.name
+  subnet_group_name          = aws_elasticache_subnet_group.seunbaba.name
   security_group_ids         = [aws_security_group.db.id]
   snapshot_retention_limit   = 3                         # carts survive a full node loss
 }
@@ -130,7 +130,7 @@ resource "aws_elasticache_replication_group" "redis" {
 # ---------------------------------------------------------------- MongoDB Atlas (catalogue + order read model)
 resource "mongodbatlas_advanced_cluster" "catalogue" {
   project_id   = var.atlas_project_id
-  name         = "ojahub-catalogue"
+  name         = "seunbaba-catalogue"
   cluster_type = "REPLICASET"
   replication_specs {
     region_configs {
