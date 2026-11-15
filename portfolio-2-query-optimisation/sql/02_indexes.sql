@@ -3,7 +3,7 @@
 -- Optimisation indexes. Each one is justified by a specific query plan
 -- (see README.md section 3). Applied AFTER the "before" benchmark.
 -- =====================================================================
-SET search_path = ojahub, public;
+SET search_path = seunbaba, public;
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 -- Q1: FK index + sort order + covering columns -> index-only access path
@@ -44,5 +44,5 @@ VACUUM (ANALYZE) customer_order, order_item, product, shipment, shipment_event;
 SELECT indexrelname AS index_name, relname AS table_name,
        pg_size_pretty(pg_relation_size(indexrelid)) AS size
 FROM pg_stat_user_indexes
-WHERE schemaname = 'ojahub' AND indexrelname ~ '^(ix_|brin_|gin_)'
+WHERE schemaname = 'seunbaba' AND indexrelname ~ '^(ix_|brin_|gin_)'
 ORDER BY pg_relation_size(indexrelid) DESC;

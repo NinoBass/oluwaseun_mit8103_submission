@@ -1,10 +1,10 @@
 -- =====================================================================
 -- Portfolio 2 - 01_business_queries.sql
--- Six realistic OjaHub workloads. Each is run with
+-- Six realistic SeunBaba workloads. Each is run with
 --   EXPLAIN (ANALYZE, BUFFERS)  before and after optimisation
 -- by run_benchmark.sh. The plain query text lives here.
 -- =====================================================================
-SET search_path = ojahub, public;
+SET search_path = seunbaba, public;
 
 -- Q1  Customer-service lookup: "show me this customer's last 10 orders"
 --     (login is by e-mail, typed in any letter case)
