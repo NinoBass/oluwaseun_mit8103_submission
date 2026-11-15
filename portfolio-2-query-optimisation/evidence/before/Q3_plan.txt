@@ -1,0 +1,58 @@
+-- Q3 (before)
+WITH monthly AS (
+    SELECT sr.geo_zone,
+           date_trunc('month', o.order_date) AS month,
+           count(*)                          AS orders,
+           sum(o.total_amount)               AS revenue
+    FROM customer_order o
+    JOIN customer_address a ON a.address_id = o.shipping_address_id
+    JOIN state_region sr    ON sr.state_code = a.state_code
+    WHERE o.order_date >= TIMESTAMPTZ '2026-01-01 00:00+01'
+      AND o.order_date <  TIMESTAMPTZ '2026-11-01 00:00+01'
+      AND o.order_status IN ('PAID','SHIPPED','DELIVERED')
+    GROUP BY sr.geo_zone, date_trunc('month', o.order_date)
+)
+SELECT geo_zone, to_char(month, 'YYYY-MM') AS month, orders, revenue,
+       round(100.0 * (revenue - lag(revenue) OVER w) / lag(revenue) OVER w, 1) AS mom_growth_pct
+FROM monthly
+WINDOW w AS (PARTITION BY geo_zone ORDER BY month)
+ORDER BY geo_zone, month;
+
+Incremental Sort  (cost=20811.79..32085.75 rows=98668 width=123) (actual time=195.747..208.938 rows=60 loops=1)
+  Sort Key: sr.geo_zone, (to_char((date_trunc('month'::text, o.order_date)), 'YYYY-MM'::text))
+  Presorted Key: sr.geo_zone
+  Full-sort Groups: 2  Sort Method: quicksort  Average Memory: 28kB  Peak Memory: 28kB
+  Buffers: shared hit=4694
+  ->  WindowAgg  (cost=20761.36..26434.77 rows=98668 width=123) (actual time=187.414..208.890 rows=60 loops=1)
+        Buffers: shared hit=4694
+        ->  GroupAggregate  (cost=20761.36..23474.73 rows=98668 width=59) (actual time=187.066..208.694 rows=60 loops=1)
+              Group Key: sr.geo_zone, (date_trunc('month'::text, o.order_date))
+              Buffers: shared hit=4694
+              ->  Sort  (cost=20761.36..21008.03 rows=98668 width=25) (actual time=186.657..194.371 rows=98304 loops=1)
+                    Sort Key: sr.geo_zone, (date_trunc('month'::text, o.order_date))
+                    Sort Method: quicksort  Memory: 8456kB
+                    Buffers: shared hit=4694
+                    ->  Hash Join  (cost=2156.33..12576.70 rows=98668 width=25) (actual time=21.017..141.695 rows=98304 loops=1)
+                          Hash Cond: (a.state_code = sr.state_code)
+                          Buffers: shared hit=4694
+                          ->  Hash Join  (cost=2154.50..12039.53 rows=98668 width=17) (actual time=20.987..103.655 rows=98304 loops=1)
+                                Hash Cond: (o.shipping_address_id = a.address_id)
+                                Buffers: shared hit=4693
+                                ->  Seq Scan on customer_order o  (cost=0.00..9626.00 rows=98668 width=22) (actual time=5.037..46.813 rows=98304 loops=1)
+                                      Filter: ((order_date >= '2026-01-01 00:00:00+01'::timestamp with time zone) AND (order_date < '2026-11-01 00:00:00+01'::timestamp with time zone) AND ((order_status)::text = ANY ('{PAID,SHIPPED,DELIVERED}'::text[])))
+                                      Rows Removed by Filter: 201696
+                                      Buffers: shared hit=4001
+                                ->  Hash  (cost=1342.00..1342.00 rows=65000 width=11) (actual time=15.894..15.896 rows=65000 loops=1)
+                                      Buckets: 65536  Batches: 1  Memory Usage: 3242kB
+                                      Buffers: shared hit=692
+                                      ->  Seq Scan on customer_address a  (cost=0.00..1342.00 rows=65000 width=11) (actual time=0.008..7.411 rows=65000 loops=1)
+                                            Buffers: shared hit=692
+                          ->  Hash  (cost=1.37..1.37 rows=37 width=14) (actual time=0.018..0.018 rows=37 loops=1)
+                                Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                                Buffers: shared hit=1
+                                ->  Seq Scan on state_region sr  (cost=0.00..1.37 rows=37 width=14) (actual time=0.006..0.009 rows=37 loops=1)
+                                      Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=5
+Planning Time: 0.395 ms
+Execution Time: 209.583 ms
