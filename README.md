@@ -94,9 +94,9 @@ Each portfolio folder has its own `README.md` explaining **what was implemented,
 | All five portfolios use the same case study | Yes. One SeunBaba database feeds P1–P5 (MongoDB and the shards are loaded from it) |
 | All five portfolio activities completed | Yes. See the table below |
 | GitHub repository properly organised | Yes. Suggested structure, per-portfolio README + `sql/`/`scripts/` + `evidence/` |
-| Practical work and supporting evidence included | Yes. 25 screenshots plus raw `.txt` outputs, plans and logs |
+| Practical work and supporting evidence included | Yes. 25 screenshots plus raw `.txt` outputs, plans, logs and server configuration files |
 | README / documentation explains the work | Yes. Each README covers how it was implemented, how it was tested, results and analysis |
-| Required files submitted through the LMS | `Odunlade_Oluwaseun_301931438/` (docx, pdf, evidence pdf, README.txt, source zip) and the `.zip` |
+| Required files submitted through the LMS | [`Odunlade_Oluwaseun_301931438/`](Odunlade_Oluwaseun_301931438/): documentation (pdf and docx), evidence pack, README.txt. Every name follows `Surname_Firstname_StudentID_DocumentType`, with no spaces |
 | GitHub link works and is accessible to the assessor | **Student action:** make the repository private and give the assessor access before submitting |
 | Sources, datasets, libraries referenced | Yes. References and tools below; the data set is synthetic and self-generated |
 | AI use declared | Yes. Below, and in the LMS document §6 |
