@@ -1,9 +1,9 @@
 -- =====================================================================
 -- Portfolio 1 - 02_reference_data.sql
--- Lookup data for OjaHub Commerce: states, warehouses, category tree,
+-- Lookup data for SeunBaba Commerce: states, warehouses, category tree,
 -- couriers are plain text in shipment so they are not seeded here.
 -- =====================================================================
-SET search_path = ojahub, public;
+SET search_path = seunbaba, public;
 
 INSERT INTO state_region (state_code, state_name, geo_zone) VALUES
 ('AB','Abia','South East'),        ('AD','Adamawa','North East'),   ('AK','Akwa Ibom','South South'),

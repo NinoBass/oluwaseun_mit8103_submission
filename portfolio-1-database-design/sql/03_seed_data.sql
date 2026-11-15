@@ -1,6 +1,6 @@
 -- =====================================================================
 -- Portfolio 1 - 03_seed_data.sql
--- Deterministic synthetic data generator for OjaHub Commerce.
+-- Deterministic synthetic data generator for SeunBaba Commerce.
 -- All data is fictitious. setseed() makes every run produce the same
 -- data so that query plans and timings in Portfolio 2 are repeatable.
 --
@@ -9,7 +9,7 @@
 --   orders 300 000   | order lines ~750 000 | payments ~300 000
 --   shipments ~265 000 | shipment events ~1 000 000 | reviews ~60 000
 -- =====================================================================
-SET search_path = ojahub, public;
+SET search_path = seunbaba, public;
 SELECT setseed(0.8103);
 
 -- ---------------------------------------------------------------------
@@ -34,7 +34,7 @@ FROM city_pool;
 -- ---------------------------------------------------------------------
 INSERT INTO customer (email, phone, first_name, last_name, date_of_birth, account_status, created_at)
 SELECT lower(fn) || '.' || lower(ln) || g || '@' ||
-         (ARRAY['gmail.com','yahoo.com','outlook.com','ojahub.ng','hotmail.com'])[1 + (g % 5)],
+         (ARRAY['gmail.com','yahoo.com','outlook.com','seunbaba.ng','hotmail.com'])[1 + (g % 5)],
        '+234' || (ARRAY['803','806','813','816','703','706','810','814','903','906',
                         '802','808','812','701','902','805','807','815','905'])[1 + (g % 19)]
               || lpad(g::text, 7, '0'),
@@ -88,7 +88,7 @@ SELECT (ARRAY['Mainland','Island','Eko','Arewa','Naija','Royal','Prime','Delta',
        (ARRAY['Gadgets','Stores','Mart','Traders','Concepts','Supplies','Ventures','Enterprises','Hub','Emporium'])
               [1 + ((g / 15) % 10)] || ' ' || g,
        'RC' || (100000 + g * 37),
-       'sales' || g || '@vendor.ojahub.ng',
+       'sales' || g || '@vendor.seunbaba.ng',
        (ARRAY['LA','LA','LA','FC','RI','KN','OY','AN','ED','EN'])[1 + (g % 10)],
        (ARRAY[7.5, 10, 12.5, 15])[1 + (g % 4)],
        DATE '2023-01-15' + (g * 5),
@@ -131,9 +131,9 @@ WHERE c.parent_category_id IS NOT NULL;
 INSERT INTO product (vendor_id, category_id, sku, product_name, description, unit_price, weight_kg, is_active, created_at)
 SELECT 1 + floor(random() * 150)::int,
        l.category_id,
-       'OJH-' || lpad(g::text, 6, '0'),
+       'SBB-' || lpad(g::text, 6, '0'),
        b.brand || ' ' || i.item || ' ' || (ARRAY['Classic','Pro','Lite','Max','Plus','Edition 2025','Original'])[1 + (g % 7)],
-       'Genuine ' || b.brand || ' ' || i.item || ' sold on OjaHub with nationwide delivery.',
+       'Genuine ' || b.brand || ' ' || i.item || ' sold on SeunBaba with nationwide delivery.',
        round((l.min_price + power(random(), 4) * (l.max_price - l.min_price)) / 50) * 50,
        round((l.kg * (0.6 + random() * 0.8))::numeric, 3),
        random() > 0.04,
@@ -282,7 +282,7 @@ WHERE o.order_status <> 'PENDING';
 INSERT INTO shipment (order_id, warehouse_id, courier_name, tracking_number, shipment_status, shipped_at, delivered_at)
 SELECT o.order_id,
        (SELECT min(warehouse_id) FROM order_item oi WHERE oi.order_id = o.order_id),
-       (ARRAY['GIG Logistics','DHL Nigeria','Kwik Delivery','Sendbox','OjaHub Express'])[1 + (o.order_id % 5)::int],
+       (ARRAY['GIG Logistics','DHL Nigeria','Kwik Delivery','Sendbox','SeunBaba Express'])[1 + (o.order_id % 5)::int],
        'OJX' || lpad(o.order_id::text, 9, '0'),
        CASE o.order_status WHEN 'SHIPPED' THEN 'IN_TRANSIT' WHEN 'REFUNDED' THEN 'RETURNED' ELSE 'DELIVERED' END,
        o.order_date + INTERVAL '1 day' + random() * INTERVAL '10 hours',
