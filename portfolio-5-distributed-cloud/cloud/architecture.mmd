@@ -1,0 +1,12 @@
+flowchart LR
+    U["Shoppers<br/>web + mobile app"] --> API["OjaHub API<br/>(stateless, autoscaling)"]
+    subgraph AWS["AWS af-south-1 · 3 AZs"]
+      direction LR
+      API -->|"cart, sessions,<br/>flash-sale DECR"| R[("ElastiCache Redis<br/>primary + replica")]
+      API -->|"checkout / payments<br/>(ACID, FOR UPDATE)"| PG[("RDS PostgreSQL 16<br/>PRIMARY  AZ-a")]
+      PG -. "synchronous<br/>replication" .-> PGS[("Multi-AZ standby<br/>AZ-b")]
+      PG -. "asynchronous<br/>streaming" .-> PGR[("Read replica<br/>reports, BI")]
+      API -->|"catalogue search,<br/>order history"| MG[("MongoDB Atlas M30<br/>3-member replica set")]
+      PG -->|"CDC / nightly ETL<br/>(Portfolio 4 loader)"| MG
+    end
+    PG -. "encrypted snapshots +<br/>WAL archive (PITR 14 days)" .-> S3[("S3 backups<br/>cross-region copy")]
