@@ -125,7 +125,7 @@ const doc = new Document({
         { border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: navy, space: 4 } }, spacing: { after: 100 } }),
 
       h1("1. Selected organisation: SeunBaba Commerce Ltd (simulated)"),
-      p("SeunBaba is a simulated multi-vendor e-commerce marketplace in Ikeja, Lagos (ọjà is Yoruba for market). Independent Nigerian vendors list products, and SeunBaba runs checkout in Naira (card, transfer, USSD, wallet, pay-on-delivery), stock in four hubs (Lagos, Abuja, Port Harcourt, Kano) and last-mile delivery through couriers."),
+      p("SeunBaba is a simulated multi-vendor e-commerce marketplace in Ikeja, Lagos (the name is a play on Alibaba, the e-commerce marketplace). Independent Nigerian vendors list products, and SeunBaba runs checkout in Naira (card, transfer, USSD, wallet, pay-on-delivery), stock in four hubs (Lagos, Abuja, Port Harcourt, Kano) and last-mile delivery through couriers."),
       bullet([b("Database users: "), "customers (web and mobile app), vendors, warehouse staff, customer-service agents, finance (reconciliation) and management (dashboards)."]),
       bullet([b("Major data: "), "customers and addresses, vendors, category tree, products, stock per warehouse, coupons, orders and lines, payment attempts, shipments, courier scan events, reviews, stock audit trail."]),
       bullet([b("Key operations: "), "register, list and search products, place an order (reserve stock, coupon, payment), cancel or refund, dispatch and track a parcel, review, low-stock and sales reporting."]),
