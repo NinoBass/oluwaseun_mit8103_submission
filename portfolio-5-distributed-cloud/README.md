@@ -21,6 +21,7 @@
 | **Availability** | Failover (R3), shard-failure isolation (S_shard_failure), MongoDB election (M2 E2–E3) |
 | **Consistency** | Sync vs async stale reads (R2/R4), causal read-your-writes (M2 E1b), loss of majority / CAP (M2 E4), summary table in [§4](#4-consistency-and-availability-summary-for-seunbaba) |
 | **Deployment** | [§5](#5-cloud-deployment-design-aws): [`cloud/architecture.png`](cloud/architecture.png), [`cloud/terraform/main.tf`](cloud/terraform/main.tf) (**design only, not applied**) |
+| **Configuration files** | [`config/`](config/): [`postgresql-primary.conf`](config/postgresql-primary.conf) (replication, `pg_rewind`, memory), [`postgresql-standby.auto.conf`](config/postgresql-standby.auto.conf), [`postgresql-shard.conf`](config/postgresql-shard.conf), [`mongod-rs0.conf`](config/mongod-rs0.conf) |
 
 **How it was implemented.** Real PostgreSQL clusters created with `initdb` and `pg_basebackup`; `postgres_fdw` foreign-table partitions; a MongoDB replica set grown with `rs.add`.
 **How it was tested.** Failures were *injected* (immediate shutdown, `SIGKILL`, a stopped shard, loss of majority) and the outcome measured: RTO, RPO, election time, stale reads, sharded vs single-node results compared with `EXCEPT`. A failed first failover attempt is kept as evidence together with its fix.
@@ -132,6 +133,8 @@ E4 is the **CAP theorem** observed directly. During a partition that leaves no m
 **Scaling path.** First, vertical scaling plus read replicas. Next, the materialised summaries from Portfolio 2. Last, horizontal sharding by `customer_id` (section 2) using a managed distributed PostgreSQL such as Citus. Citus also removes the PG16 `postgres_fdw` limits seen in S3 and S4.
 
 ## 6. How to run
+
+Server settings these scripts rely on are in [`config/`](config/): append `postgresql-primary.conf` to the primary's `postgresql.conf` (and `postgresql-shard.conf` to each shard's) before running. `pg_basebackup -R` writes the standby settings shown in `postgresql-standby.auto.conf` automatically.
 
 The scripts run on Linux and macOS. Binary and data locations default to the Linux layout and can be overridden: `PGBIN` (default `pg_config --bindir`), `PG_WORK` (cluster directories, default `/var/lib/postgresql/work`), `MONGO_BIN`, `MONGO_WORK` and `MONGO_LOGDIR`. The primary must be the cluster `$PG_WORK/primary` on port 5432 with `wal_level = replica`, `wal_log_hints = on` and `wal_keep_size = '2GB'`. The evidence in this folder was captured on macOS (Apple M5 Pro) with PostgreSQL 16.16 and MongoDB 9.0.8.
 
