@@ -4,11 +4,11 @@
   before: OJH-000101 stock.wh1 = 243, requested 1
   [txn] decrement OJH-000100 by 2: modified=1
   [txn] decrement OJH-000101 by 1: modified=1
-  [txn] inserted order 300033
+  [txn] inserted order 300037
   COMMITTED
   after : OJH-000100 stock.wh1 = 172
   after : OJH-000101 stock.wh1 = 242
-  order 300033 exists? true
+  order 300037 exists? true
 
 ######## T2 abort: line 1 succeeds, line 2 fails -> line 1 is undone ########
   before: OJH-000100 stock.wh1 = 172, requested 1
@@ -18,7 +18,7 @@
   ABORTED: insufficient stock for OJH-000101
   after : OJH-000100 stock.wh1 = 172
   after : OJH-000101 stock.wh1 = 242
-  order 300034 exists? false
+  order 300038 exists? false
 
 ######## T3 write conflict: two concurrent transactions update the same product ########
   session 1 updated the product (uncommitted)
