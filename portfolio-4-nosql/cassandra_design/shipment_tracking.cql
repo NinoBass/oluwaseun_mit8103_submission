@@ -40,5 +40,5 @@ CREATE TABLE IF NOT EXISTS events_by_courier_day (
 -- for the tracking page (a scan that is a few ms stale is acceptable).
 --
 -- INSERT INTO events_by_tracking_number (tracking_number, event_time, event_status, event_location, courier_name, order_id)
--- VALUES ('OJX000245000', '2026-10-30 09:15:00+0100', 'OUT_FOR_DELIVERY', 'Lekki', 'GIG Logistics', 245000);
--- SELECT * FROM events_by_tracking_number WHERE tracking_number = 'OJX000245000';
+-- VALUES ('SBX000245000', '2026-10-30 09:15:00+0100', 'OUT_FOR_DELIVERY', 'Lekki', 'GIG Logistics', 245000);
+-- SELECT * FROM events_by_tracking_number WHERE tracking_number = 'SBX000245000';
